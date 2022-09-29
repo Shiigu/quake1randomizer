@@ -516,33 +516,63 @@ void(entity e) ConvertToPickupUnbiased = {
 };
 
 // Converts a pickup of one type to another randomly.
-// 90% chance of being either non-Mega Health pickup, 10% chance of being either non-Red Armor pickup
+// 90% chance of being a pickup of the type it already is (Health or Armor, but quality can change), 10% of becoming of the other type.
 void(entity e) ConvertToPickupBiased = {
     local float rng;
     rng = Random(1, 100);
-    if(rng >= 1 && rng <= 45)
-    { 
-        ConvertToHealth(e, 1);
-        dprint(e.classname);
-        dprint(" (15)\n");
+    if(e.classname == "item_health")
+    {
+        if(rng >= 1 && rng <= 45)
+        { 
+            ConvertToHealth(e, 1);
+            dprint(e.classname);
+            dprint(" (15)\n");
+        }
+        else if(rng >= 46 && rng <= 90)
+        { 
+            ConvertToHealth(e, 2);
+            dprint(e.classname);
+            dprint(" (25)\n");
+        }
+        else if(rng >= 91 && rng <= 95)
+        { 
+            ConvertToArmor(e, 0);
+            dprint(e.classname);
+            dprint("\n");
+        }
+        else if(rng >= 96 && rng <= 100)
+        { 
+            ConvertToArmor(e, 1);
+            dprint(e.classname);
+            dprint("\n");
+        }
     }
-    else if(rng >= 46 && rng <= 90)
-    { 
-        ConvertToHealth(e, 2);
-        dprint(e.classname);
-        dprint(" (25)\n");
-    }
-    else if(rng >= 91 && rng <= 95)
-    { 
-        ConvertToArmor(e, 0);
-        dprint(e.classname);
-        dprint("\n");
-    }
-    else if(rng >= 96 && rng <= 100)
-    { 
-        ConvertToArmor(e, 1);
-        dprint(e.classname);
-        dprint("\n");
+    else if(e.classname == "item_armor1" || e.classname == "item_armor2")
+    {
+        if(rng >= 1 && rng <= 5)
+        { 
+            ConvertToHealth(e, 1);
+            dprint(e.classname);
+            dprint(" (15)\n");
+        }
+        else if(rng >= 6 && rng <= 10)
+        { 
+            ConvertToHealth(e, 2);
+            dprint(e.classname);
+            dprint(" (25)\n");
+        }
+        else if(rng >= 11 && rng <= 55)
+        { 
+            ConvertToArmor(e, 0);
+            dprint(e.classname);
+            dprint("\n");
+        }
+        else if(rng >= 56 && rng <= 100)
+        { 
+            ConvertToArmor(e, 1);
+            dprint(e.classname);
+            dprint("\n");
+        }
     }
     e.Converted = "1";
 };
