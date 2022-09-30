@@ -334,7 +334,7 @@ float(float lower, float upper) Random =
 float(float lower, float upper) RandomTwoPositives =
 {
 	local float num = random();
-	num = num * (upper - lower);
+	num = num * (upper - lower + 1);
 	num = num + lower;
 	return floor(num);
 };
@@ -344,7 +344,7 @@ float(float lower, float upper) RandomTwoNegatives =
 	local float num = random();
 	local float newlower = upper * -1;
 	local float newupper = lower * -1;
-	num = num * (newupper - newlower);
+	num = num * (newupper - newlower + 1);
 	num = num + newlower;
 	num = num * -1;
 	return floor(num);
@@ -356,7 +356,7 @@ float(float lower, float upper) RandomDiffSigns =
 	local float diff = (lower * -1);
 	local float newlower = 0;
 	local float newupper = upper + diff;
-	num = num * newupper;
+	num = num * newupper + 1;
 	num = num - diff;
 	return floor(num);
 };

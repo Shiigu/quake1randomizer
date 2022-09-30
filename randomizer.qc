@@ -141,9 +141,6 @@ void() FlagEntities = {
 // Converts entities to one of the same type.
 void() ConvertEntities = {
     local entity temp;
-    local float oldsize_z;
-    local float sizedifference;
-    local string oldclassname;
 	
 	temp = find(world, Converted, "0");
 
@@ -155,8 +152,6 @@ void() ConvertEntities = {
         dprint(" to: ");
         if(temp.classname != "worldspawn")
         {
-            oldsize_z = temp.size_z;
-            oldclassname = temp.classname;
             if(temp.EntityType == "Monster")
             {
                 ConvertToMonster(temp);
@@ -210,17 +205,6 @@ void() ConvertEntities = {
             else {
                 temp.Converted = "1"; // Just in case something that shouldn't have been flagged was actually flagged.
             }
-            if(temp.EntityType != "Monster" && oldsize_z < temp.size_z)
-            {
-                sizedifference = temp.size_z - oldsize_z;
-                dprint(temp.classname);
-                dprint(" is ");
-                dprint(ftos(sizedifference));
-                dprint(" units taller than ");
-                dprint(oldclassname);
-                dprint(". Adjusting z position.\n");
-                temp.origin_z = temp.origin_z + sizedifference;
-            } 
         }
 		temp = find(temp, Converted, "0");
 	}
@@ -711,7 +695,7 @@ void(entity e) ConvertToPowerupUnbiased = {
 };
 
 // Converts a powerup of one type to another randomly.
-// 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a weapon, 3% chance of being a Biosuit
+// 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 6% chance of being a weapon, 4% chance of being a Biosuit
 void(entity e) ConvertToPowerupBiased = {
     local float rng;
     rng = Random(1, 100);
@@ -836,14 +820,14 @@ void(entity e) ConvertToWeaponBiased = {
         ConvertToRocketLauncher(e);
         SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
     }
-    else if(rng == 6 && !(SpawnedWeapons & IT_LIGHTNING))
+    else if(rng == 6 && !(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
     { 
         ConvertToThunderbolt(e);
         SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
     }
     else
     {
-        // If it rolled an already-spawned weapon, it will instead spawn the lowest-ranked weapon not yet present
+        // If it rolled an already-spawned weapon (or tried to spawn a Thunderbolt in water), it will instead spawn the lowest-ranked weapon not yet present.
         dprint("(DEFAULT) ");
         if (!(SpawnedWeapons & IT_SUPER_SHOTGUN))
         {
@@ -870,13 +854,14 @@ void(entity e) ConvertToWeaponBiased = {
             ConvertToRocketLauncher(e);
             SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
         }
-        else if (!(SpawnedWeapons & IT_LIGHTNING))
+        else if (!(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
         {
             ConvertToThunderbolt(e);
             SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
         }
         else 
         {
+            // If all weapons were rolled (or yet again tried to spawn a Thunderbolt in water), it will instead spawn a powerup.
             dprint("(NOT A WEAPON) ");
             ConvertToPowerupBiased(e);
             return;
