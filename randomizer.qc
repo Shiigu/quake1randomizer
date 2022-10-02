@@ -566,24 +566,23 @@ void(entity e) ConvertToPickupBiased = {
 void(entity e) ConvertToAmmoUnbiased = {
     local float AmmoTypeRng;
     local float AmmoSizeRng;
-    local float AmmoPackSize;
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
     if(AmmoTypeRng == 1)
     {
-        ConvertToShells(e, AmmoPackSize);
+        ConvertToShells(e, AmmoSizeRng);
     }
     else if(AmmoTypeRng == 2)
     { 
-        ConvertToNails(e, AmmoPackSize);
+        ConvertToNails(e, AmmoSizeRng);
     }
     else if(AmmoTypeRng == 3)
     { 
-        ConvertToRockets(e, AmmoPackSize);
+        ConvertToRockets(e, AmmoSizeRng);
     }
     else if(AmmoTypeRng == 4)
     { 
-        ConvertToCells(e, AmmoPackSize);
+        ConvertToCells(e, AmmoSizeRng);
     }
     dprint(e.classname);
     if(AmmoSizeRng == 1)
@@ -593,6 +592,12 @@ void(entity e) ConvertToAmmoUnbiased = {
     else if(AmmoSizeRng == 2)
     {
         dprint(" (SMALL)");
+    }
+    else
+    {
+        dprint(" (INVALID AMMO SIZE TYPE OF ");
+        dprint(ftos(AmmoSizeRng));
+        dprint(")");
     }
     dprint("\n");
     e.Converted = "1";
