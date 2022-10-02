@@ -586,11 +586,11 @@ void(entity e) ConvertToAmmoUnbiased = {
         ConvertToCells(e, AmmoPackSize);
     }
     dprint(e.classname);
-    if(AmmoPackSize == 1)
+    if(AmmoSizeRng == 1)
     {
         dprint(" (BIG)");
     }
-    else if(AmmoPackSize == 2)
+    else if(AmmoSizeRng == 2)
     {
         dprint(" (SMALL)");
     }

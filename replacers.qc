@@ -215,11 +215,11 @@ void(entity e) ConvertToFiend =
 
 	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 300;
     e.classname = "monster_demon1";
 	e.th_stand = demon1_stand1;
@@ -249,11 +249,11 @@ void(entity e) ConvertToDog =
 
 	setsize (e, '-32 -32 -24', '32 32 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 25;
     e.classname = "monster_dog";
 	e.th_stand = dog_stand1;
@@ -282,11 +282,11 @@ void(entity e) ConvertToEnforcer =
 
 	setsize (e, '-16 -16 -24', '16 16 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 80;
     e.classname = "monster_enforcer";
 	e.th_stand = enf_stand1;
@@ -316,11 +316,11 @@ void(entity e) ConvertToRotfish =
 
 	setsize (e, '-16 -16 -24', '16 16 24');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (!(e.flags & FL_SWIM))
 		e.flags = e.flags | FL_SWIM;
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 25;
 	e.classname = "monster_fish";
 	e.th_stand = f_stand1;
@@ -350,11 +350,11 @@ void(entity e) ConvertToDeathKnight =
 
 	setsize (e, '-16 -16 -24', '16 16 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 250;
     e.classname = "monster_hell_knight";
 	e.th_stand = hknight_stand1;
@@ -383,11 +383,11 @@ void(entity e) ConvertToKnight =
 
 	setsize (e, '-16 -16 -24', '16 16 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 75;
     e.classname = "monster_knight";
 	e.th_stand = knight_stand1;
@@ -417,11 +417,11 @@ void(entity e) ConvertToOgre =
 
 	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 200;
     e.classname = "monster_ogre";
 	e.th_stand = ogre_stand1;
@@ -450,11 +450,11 @@ void(entity e) ConvertToVore =
 	setmodel (e, "progs/shalrath.mdl");
 	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 400;
     e.classname = "monster_shalrath";
 	e.th_stand = shal_stand;
@@ -483,11 +483,11 @@ void(entity e) ConvertToShambler =
 
 	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 600;
     e.classname = "monster_shambler";
 	e.th_stand = sham_stand1;
@@ -516,11 +516,11 @@ void(entity e) ConvertToGrunt =
 
 	setsize (e, '-16 -16 -24', '16 16 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 30;
     e.classname = "monster_army";
 	e.th_stand = army_stand1;
@@ -550,11 +550,11 @@ void(entity e) ConvertToSpawn =
 
 	setsize (e, '-16 -16 -24', '16 16 40');
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 80;
     e.classname = "monster_tarbaby";
 	e.th_stand = tbaby_stand1;
@@ -586,9 +586,9 @@ void(entity e) ConvertToScrag =
 	if (!(e.flags & FL_FLY))
 		e.flags = e.flags | FL_FLY;
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - SPAWN_CRUCIFIED;
+		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
 	e.health = 80;
     e.classname = "monster_wizard";
 	e.th_stand = wiz_stand1;
@@ -618,9 +618,9 @@ void(entity e) ConvertToZombie =
 
 	setsize (e, '-16 -16 -24', '16 16 40');    
 	if (e.flags & FL_FLY)
-		e.flags = e.flags - FL_FLY;
+		e.flags = e.flags - (e.flags & FL_FLY);
 	if (e.flags & FL_SWIM)
-		e.flags = e.flags - FL_SWIM;
+		e.flags = e.flags - (e.flags & FL_SWIM);
 	e.health = 60;
     e.classname = "monster_zombie";
 	e.th_stand = zombie_stand1;
