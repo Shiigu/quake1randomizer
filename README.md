@@ -120,6 +120,10 @@ Every weapon has an even chance to be spawned.
 
 Here, the game just does not care. All convertible objects have the same chance to replace another of the same type. Have fun!
 
+### Backpack Mode ("scratch1" cvar is "1")
+
+This mode can be used with both Biased and Unbiased Modes. Here, all the weapons and ammo pickups are "disguised" as backpacks, so you can't know what you get until you actually get it!
+
 ---
 
 ## Where can you help?
