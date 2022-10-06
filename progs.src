@@ -1,6 +1,7 @@
 ../progs.dat
 
 defs.qc
+custom/math.qc
 subs.qc
 fight.qc
 ai.qc
@@ -34,7 +35,5 @@ shalrath.qc		// registered
 enforcer.qc		// registered
 oldone.qc		// registered
 
-// CUSTOM
-
-replacers.qc
-randomizer.qc
+custom/replacers.qc
+custom/randomizer.qc

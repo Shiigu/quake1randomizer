@@ -1,5 +1,6 @@
 void() W_SetCurrentAmmo;
 void(entity e) StartItem_Replaced;
+void() BackpackTouch_Replaced;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
@@ -43,7 +44,7 @@ void() PlaceItem =
 	self.solid = SOLID_TRIGGER;
 	self.movetype = MOVETYPE_TOSS;	
 	self.velocity = '0 0 0';
-	self.origin_z = self.origin_z + 6;
+	self.origin_z = self.origin_z + 1;
 	
 	if (!droptofloor())
 	{
@@ -1340,6 +1341,114 @@ void() BackpackTouch =
 		self.weapon = new;
 	else
 		Deathmatch_Weapon (old, new);
+
+	W_SetCurrentAmmo ();
+};
+
+// BackpackTouch for items disguised as backpacks ("scratch1" = 1)
+void() BackpackTouch_Replaced =
+{
+	local string s;
+	local float	best, old, new;
+	local entity stemp;
+	local float	acount;
+	
+	if (other.classname != "player")
+		return;
+	if (other.health <= 0)
+		return;
+	if (!self.items && self.ammo_shells)
+		if (other.ammo_shells >= 100)
+			return;
+	if (!self.items && self.ammo_nails)
+		if (other.ammo_nails >= 200)
+			return;
+	if (!self.items && self.ammo_rockets)
+		if (other.ammo_rockets >= 100)
+			return;
+	if (!self.items && self.ammo_cells)
+		if (other.ammo_cells >= 100)
+			return;
+
+	acount = 0;
+	sprint (other, "You get ");
+
+	if (self.items)
+		{
+			acount = 1;
+			sprint (other, "the ");
+			sprint (other, self.netname);
+		}
+
+// if the player was using his best weapon, change up to the new one if better		
+	stemp = self;
+	self = other;
+	best = W_BestWeapon();
+	self = stemp;
+// change weapons
+	other.ammo_shells = other.ammo_shells + self.ammo_shells;
+	other.ammo_nails = other.ammo_nails + self.ammo_nails;
+	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
+	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+
+	new = self.items;
+	if (!new)
+		new = other.weapon;
+	old = other.items;
+	other.items = other.items | new;
+	
+	bound_other_ammo ();
+
+	if (self.ammo_shells)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_shells);
+		sprint (other, s);
+		sprint (other, " shells");
+	}
+	if (self.ammo_nails)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_nails);
+		sprint (other, s);
+		sprint (other, " nails");
+	}
+	if (self.ammo_rockets)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_rockets);
+		sprint (other, s);
+		sprint (other, " rockets");
+	}
+	if (self.ammo_cells)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_cells);
+		sprint (other, s);
+		sprint (other, " cells");
+	}
+	
+	sprint (other, "\n");
+// backpack touch sound
+	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
+	stuffcmd (other, "bf\n");
+
+// change to the weapon
+	if (self.items)
+		other.weapon = self.items;
+
+// remove the backpack, change self to the player
+	remove(self);
+	self = other;
+
 
 	W_SetCurrentAmmo ();
 };

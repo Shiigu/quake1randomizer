@@ -29,11 +29,13 @@ float RandomMode; // 1 (default) will be a biased mode to give the player a fair
                   // Same value as gamecfg cvar.
 
 float SpawnedWeapons; // For Biased mode. Includes which weapons have been added.
+float HideInBackpacks; // If TRUE, all Weapons and Ammo are "hidden" as backpacks.
 
 void() Randomize = {
     RandomMode = cvar("gamecfg");
+    HideInBackpacks = cvar("scratch1");
     SpawnedWeapons = 0;
-    dprint("----- SUPER RANDOMIZER MOD -----\n");
+    dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
     dprint(ftos(RandomMode));
     dprint(". ");
@@ -49,6 +51,10 @@ void() Randomize = {
     {
         dprint("Mode is invalid. Must be 0 or 1. Cancelling randomizing.\n");
         return;
+    }
+    if(HideInBackpacks)
+    {
+        dprint("scratch1 is 1. All weapons and ammo will be disguised as backpacks.\n");
     }
     Placeholder = spawn(); // Temporary entity to call the randomizer functions in order    
 	Placeholder.think = FlagEntities;
@@ -141,6 +147,7 @@ void() FlagEntities = {
 // Converts entities to one of the same type.
 void() ConvertEntities = {
     local entity temp;
+    local vector oldsize, neworigin;
 	
 	temp = find(world, Converted, "0");
 
@@ -152,6 +159,7 @@ void() ConvertEntities = {
         dprint(" to: ");
         if(temp.classname != "worldspawn")
         {
+            oldsize = temp.size;
             if(temp.EntityType == "Monster")
             {
                 ConvertToMonster(temp);
@@ -204,6 +212,13 @@ void() ConvertEntities = {
             }
             else {
                 temp.Converted = "1"; // Just in case something that shouldn't have been flagged was actually flagged.
+            }
+            if((temp.flags & FL_ITEM) && oldsize_z < temp.size_z)
+            {
+                // If an item was converted into a taller one (e.g. Ammo to weapon, or between powerups)...
+                // ... move it a bit higher to not instantly flag it as stuck. Turning into a smaller item is fair game though.
+                neworigin = temp.origin;
+                neworigin_z = neworigin_z + fabs(temp.size_z - oldsize_z);
             }
         }
 		temp = find(temp, Converted, "0");
@@ -336,7 +351,7 @@ void(entity e) ConvertToMonsterOnWaterUnbiased = {
         ConvertToVore(e);
     }
     else if(rng == 8)
-    { 
+    {
         ConvertToShambler(e);
     }
     else if(rng == 9)
@@ -568,21 +583,28 @@ void(entity e) ConvertToAmmoUnbiased = {
     local float AmmoSizeRng;
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
-    if(AmmoTypeRng == 1)
+    if(!HideInBackpacks)
     {
-        ConvertToShells(e, AmmoSizeRng);
+        if(AmmoTypeRng == 1)
+        {
+            ConvertToShells(e, AmmoSizeRng);
+        }
+        else if(AmmoTypeRng == 2)
+        { 
+            ConvertToNails(e, AmmoSizeRng);
+        }
+        else if(AmmoTypeRng == 3)
+        { 
+            ConvertToRockets(e, AmmoSizeRng);
+        }
+        else if(AmmoTypeRng == 4)
+        { 
+            ConvertToCells(e, AmmoSizeRng);
+        }
     }
-    else if(AmmoTypeRng == 2)
-    { 
-        ConvertToNails(e, AmmoSizeRng);
-    }
-    else if(AmmoTypeRng == 3)
-    { 
-        ConvertToRockets(e, AmmoSizeRng);
-    }
-    else if(AmmoTypeRng == 4)
-    { 
-        ConvertToCells(e, AmmoSizeRng);
+    else
+    {
+        ConvertToAmmoBackpack(e, AmmoTypeRng, AmmoSizeRng);
     }
     dprint(e.classname);
     if(AmmoSizeRng == 1)
@@ -622,19 +644,31 @@ void(entity e) ConvertToAmmoBiased = {
     }
     if(AmmoTypeRng >= 1 && AmmoTypeRng <= 30)
     {
-        ConvertToShells(e, AmmoPackSize);
+        if(!HideInBackpacks)
+            ConvertToShells(e, AmmoPackSize);
+        else
+            ConvertToAmmoBackpack(e, 1, AmmoPackSize);
     }
     else if(AmmoTypeRng >= 31 && AmmoTypeRng <= 60)
     { 
-        ConvertToNails(e, AmmoPackSize);
+        if(!HideInBackpacks)
+            ConvertToNails(e, AmmoPackSize);
+        else
+            ConvertToAmmoBackpack(e, 2, AmmoPackSize);
     }
     else if(AmmoTypeRng >= 61 && AmmoTypeRng <= 75)
     { 
-        ConvertToRockets(e, AmmoPackSize);
+        if(!HideInBackpacks)
+            ConvertToRockets(e, AmmoPackSize);
+        else
+            ConvertToAmmoBackpack(e, 3, AmmoPackSize);
     }
     else if(AmmoTypeRng >= 76 && AmmoTypeRng <= 90)
     { 
-        ConvertToCells(e, AmmoPackSize);
+        if(!HideInBackpacks)
+            ConvertToCells(e, AmmoPackSize);
+        else
+            ConvertToAmmoBackpack(e, 4, AmmoPackSize);
     }
     else if(AmmoTypeRng >= 91 && AmmoTypeRng <= 100)
     {
@@ -755,27 +789,45 @@ void(entity e) ConvertToWeaponUnbiased = {
     rng = Random(1, 6);
     if(rng == 1)
     { 
-        ConvertToDoubleBarrelledShotgun(e);
+        if(!HideInBackpacks)
+            ConvertToDoubleBarrelledShotgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
     }
     else if(rng == 2)
     { 
-        ConvertToNailgun(e);
+        if(!HideInBackpacks)
+            ConvertToNailgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_NAILGUN);
     }
     else if(rng == 3)
     { 
-        ConvertToSuperNailgun(e);
+        if(!HideInBackpacks)
+            ConvertToSuperNailgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
     }
     else if(rng == 4)
     { 
-        ConvertToGrenadeLauncher(e);
+        if(!HideInBackpacks)
+            ConvertToGrenadeLauncher(e);
+        else
+            ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
     }
     else if(rng == 5)
     { 
-        ConvertToRocketLauncher(e);
+        if(!HideInBackpacks)
+            ConvertToRocketLauncher(e);
+        else
+            ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
     }
     else if(rng == 6)
     { 
-        ConvertToThunderbolt(e);
+        if(!HideInBackpacks)
+            ConvertToThunderbolt(e);
+        else
+            ConvertToWeaponBackpack(e, IT_LIGHTNING);
     }
     dprint(e.classname);
     dprint("\n");
@@ -801,33 +853,51 @@ void(entity e) ConvertToWeaponBiased = {
     }
     rng = Random(1, 6);
     if(rng == 1 && !(SpawnedWeapons & IT_SUPER_SHOTGUN))
-    { 
-        ConvertToDoubleBarrelledShotgun(e);
+    {
+        if(!HideInBackpacks)
+            ConvertToDoubleBarrelledShotgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
         SpawnedWeapons = SpawnedWeapons | IT_SUPER_SHOTGUN;
     }
     else if(rng == 2 && !(SpawnedWeapons & IT_NAILGUN))
     { 
-        ConvertToNailgun(e);
+        if(!HideInBackpacks)
+            ConvertToNailgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_NAILGUN);
         SpawnedWeapons = SpawnedWeapons | IT_NAILGUN;
     }
     else if(rng == 3 && !(SpawnedWeapons & IT_SUPER_NAILGUN))
     { 
-        ConvertToSuperNailgun(e);
+        if(!HideInBackpacks)
+            ConvertToSuperNailgun(e);
+        else
+            ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
         SpawnedWeapons = SpawnedWeapons | IT_SUPER_NAILGUN;
     }
     else if(rng == 4 && !(SpawnedWeapons & IT_GRENADE_LAUNCHER))
     { 
-        ConvertToGrenadeLauncher(e);
+        if(!HideInBackpacks)
+            ConvertToGrenadeLauncher(e);
+        else
+            ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
         SpawnedWeapons = SpawnedWeapons | IT_GRENADE_LAUNCHER;
     }
     else if(rng == 5 && !(SpawnedWeapons & IT_ROCKET_LAUNCHER))
     { 
-        ConvertToRocketLauncher(e);
+        if(!HideInBackpacks)
+            ConvertToRocketLauncher(e);
+        else
+            ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
         SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
     }
     else if(rng == 6 && !(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
     { 
-        ConvertToThunderbolt(e);
+        if(!HideInBackpacks)
+            ConvertToThunderbolt(e);
+        else
+            ConvertToWeaponBackpack(e, IT_LIGHTNING);
         SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
     }
     else
@@ -836,32 +906,50 @@ void(entity e) ConvertToWeaponBiased = {
         dprint("(DEFAULT) ");
         if (!(SpawnedWeapons & IT_SUPER_SHOTGUN))
         {
-            ConvertToDoubleBarrelledShotgun(e);
+            if(!HideInBackpacks)
+                ConvertToDoubleBarrelledShotgun(e);
+            else
+                ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
             SpawnedWeapons = SpawnedWeapons | IT_SUPER_SHOTGUN;
         }
         else if (!(SpawnedWeapons & IT_NAILGUN))
         {
-            ConvertToNailgun(e);
+            if(!HideInBackpacks)
+                ConvertToNailgun(e);
+            else
+                ConvertToWeaponBackpack(e, IT_NAILGUN);
             SpawnedWeapons = SpawnedWeapons | IT_NAILGUN;
         }
         else if (!(SpawnedWeapons & IT_SUPER_NAILGUN))
         {
-            ConvertToSuperNailgun(e);
+            if(!HideInBackpacks)
+                ConvertToSuperNailgun(e);
+            else
+                ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
             SpawnedWeapons = SpawnedWeapons | IT_SUPER_NAILGUN;
         }
         else if (!(SpawnedWeapons & IT_GRENADE_LAUNCHER))
-        {
-            ConvertToGrenadeLauncher(e);
+        {        
+            if(!HideInBackpacks)
+                ConvertToGrenadeLauncher(e);
+            else
+                ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
             SpawnedWeapons = SpawnedWeapons | IT_GRENADE_LAUNCHER;
         }
         else if (!(SpawnedWeapons & IT_ROCKET_LAUNCHER))
         {
-            ConvertToRocketLauncher(e);
+            if(!HideInBackpacks)
+                ConvertToRocketLauncher(e);
+            else
+                ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
             SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
         }
         else if (!(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
         {
-            ConvertToThunderbolt(e);
+            if(!HideInBackpacks)
+                ConvertToThunderbolt(e);
+            else
+                ConvertToWeaponBackpack(e, IT_LIGHTNING);
             SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
         }
         else 

@@ -13,13 +13,15 @@ void(entity e) ConvertToGrunt;
 void(entity e) ConvertToSpawn;
 void(entity e) ConvertToScrag;
 void(entity e) ConvertToZombie;
-// PICKUPS AND POWERUPS
+// PICKUPS
 void(entity e, float type) ConvertToHealth;
 void(entity e, float type) ConvertToArmor;
+// AMMO
 void(entity e, float type) ConvertToShells;
 void(entity e, float type) ConvertToNails;
 void(entity e, float type) ConvertToRockets;
 void(entity e, float type) ConvertToCells;
+// POWERUPS
 void(entity e) ConvertToPentagramOfProtection;
 void(entity e) ConvertToBiosuit;
 void(entity e) ConvertToRingOfShadows;
@@ -31,6 +33,9 @@ void(entity e) ConvertToSuperNailgun;
 void(entity e) ConvertToGrenadeLauncher;
 void(entity e) ConvertToRocketLauncher;
 void(entity e) ConvertToThunderbolt;
+// SCRATCH1 = 1 ONLY
+void(entity e, float type) ConvertToWeaponBackpack;
+void(entity e, float type, float size) ConvertToAmmoBackpack;
 
 void() precache_everything = 
 {
@@ -636,7 +641,7 @@ void(entity e) ConvertToZombie =
 
 // END MONSTERS
 
-// START PICKUPS AND POWERUPS
+// START PICKUPS
 
 // Converts entity to a health pack
 // "type" indicates whether it's a 15 pack, 25 pack or 100 pack
@@ -691,6 +696,10 @@ void(entity e, float type) ConvertToArmor =
 	setsize (e, '-16 -16 0', '16 16 56');
 	StartItem_Replaced (e);
 };
+
+// END PICKUPS
+
+// START AMMO
 
 // Converts entity into a box of shells
 // "type" contains whether it's a small box (20) or a big box (40)
@@ -784,6 +793,10 @@ void(entity e, float type) ConvertToCells =
 	StartItem_Replaced (e);
 };
 
+// END AMMO
+
+// START POWERUPS
+
 // Converts entity into a Pentagram of Protection
 void(entity e) ConvertToPentagramOfProtection =
 {
@@ -840,7 +853,7 @@ void(entity e) ConvertToQuadDamage =
 	StartItem_Replaced (e);
 };
 
-// END PICKUPS AND POWERUPS
+// END POWERUPS
 
 // START WEAPONS
 
@@ -923,3 +936,117 @@ void(entity e) ConvertToThunderbolt =
 };
 
 // END WEAPONS
+
+// START SCRATCH1 = 1 ONLY
+
+void(entity e, float type) ConvertToWeaponBackpack =
+{
+	e.items = type;
+	e.ammo_shells = 0;
+	e.ammo_nails = 0;
+	e.ammo_rockets = 0;
+	e.ammo_cells = 0;
+	if (type == IT_SUPER_SHOTGUN)
+	{
+		e.classname = "item_backpack_supershotgun";
+		e.netname = "Double-barrelled Shotgun";
+		e.ammo_shells = 5;
+	}
+	else if (type == IT_NAILGUN)
+	{
+		e.classname = "item_backpack_nailgun";
+		e.netname = "Nailgun";
+		e.ammo_nails = 30;
+	}
+	else if (type == IT_SUPER_NAILGUN)
+	{
+		e.classname = "item_backpack_supernailgun";
+		e.netname = "Super Nailgun";
+		e.ammo_nails = 30;
+	}
+	else if (type == IT_GRENADE_LAUNCHER)
+	{
+		e.classname = "item_backpack_grenadelauncher";
+		e.netname = "Grenade Launcher";
+		e.ammo_rockets = 5;
+	}
+	else if (type == IT_ROCKET_LAUNCHER)
+	{
+		e.classname = "item_backpack_rocketlauncher";
+		e.netname = "Rocket Launcher";
+		e.ammo_rockets = 5;
+	}
+	else if (type == IT_LIGHTNING)
+	{
+		e.classname = "item_backpack_lightning";
+		e.netname = "Thunderbolt";
+		e.ammo_cells = 15;
+	}
+	else
+	{
+		e.netname = "";
+		dprint("Invalid weapon type\n");	
+		return;
+	}
+
+	e.flags = FL_ITEM;
+	e.solid = SOLID_TRIGGER;
+	e.movetype = MOVETYPE_TOSS;
+	setmodel (e, "progs/backpack.mdl");
+	setsize (e, '-16 -16 0', '16 16 56');
+	e.touch = BackpackTouch_Replaced;
+	StartItem_Replaced (e);
+};
+
+void(entity e, float type, float size) ConvertToAmmoBackpack =
+{
+	e.items = 0;
+	if (type == 1) // Shells
+	{
+		e.classname = "item_backpack_shells";
+		if(size == 1)
+			e.ammo_shells = 40;
+		else if(size == 2)
+			e.ammo_shells = 20;
+	}
+	else if (type == 2) // Nails
+	{
+		e.classname = "item_backpack_spikes";
+		if(size == 1)
+			e.ammo_nails = 50;
+		else if(size == 2)
+			e.ammo_nails = 25;
+	}
+	else if (type == 3) // Rockets
+	{
+		e.classname = "item_backpack_rockets";
+		if(size == 1)
+			e.ammo_rockets = 10;
+		else if(size == 2)
+			e.ammo_rockets = 5;
+	}
+	else if (type == 4) // Cells
+	{
+		e.classname = "item_backpack_cells";
+		if(size == 1)
+			e.ammo_cells = 12;
+		else if(size == 2)
+			e.ammo_cells = 6;
+	}
+	else
+	{
+		e.netname = "";
+		dprint("Invalid ammo type\n");	
+		return;
+	}
+
+	e.flags = FL_ITEM;
+	e.solid = SOLID_TRIGGER;
+	e.movetype = MOVETYPE_TOSS;
+	setmodel (e, "progs/backpack.mdl");
+	setsize (e, '-16 -16 0', '16 16 56');
+	e.touch = BackpackTouch_Replaced;
+	StartItem_Replaced (e);
+};
+
+// END SCRATCH1 = 1 ONLY

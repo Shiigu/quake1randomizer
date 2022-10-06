@@ -23,6 +23,7 @@ void(entity e) walkmonster_start_replaced;
 void(entity e) flymonster_start_replaced;
 void(entity e) swimmonster_start_replaced;
 float(float lower, float upper) Random;
+float(entity head) IsTouchingTeleporter;
 
 void() monster_use =
 {
@@ -77,19 +78,28 @@ void() walkmonster_start_go =
 	local string	stemp;
 	local entity	etemp;
 	local vector old;
+	local float IS_IN_TELEPORTER;
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 
-	droptofloor();
+	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
+
+	if(!IS_IN_TELEPORTER)
+	{
+		droptofloor();
+	}
 	
-	if (!walkmove(0,0))
+	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
 		old_z = self.origin_z;
+		dprint ("walkmonster ");
+		dprint (self.classname);
+		dprint (" is stuck. Beginning unstuck.\n");
 		UnstuckMonster(self, 0);
 	}
 
-	if (!walkmove(0,0))
+	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
@@ -154,12 +164,15 @@ void(entity e) walkmonster_start_replaced =
 {
 	e.nextthink = e.nextthink + random()*0.5;
 	e.think = walkmonster_start_go;
+	force_retouch = 2;
 	total_monsters = total_monsters + 1;
 };
 
 void() flymonster_start_go =
 {
 	local vector old;
+	local entity	etemp;
+	local float IS_IN_TELEPORTER;
 	self.takedamage = DAMAGE_AIM;
 
 	self.ideal_yaw = self.angles * '0 1 0';
@@ -171,15 +184,20 @@ void() flymonster_start_go =
 	self.flags = self.flags | FL_FLY;
 	self.flags = self.flags | FL_MONSTER;
 
-	if (!walkmove(0,0))
+	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
+
+	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
 		old_z = self.origin_z;
+		dprint ("flymonster ");
+		dprint (self.classname);
+		dprint (" is stuck. Beginning unstuck.\n");
 		UnstuckMonster(self, 1);
 	}
 
-	if (!walkmove(0,0))
+	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
@@ -228,6 +246,7 @@ void(entity e) flymonster_start_replaced =
 {
 	e.nextthink = e.nextthink + random()*0.5;
 	e.think = flymonster_start_go;
+	force_retouch = 2;
 	total_monsters = total_monsters + 1;
 };
 
@@ -291,4 +310,34 @@ void(entity e) swimmonster_start_replaced =
 	total_monsters = total_monsters + 1;
 };
 
+float(entity head) IsTouchingTeleporter =
+{
+        local entity e;
+		local vector center = head.origin;
+		local float radius, side;
 
+		// Get the biggest measure to create the biggest possible cube that contains the entity
+		if(head.size_x >= head.size_y && head.size_x >= head.size_z)
+			side = head.size_x;
+		else if(head.size_y >= head.size_x && head.size_y >= head.size_z)
+			side = head.size_y;
+		else if(head.size_z >= head.size_x && head.size_z >= head.size_x)
+			side = head.size_z;
+
+		// The radius of a sphere that only touches the vertexes of a cube is half the cube's body diagonal
+		// (The body diagonal of a cube whose sides equal x is "sqrt(3) * x")
+		radius = (side * sqrt(3)) / 2;
+		e = findradius(head.origin, radius);
+
+		while(e)
+		{
+			if(e.classname == "trigger_teleport" && e.targetname)
+			{
+				dprint(head.classname);
+				dprint(" is tied to a teleporter. Excluded from unstuck checks.\n");
+				return TRUE;
+			}
+			e = e.chain;
+		}
+		return FALSE;
+};
