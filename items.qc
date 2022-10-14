@@ -38,6 +38,7 @@ plants the object on the floor
 void() PlaceItem =
 {
 	local vector old;
+	local float IS_IN_TELEPORTER;
 
 	self.mdl = self.model;		// so it can be restored on respawn
 	self.flags = FL_ITEM;		// make extra wide
@@ -46,14 +47,17 @@ void() PlaceItem =
 	self.velocity = '0 0 0';
 	self.origin_z = self.origin_z + 1;
 	
-	if (!droptofloor())
+	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
+
+	if (Space_Occupied(self) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
 		old_z = self.origin_z;
 		UnstuckObject(self);
 	}
-	if (!droptofloor())
+	
+	if (Space_Occupied(self) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;

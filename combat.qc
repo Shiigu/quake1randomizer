@@ -76,6 +76,13 @@ void(entity targ, entity attacker) Killed =
 	if (self.flags & FL_MONSTER)
 	{
 		killed_monsters = killed_monsters + 1;
+		self.th_stand = SUB_Null;
+		self.th_walk = SUB_Null;
+		self.th_run = SUB_Null;
+		self.th_melee = SUB_Null;
+		self.th_missile = SUB_Null;
+		self.th_pain = SUB_Null;
+		self.use = SUB_Null;
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
 

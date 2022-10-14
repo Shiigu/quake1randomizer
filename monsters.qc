@@ -23,7 +23,6 @@ void(entity e) walkmonster_start_replaced;
 void(entity e) flymonster_start_replaced;
 void(entity e) swimmonster_start_replaced;
 float(float lower, float upper) Random;
-float(entity head) IsTouchingTeleporter;
 
 void() monster_use =
 {
@@ -110,6 +109,7 @@ void() walkmonster_start_go =
 		dprint (vtos(self.origin));
 		T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
 		dprint ("\n");
+		return;
 	}
 	
 	self.takedamage = DAMAGE_AIM;
@@ -208,6 +208,7 @@ void() flymonster_start_go =
 		dprint (vtos(self.origin));
 		T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
 		dprint ("\n");
+		return;
 	}
 
 	if (self.target)
@@ -308,36 +309,4 @@ void(entity e) swimmonster_start_replaced =
 	e.nextthink = e.nextthink + random()*0.5;
 	e.think = swimmonster_start_go;
 	total_monsters = total_monsters + 1;
-};
-
-float(entity head) IsTouchingTeleporter =
-{
-        local entity e;
-		local vector center = head.origin;
-		local float radius, side;
-
-		// Get the biggest measure to create the biggest possible cube that contains the entity
-		if(head.size_x >= head.size_y && head.size_x >= head.size_z)
-			side = head.size_x;
-		else if(head.size_y >= head.size_x && head.size_y >= head.size_z)
-			side = head.size_y;
-		else if(head.size_z >= head.size_x && head.size_z >= head.size_x)
-			side = head.size_z;
-
-		// The radius of a sphere that only touches the vertexes of a cube is half the cube's body diagonal
-		// (The body diagonal of a cube whose sides equal x is "sqrt(3) * x")
-		radius = (side * sqrt(3)) / 2;
-		e = findradius(head.origin, radius);
-
-		while(e)
-		{
-			if(e.classname == "trigger_teleport" && e.targetname)
-			{
-				dprint(head.classname);
-				dprint(" is tied to a teleporter. Excluded from unstuck checks.\n");
-				return TRUE;
-			}
-			e = e.chain;
-		}
-		return FALSE;
 };

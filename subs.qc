@@ -6,6 +6,10 @@ float(float lower, float upper) RandomTwoNegatives;
 float(float lower, float upper) RandomDiffSigns;
 void(entity e, float flying) UnstuckMonster;
 void(entity e) UnstuckObject;
+float(entity head) IsTouchingTeleporter;
+float(entity head) IsNearAWaterSurface;
+float(entity head) IsNearOtherArmor;
+.string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 
 void() SUB_Null = {};
 
@@ -385,9 +389,9 @@ void(entity e, float flying) UnstuckMonster =
 	old_z = self.origin_z;
 	dprint("Attempting to unstuck ");
 	dprint(self.classname);
-	dprint(" ");
+	dprint(" (");
 	dprint(vtos(self.origin));
-	dprint(".");
+	dprint(").");
 	do
 	{
 		fixvector_x = old_x;
@@ -448,9 +452,9 @@ void(entity e) UnstuckObject =
 	old_z = self.origin_z;
 	dprint("Attempting to unstuck ");
 	dprint(self.classname);
-	dprint(" ");
+	dprint(" (");
 	dprint(vtos(self.origin));
-	dprint(".");
+	dprint(").");
 	do
 	{
 		fixvector_x = old_x;
@@ -474,13 +478,152 @@ void(entity e) UnstuckObject =
 		fixvector_z = Random(min_z, max_z);
 		setorigin(self, fixvector);
 		CURRENT_TRY = CURRENT_TRY + 1;
-		if(droptofloor())
+		if(!Space_Occupied(e))
 		{ 
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while(!droptofloor() && CURRENT_TRY < MAX_TRIES);
+	while(Space_Occupied(e) && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
+};
+
+float(entity head) IsTouchingTeleporter =
+{
+        local entity e;
+		local vector center = head.origin;
+		local float radius, side;
+
+		// Get the biggest measure to create the biggest possible cube that contains the entity
+		if(head.size_x >= head.size_y && head.size_x >= head.size_z)
+			side = head.size_x;
+		else if(head.size_y >= head.size_x && head.size_y >= head.size_z)
+			side = head.size_y;
+		else if(head.size_z >= head.size_x && head.size_z >= head.size_x)
+			side = head.size_z;
+
+		// The radius of a sphere that only touches the vertexes of a cube is half the cube's body diagonal
+		// (The body diagonal of a cube whose sides equal x is "sqrt(3) * x")
+		radius = (side * sqrt(3)) / 2;
+		e = findradius(head.origin, radius);
+
+		while(e)
+		{
+			if(e.classname == "trigger_teleport" && e.targetname)
+			{
+				dprint(head.classname);
+				dprint(" (");
+				dprint(vtos(head.origin));
+				dprint(")");
+				dprint(" is tied to a teleporter. Excluded from unstuck checks.\n");
+				return TRUE;
+			}
+			e = e.chain;
+		}
+		return FALSE;
+};
+
+// Checks if there are already-converted Armor suits nearby
+float(entity head) IsNearOtherArmor =
+{
+        local entity e;
+		local vector center = head.origin;
+		local float radius, side;
+
+		// Search for all entities in a 256 unit radius
+		e = findradius(head.origin, 256);
+
+		while(e)
+		{
+			if(e.Converted == "1" && (e.classname == "item_armor1" || e.classname == "item_armor2" || e.classname == "item_armorInv"))
+			{
+				dprint(" (REROLL ARMOR) ");
+				return TRUE;
+			}
+			e = e.chain;
+		}
+		return FALSE;
+};
+
+// Tries, in six increments, whether there's some liquid surface between the start and the destination
+float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
+{
+	local float MAX_TRIES = 6;
+	local float CURRENT_TRIES, contents;
+	local vector increment, target;
+	if(plusX != 0)
+		increment_x = plusX / MAX_TRIES;
+	if(plusY != 0)
+		increment_y = plusY / MAX_TRIES;
+	if(plusZ != 0)
+		increment_z = plusZ / MAX_TRIES;
+	target = center;
+	while(CURRENT_TRIES < MAX_TRIES)
+	{
+		contents = pointcontents(target);
+		if(contents == CONTENT_WATER || contents == CONTENT_SLIME || contents == CONTENT_LAVA)
+			return TRUE;
+		else
+		{
+			traceline(center, target, TRUE, world);
+			if(trace_inwater)
+				return TRUE;
+		}
+		CURRENT_TRIES = CURRENT_TRIES + 1;
+		target_x = target_x + increment_x;
+		target_y = target_y + increment_y;
+		target_z = target_z + increment_z;
+	}
+	return FALSE;
+};
+
+// Checks if there are liquid surfaces around 256 away from the object
+// (It does NOT check if there are liquid surfaces above the object, as that is likely to be separated by a wall)
+float(entity head) IsNearAWaterSurface =
+{
+		local vector center = head.origin;
+		local float IsNearLiquid;
+
+		IsNearLiquid = 0;
+
+		// Plane in the center
+
+		IsNearLiquid = GoesThroughALiquid(center, 256, 0, 0);		// RIGHT?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, 0, 0);		// LEFT?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 0, 256, 0);		// UP?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 0, -256, 0);		// DOWN?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 256, 256, 0);		// UPPER RIGHT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 256, -256, 0); 	// LOWER RIGHT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, 256, 0);	// UPPER LEFT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, -256, 0);	// LOWER LEFT CORNER?
+
+		// LOWER HALF OF THE OBJECT
+
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 256, 0, -256);		// RIGHT?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, 0, -256);		// LEFT?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 0, 256, -256);		// UP?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 0, -256, -256);		// DOWN?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 256, 256, -256);		// UPPER RIGHT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, 256, -256, -256); 	// LOWER RIGHT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, 256, -256);		// UPPER LEFT CORNER?
+		if(IsNearLiquid == 0)
+			IsNearLiquid = GoesThroughALiquid(center, -256, -256, -256);	// LOWER LEFT CORNER?
+
+		// We don't pay attention to the upper half because having water above the object might mean it's in a different floor altogether
+		return IsNearLiquid;
 };

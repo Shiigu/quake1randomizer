@@ -15,7 +15,6 @@ void(entity e) ConvertToPowerupUnbiased;
 void(entity e) ConvertToWeaponBiased;
 void(entity e) ConvertToWeaponUnbiased;
 
-.string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converted
 .string EntityType; 
     /* Entities will be converted to one of the same type:
        - "Monster" for Monsters
@@ -166,7 +165,6 @@ void() ConvertEntities = {
             }
             else if(temp.EntityType == "Pickup")
             {
-                temp.origin_z = temp.origin_z + 50;
                 if (RandomMode == 0)
                 {
                     ConvertToPickupBiased(temp);
@@ -178,7 +176,6 @@ void() ConvertEntities = {
             }
             else if(temp.EntityType == "Ammo")
             {
-                temp.origin_z = temp.origin_z + 20;
                 if (RandomMode == 0)
                 {
                     ConvertToAmmoBiased(temp);
@@ -219,6 +216,7 @@ void() ConvertEntities = {
                 // ... move it a bit higher to not instantly flag it as stuck. Turning into a smaller item is fair game though.
                 neworigin = temp.origin;
                 neworigin_z = neworigin_z + fabs(temp.size_z - oldsize_z);
+                temp.origin = neworigin;
             }
         }
 		temp = find(temp, Converted, "0");
@@ -516,6 +514,7 @@ void(entity e) ConvertToPickupUnbiased = {
 
 // Converts a pickup of one type to another randomly.
 // 90% chance of being a pickup of the type it already is (Health or Armor, but quality can change), 10% of becoming of the other type.
+// If there are nearby sources of armor, it will spawn a health pack instead
 void(entity e) ConvertToPickupBiased = {
     local float rng;
     rng = Random(1, 100);
@@ -535,15 +534,33 @@ void(entity e) ConvertToPickupBiased = {
         }
         else if(rng >= 91 && rng <= 95)
         { 
-            ConvertToArmor(e, 0);
-            dprint(e.classname);
-            dprint("\n");
+            if(!IsNearOtherArmor(e))
+            {
+                ConvertToArmor(e, 0);
+                dprint(e.classname);
+                dprint("\n");
+            }
+            else
+            {
+                ConvertToHealth(e, 1);
+                dprint(e.classname);
+                dprint(" (15)\n");
+            }
         }
         else if(rng >= 96 && rng <= 100)
         { 
-            ConvertToArmor(e, 1);
-            dprint(e.classname);
-            dprint("\n");
+            if(!IsNearOtherArmor(e))
+            {
+                ConvertToArmor(e, 1);
+                dprint(e.classname);
+                dprint("\n");
+            }
+            else
+            {
+                ConvertToHealth(e, 2);
+                dprint(e.classname);
+                dprint(" (25)\n");
+            }
         }
     }
     else if(e.classname == "item_armor1" || e.classname == "item_armor2")
@@ -562,15 +579,33 @@ void(entity e) ConvertToPickupBiased = {
         }
         else if(rng >= 11 && rng <= 55)
         { 
-            ConvertToArmor(e, 0);
-            dprint(e.classname);
-            dprint("\n");
+            if(!IsNearOtherArmor(e))
+            {
+                ConvertToArmor(e, 0);
+                dprint(e.classname);
+                dprint("\n");
+            }
+            else
+            {
+                ConvertToHealth(e, 1);
+                dprint(e.classname);
+                dprint(" (15)\n");
+            }
         }
         else if(rng >= 56 && rng <= 100)
         { 
-            ConvertToArmor(e, 1);
-            dprint(e.classname);
-            dprint("\n");
+            if(!IsNearOtherArmor(e))
+            {
+                ConvertToArmor(e, 1);
+                dprint(e.classname);
+                dprint("\n");
+            }
+            else
+            {
+                ConvertToHealth(e, 2);
+                dprint(e.classname);
+                dprint(" (25)\n");
+            }
         }
     }
     e.Converted = "1";
@@ -733,8 +768,41 @@ void(entity e) ConvertToPowerupUnbiased = {
     e.Converted = "1";
 };
 
+// Used to FORCE a weapon to convert into any powerup, no strings attached.
+// It can't become a Biosuit or a Red Armor. Even chances for everything.
+void(entity e) ConvertToGuaranteedPowerup = {
+    local float rng;
+    rng = Random(1, 4);
+    if(rng == 1)
+    { 
+        ConvertToPentagramOfProtection(e);
+        dprint(e.classname);
+        dprint("\n");
+    }
+    else if(rng == 2)
+    { 
+        ConvertToQuadDamage(e);
+        dprint(e.classname);
+        dprint("\n");
+    }
+    else if(rng == 3)
+    { 
+        ConvertToRingOfShadows(e);
+        dprint(e.classname);
+        dprint("\n");
+    }
+    else if(rng == 4)
+    { 
+        ConvertToHealth(e, 3);
+        dprint(e.classname);
+        dprint(" (100)\n");
+    }
+    e.Converted = "1";
+};
+
 // Converts a powerup of one type to another randomly.
-// 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 6% chance of being a weapon, 4% chance of being a Biosuit
+// 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
+// It spawns a weapon instead if it's trying to spawn in invalid conditions (Red Armor near another suit of armor, or Biosuit when there are no nearby liquid surfaces)
 void(entity e) ConvertToPowerupBiased = {
     local float rng;
     rng = Random(1, 100);
@@ -763,21 +831,33 @@ void(entity e) ConvertToPowerupBiased = {
         dprint(" (100)\n");
     }
     else if(rng >= 73 && rng <= 90)
-    { 
-        ConvertToArmor(e, 2);
-        dprint(e.classname);
-        dprint("\n");
+    {
+        if(!IsNearOtherArmor(e))
+        {
+            ConvertToArmor(e, 2);
+            dprint(e.classname);
+            dprint("\n");
+        }
+        else
+        {
+            dprint(" (WEAPON!) ");
+            ConvertToWeaponBiased(e);
+        }
     }
-    else if(rng >= 91 && rng <= 96)
-    { 
-        dprint("(WEAPON!) ");
-        ConvertToWeaponBiased(e);
-    }
-    else if(rng >= 97 && rng <= 100)
-    { 
-        ConvertToBiosuit(e);
-        dprint(e.classname);
-        dprint("\n");
+    else if(rng >= 91 && rng <= 100)
+    {
+        if(IsNearAWaterSurface(e))
+        { 
+            dprint(" (WATER!) ");
+            ConvertToBiosuit(e);
+            dprint(e.classname);
+            dprint("\n");
+        }
+        else
+        {
+            dprint(" (WEAPON!) ");
+            ConvertToWeaponBiased(e);
+        }
     }
     e.Converted = "1";
 };
@@ -847,7 +927,7 @@ void(entity e) ConvertToWeaponBiased = {
         SpawnedWeapons & IT_LIGHTNING)
     {
         dprint("(NOT A WEAPON) ");
-        ConvertToPowerupBiased(e);
+        ConvertToGuaranteedPowerup(e);
         SpawnedWeapons = 0;
         return;
     }
@@ -956,7 +1036,7 @@ void(entity e) ConvertToWeaponBiased = {
         {
             // If all weapons were rolled (or yet again tried to spawn a Thunderbolt in water), it will instead spawn a powerup.
             dprint("(NOT A WEAPON) ");
-            ConvertToPowerupBiased(e);
+            ConvertToGuaranteedPowerup(e);
             return;
         }
     }
