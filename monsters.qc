@@ -19,9 +19,6 @@ Using a monster makes it angry at the current activator
 ================
 */
 
-void(entity e) walkmonster_start_replaced;
-void(entity e) flymonster_start_replaced;
-void(entity e) swimmonster_start_replaced;
 float(float lower, float upper) Random;
 
 void() monster_use =
@@ -87,7 +84,7 @@ void() walkmonster_start_go =
 		droptofloor();
 	}
 	
-	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
@@ -98,7 +95,7 @@ void() walkmonster_start_go =
 		UnstuckMonster(self, 0);
 	}
 
-	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
@@ -156,14 +153,6 @@ void() walkmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = walkmonster_start_go;
-	total_monsters = total_monsters + 1;
-};
-
-// walkmonster_start for a replaced entity
-void(entity e) walkmonster_start_replaced =
-{
-	e.nextthink = e.nextthink + random()*0.5;
-	e.think = walkmonster_start_go;
 	force_retouch = 2;
 	total_monsters = total_monsters + 1;
 };
@@ -186,7 +175,7 @@ void() flymonster_start_go =
 
 	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
@@ -197,7 +186,7 @@ void() flymonster_start_go =
 		UnstuckMonster(self, 1);
 	}
 
-	if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
@@ -239,14 +228,6 @@ void() flymonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = flymonster_start_go;
-	total_monsters = total_monsters + 1;
-};
-
-// flymonster_start for a replaced entity
-void(entity e) flymonster_start_replaced =
-{
-	e.nextthink = e.nextthink + random()*0.5;
-	e.think = flymonster_start_go;
 	force_retouch = 2;
 	total_monsters = total_monsters + 1;
 };
@@ -299,14 +280,6 @@ void() swimmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = swimmonster_start_go;
-	total_monsters = total_monsters + 1;
-};
-
-// swimmonster_start for a replaced entity
-void(entity e) swimmonster_start_replaced =
-{
-// spread think times so they don't all happen at same time
-	e.nextthink = e.nextthink + random()*0.5;
-	e.think = swimmonster_start_go;
+	force_retouch = 2;
 	total_monsters = total_monsters + 1;
 };

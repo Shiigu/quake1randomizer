@@ -10,6 +10,7 @@ float(entity head) IsTouchingTeleporter;
 float(entity head) IsNearAWaterSurface;
 float(entity head) IsNearOtherArmor;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
+.vector oldsize;
 
 void() SUB_Null = {};
 
@@ -417,14 +418,14 @@ void(entity e, float flying) UnstuckMonster =
 		if(!flying)
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
-		if(walkmove(0,0))
+		if(!walkmove(0,0) || Space_Occupied(self))
 		{ 
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while(!walkmove(0,0) && CURRENT_TRY < MAX_TRIES);
+	while((!walkmove(0,0) || Space_Occupied(self)) && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
 };
 

@@ -1,41 +1,44 @@
 void() precache_everything;
 // MONSTERS
-void(entity e) ConvertToFiend;
-void(entity e) ConvertToDog;
-void(entity e) ConvertToEnforcer;
-void(entity e) ConvertToRotfish;
-void(entity e) ConvertToDeathKnight;
-void(entity e) ConvertToKnight;
-void(entity e) ConvertToOgre;
-void(entity e) ConvertToVore;
-void(entity e) ConvertToShambler;
-void(entity e) ConvertToGrunt;
-void(entity e) ConvertToSpawn;
-void(entity e) ConvertToScrag;
-void(entity e) ConvertToZombie;
+void() ConvertToFiend;
+void() ConvertToDog;
+void() ConvertToEnforcer;
+void() ConvertToRotfish;
+void() ConvertToDeathKnight;
+void() ConvertToKnight;
+void() ConvertToOgre;
+void() ConvertToVore;
+void() ConvertToShambler;
+void() ConvertToGrunt;
+void() ConvertToSpawn;
+void() ConvertToScrag;
+void() ConvertToZombie;
 // PICKUPS
-void(entity e, float type) ConvertToHealth;
-void(entity e, float type) ConvertToArmor;
+void() ConvertToHealth;
+void() ConvertToArmor;
 // AMMO
-void(entity e, float type) ConvertToShells;
-void(entity e, float type) ConvertToNails;
-void(entity e, float type) ConvertToRockets;
-void(entity e, float type) ConvertToCells;
+void() ConvertToShells;
+void() ConvertToNails;
+void() ConvertToRockets;
+void() ConvertToCells;
 // POWERUPS
-void(entity e) ConvertToPentagramOfProtection;
-void(entity e) ConvertToBiosuit;
-void(entity e) ConvertToRingOfShadows;
-void(entity e) ConvertToQuadDamage;
+void() ConvertToPentagramOfProtection;
+void() ConvertToBiosuit;
+void() ConvertToRingOfShadows;
+void() ConvertToQuadDamage;
 // WEAPONS
-void(entity e) ConvertToDoubleBarrelledShotgun;
-void(entity e) ConvertToNailgun;
-void(entity e) ConvertToSuperNailgun;
-void(entity e) ConvertToGrenadeLauncher;
-void(entity e) ConvertToRocketLauncher;
-void(entity e) ConvertToThunderbolt;
+void() ConvertToDoubleBarrelledShotgun;
+void() ConvertToNailgun;
+void() ConvertToSuperNailgun;
+void() ConvertToGrenadeLauncher;
+void() ConvertToRocketLauncher;
+void() ConvertToThunderbolt;
 // SCRATCH1 = 1 ONLY
-void(entity e, float type) ConvertToWeaponBackpack;
-void(entity e, float type, float size) ConvertToAmmoBackpack;
+void() ConvertToWeaponBackpack;
+void() ConvertToAmmoBackpack;
+
+.float PickupType;				// Which kind of ammo or weapon pickup it is
+.float QualityType;				// Which quality of health, armor or ammo pickup it is
 
 void() precache_everything = 
 {
@@ -205,450 +208,541 @@ void() precache_everything =
 // START MONSTERS
 
 // Replaces entity with a Fiend
-void(entity e) ConvertToFiend =
+void() ConvertToFiend =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
+	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
 
-	setmodel (e, "progs/demon.mdl");
+	setmodel (self, "progs/demon.mdl");
 
-	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 300;
-    e.classname = "monster_demon1";
-	e.frame = $stand1;
-	e.th_stand = demon1_stand1;
-	e.th_walk = demon1_walk1;
-	e.th_run = demon1_run1;
-	e.th_die = demon_die;
-	e.th_melee = Demon_MeleeAttack;		// one of two attacks
-	e.th_missile = demon1_jump1;			// jump attack
-	e.th_pain = demon1_pain;
-	walkmonster_start_replaced (e);
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 300;
+	self.classname = "monster_demon1";
+	self.frame = $stand1;
+	self.th_stand = demon1_stand1;
+	self.th_walk = demon1_walk1;
+	self.th_run = demon1_run1;
+	self.th_die = demon_die;
+	self.th_melee = Demon_MeleeAttack;		// one of two attacks
+	self.th_missile = demon1_jump1;			// jump attack
+	self.th_pain = demon1_pain;
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Dog
-void(entity e) ConvertToDog =
+void() ConvertToDog =
 {
 	if (deathmatch)
 	{
-		remove(e);
-		return;
-	}
-
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/dog.mdl");
-
-	setsize (e, '-32 -32 -24', '32 32 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 25;
-    e.classname = "monster_dog";
-	e.frame = $stand1;
-	e.th_stand = dog_stand1;
-	e.th_walk = dog_walk1;
-	e.th_run = dog_run1;
-	e.th_pain = dog_pain;
-	e.th_die = dog_die;
-	e.th_melee = dog_atta1;
-	e.th_missile = dog_leap1;
-
-	walkmonster_start_replaced (e);
-};
-
-void(entity e) ConvertToEnforcer =
-{
-	if (deathmatch)
-	{
-		remove(e);
+		remove(self);
 		return;
 	}
 	
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 
-	setmodel (e, "progs/enforcer.mdl");
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
 
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 80;
-    e.classname = "monster_enforcer";
-	e.frame = $stand1;
-	e.th_stand = enf_stand1;
-	e.th_walk = enf_walk1;
-	e.th_run = enf_run1;
-	e.th_pain = enf_pain;
-	e.th_die = enf_die;
-	e.th_missile = enf_atk1;
-    e.th_melee = SUB_Null;
+	setmodel (self, "progs/dog.mdl");
 
-	walkmonster_start_replaced (e);
+	setsize (self, '-32 -32 -24', '32 32 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 25;
+	self.classname = "monster_dog";
+	self.frame = $stand1;
+	self.th_stand = dog_stand1;
+	self.th_walk = dog_walk1;
+	self.th_run = dog_run1;
+	self.th_pain = dog_pain;
+	self.th_die = dog_die;
+	self.th_melee = dog_atta1;
+	self.th_missile = dog_leap1;
+
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
+};
+
+void() ConvertToEnforcer =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+	
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/enforcer.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 80;
+	self.classname = "monster_enforcer";
+	self.frame = $stand1;
+	self.th_stand = enf_stand1;
+	self.th_walk = enf_walk1;
+	self.th_run = enf_run1;
+	self.th_pain = enf_pain;
+	self.th_die = enf_die;
+	self.th_missile = enf_atk1;
+	self.th_melee = SUB_Null;
+
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Rotfish
-void(entity e) ConvertToRotfish =
+void() ConvertToRotfish =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
-
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/fish.mdl");
-
-	setsize (e, '-16 -16 -24', '16 16 24');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (!(e.flags & FL_SWIM))
-		e.flags = e.flags | FL_SWIM;
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 25;
-	e.classname = "monster_fish";
-	e.frame = $stand1;
-	e.th_stand = f_stand1;
-	e.th_walk = f_walk1;
-	e.th_run = f_run1;
-	e.th_die = f_death1;
-	e.th_pain = fish_pain;
-	e.th_melee = f_attack1;
-    e.th_missile = SUB_Null;
 	
-	swimmonster_start_replaced (e);
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/fish.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 24');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (!(self.flags & FL_SWIM))
+		self.flags = self.flags | FL_SWIM;
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 25;
+	self.classname = "monster_fish";
+	self.frame = $stand1;
+	self.th_stand = f_stand1;
+	self.th_walk = f_walk1;
+	self.th_run = f_run1;
+	self.th_die = f_death1;
+	self.th_pain = fish_pain;
+	self.th_melee = f_attack1;
+	self.th_missile = SUB_Null;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	swimmonster_start ();
 };
 
 // Replaces entity with a Death Knight
-void(entity e) ConvertToDeathKnight =
+void() ConvertToDeathKnight =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
 	
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/hknight.mdl");
-
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 250;
-    e.classname = "monster_hell_knight";
-	e.frame = $stand1;
-	e.th_stand = hknight_stand1;
-	e.th_walk = hknight_walk1;
-	e.th_run = hknight_run1;
-	e.th_melee = hknight_melee;
-	e.th_missile = hknight_magicc1;
-	e.th_pain = hknight_pain;
-	e.th_die = hknight_die;
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 	
-	walkmonster_start_replaced (e);
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/hknight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 250;
+	self.classname = "monster_hell_knight";
+	self.frame = $stand1;
+	self.th_stand = hknight_stand1;
+	self.th_walk = hknight_walk1;
+	self.th_run = hknight_run1;
+	self.th_melee = hknight_melee;
+	self.th_missile = hknight_magicc1;
+	self.th_pain = hknight_pain;
+	self.th_die = hknight_die;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Knight
-void(entity e) ConvertToKnight =
+void() ConvertToKnight =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/knight.mdl");
-
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 75;
-    e.classname = "monster_knight";
-	e.frame = $stand1;
-	e.th_stand = knight_stand1;
-	e.th_walk = knight_walk1;
-	e.th_run = knight_run1;
-	e.th_melee = knight_atk1;
-	e.th_pain = knight_pain;
-	e.th_die = knight_die;
-    e.th_missile = SUB_Null;
 	
-	walkmonster_start_replaced (e);
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/knight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 75;
+	self.classname = "monster_knight";
+	self.frame = $stand1;
+	self.th_stand = knight_stand1;
+	self.th_walk = knight_walk1;
+	self.th_run = knight_run1;
+	self.th_melee = knight_atk1;
+	self.th_pain = knight_pain;
+	self.th_die = knight_die;
+	self.th_missile = SUB_Null;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with an Ogre
-void(entity e) ConvertToOgre =
+void() ConvertToOgre =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
-
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/ogre.mdl");
-
-	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 200;
-    e.classname = "monster_ogre";
-	e.frame = $stand1;
-	e.th_stand = ogre_stand1;
-	e.th_walk = ogre_walk1;
-	e.th_run = ogre_run1;
-	e.th_die = ogre_die;
-	e.th_melee = ogre_melee;
-	e.th_missile = ogre_nail1;
-	e.th_pain = ogre_pain;
 	
-	walkmonster_start_replaced (e);
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/ogre.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 200;
+	self.classname = "monster_ogre";
+	self.frame = $stand1;
+	self.th_stand = ogre_stand1;
+	self.th_walk = ogre_walk1;
+	self.th_run = ogre_run1;
+	self.th_die = ogre_die;
+	self.th_melee = ogre_melee;
+	self.th_missile = ogre_nail1;
+	self.th_pain = ogre_pain;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Vore
-void(entity e) ConvertToVore =
+void() ConvertToVore =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
 	
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 	
-	setmodel (e, "progs/shalrath.mdl");
-	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 400;
-    e.classname = "monster_shalrath";
-	e.frame = $stand1;
-	e.th_stand = shal_stand;
-	e.th_walk = shal_walk1;
-	e.th_run = shal_run1;
-	e.th_die = shalrath_die;
-	e.th_pain = shalrath_pain;
-	e.th_missile = shal_attack1;
-    e.th_melee = SUB_Null;
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	
+	setmodel (self, "progs/shalrath.mdl");
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 400;
+	self.classname = "monster_shalrath";
+	self.frame = $stand1;
+	self.th_stand = shal_stand;
+	self.th_walk = shal_walk1;
+	self.th_run = shal_run1;
+	self.th_die = shalrath_die;
+	self.th_pain = shalrath_pain;
+	self.th_missile = shal_attack1;
+	self.th_melee = SUB_Null;
 
-	walkmonster_start_replaced (e);
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Shambler
-void(entity e) ConvertToShambler =
+void() ConvertToShambler =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
-
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-	setmodel (e, "progs/shambler.mdl");
-
-	setsize (e, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 600;
-    e.classname = "monster_shambler";
-	e.frame = $stand1;
-	e.th_stand = sham_stand1;
-	e.th_walk = sham_walk1;
-	e.th_run = sham_run1;
-	e.th_die = sham_die;
-	e.th_melee = sham_melee;
-	e.th_missile = sham_magic1;
-	e.th_pain = sham_pain;
 	
-	walkmonster_start_replaced (e);
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	setmodel (self, "progs/shambler.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 600;
+	self.classname = "monster_shambler";
+	self.frame = $stand1;
+	self.th_stand = sham_stand1;
+	self.th_walk = sham_walk1;
+	self.th_run = sham_run1;
+	self.th_die = sham_die;
+	self.th_melee = sham_melee;
+	self.th_missile = sham_magic1;
+	self.th_pain = sham_pain;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with a Grunt
-void(entity e) ConvertToGrunt =
+void() ConvertToGrunt =
 {	
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
 
-	setmodel (e, "progs/soldier.mdl");
+	setmodel (self, "progs/soldier.mdl");
 
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 30;
-    e.classname = "monster_army";
-	e.frame = $stand1;
-	e.th_stand = army_stand1;
-	e.th_walk = army_walk1;
-	e.th_run = army_run1;
-	e.th_missile = army_atk1;
-	e.th_pain = army_pain;
-	e.th_die = army_die;
-    e.th_melee = SUB_Null;
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 30;
+	self.classname = "monster_army";
+	self.frame = $stand1;
+	self.th_stand = army_stand1;
+	self.th_walk = army_walk1;
+	self.th_run = army_run1;
+	self.th_missile = army_atk1;
+	self.th_pain = army_pain;
+	self.th_die = army_die;
+	self.th_melee = SUB_Null;
 
-	walkmonster_start_replaced (e);
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with an Spawn
-void(entity e) ConvertToSpawn =
+void() ConvertToSpawn =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
 	
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
-
-	setmodel (e, "progs/tarbaby.mdl");
-
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 80;
-    e.classname = "monster_tarbaby";
-	e.frame = $stand1;
-	e.th_stand = tbaby_stand1;
-	e.th_walk = tbaby_walk1;
-	e.th_run = tbaby_run1;
-	e.th_missile = tbaby_jump1;
-	e.th_melee = tbaby_jump1;
-	e.th_die = tbaby_die1;
-    e.th_pain = SUB_Null;
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 	
-	walkmonster_start_replaced (e);
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/tarbaby.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 80;
+	self.classname = "monster_tarbaby";
+	self.frame = $stand1;
+	self.th_stand = tbaby_stand1;
+	self.th_walk = tbaby_walk1;
+	self.th_run = tbaby_run1;
+	self.th_missile = tbaby_jump1;
+	self.th_melee = tbaby_jump1;
+	self.th_die = tbaby_die1;
+	self.th_pain = SUB_Null;
+	
+	dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // Replaces entity with an Scrag
-void(entity e) ConvertToScrag =
+void() ConvertToScrag =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
+	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
 
-	setmodel (e, "progs/wizard.mdl");
+	setmodel (self, "progs/wizard.mdl");
 
-	setsize (e, '-16 -16 -24', '16 16 40');
-	if (!(e.flags & FL_FLY))
-		e.flags = e.flags | FL_FLY;
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	if (e.spawnflags & SPAWN_CRUCIFIED)
-		e.spawnflags = e.spawnflags - (e.spawnflags & SPAWN_CRUCIFIED);
-	e.health = 80;
-    e.classname = "monster_wizard";
-	e.frame = $stand1;
-	e.th_stand = wiz_stand1;
-	e.th_walk = wiz_walk1;
-	e.th_run = wiz_run1;
-	e.th_missile = Wiz_Missile;
-	e.th_pain = Wiz_Pain;
-	e.th_die = wiz_die;
-    e.th_melee = SUB_Null;
+	setsize (self, '-16 -16 -24', '16 16 40');
+	if (!(self.flags & FL_FLY))
+		self.flags = self.flags | FL_FLY;
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 80;
+	self.classname = "monster_wizard";
+	self.frame = $stand1;
+	self.th_stand = wiz_stand1;
+	self.th_walk = wiz_walk1;
+	self.th_run = wiz_run1;
+	self.th_missile = Wiz_Missile;
+	self.th_pain = Wiz_Pain;
+	self.th_die = wiz_die;
+	self.th_melee = SUB_Null;
 		
-	flymonster_start_replaced (e);
+	dprint(self.classname);
+	dprint("\n");	
+
+	flymonster_start ();
 };
 
 // Replaces entity with a (non-crucified) Zombie
-void(entity e) ConvertToZombie =
+void() ConvertToZombie =
 {
 	if (deathmatch)
 	{
-		remove(e);
+		remove(self);
 		return;
 	}
+	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
 
-	e.solid = SOLID_SLIDEBOX;
-	e.movetype = MOVETYPE_STEP;
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
 
-	setmodel (e, "progs/zombie.mdl");
+	setmodel (self, "progs/zombie.mdl");
 
-	setsize (e, '-16 -16 -24', '16 16 40');    
-	if (e.flags & FL_FLY)
-		e.flags = e.flags - (e.flags & FL_FLY);
-	if (e.flags & FL_SWIM)
-		e.flags = e.flags - (e.flags & FL_SWIM);
-	e.health = 60;
-    e.classname = "monster_zombie";
-	e.frame = $stand1;
-	e.th_stand = zombie_stand1;
-	e.th_walk = zombie_walk1;
-	e.th_run = zombie_run1;
-	e.th_pain = zombie_pain;
-	e.th_die = zombie_die;
-	e.th_missile = zombie_missile;
-    e.th_melee = SUB_Null;
+	setsize (self, '-16 -16 -24', '16 16 40');    
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	self.health = 60;
+	self.classname = "monster_zombie";
+	self.frame = $stand1;
+	self.th_stand = zombie_stand1;
+	self.th_walk = zombie_walk1;
+	self.th_run = zombie_run1;
+	self.th_pain = zombie_pain;
+	self.th_die = zombie_die;
+	self.th_missile = zombie_missile;
+	self.th_melee = SUB_Null;
 
-    walkmonster_start_replaced (e);
+    dprint(self.classname);
+	dprint("\n");	
+
+	walkmonster_start();
 };
 
 // END MONSTERS
@@ -657,56 +751,71 @@ void(entity e) ConvertToZombie =
 
 // Converts entity to a health pack
 // "type" indicates whether it's a 15 pack, 25 pack or 100 pack
-void(entity e, float type) ConvertToHealth =
+void() ConvertToHealth =
 {	
-	e.touch = health_touch;
-    e.classname = "item_health";
-	if (type == 1)
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = health_touch;
+	self.classname = "item_health";
+	if (self.QualityType == 1)
 	{
-        setmodel(e, "maps/b_bh10.bsp");
-		e.noise = "items/r_item1.wav";
-		e.healamount = 15;
-		e.healtype = 0;
+        setmodel(self, "maps/b_bh10.bsp");
+		self.noise = "items/r_item1.wav";
+		self.healamount = 15;
+		self.healtype = 0;
 	}
-	else if (type == 2)
+	else if (self.QualityType == 2)
 	{		
-		setmodel(e, "maps/b_bh25.bsp");
-		e.noise = "items/health1.wav";
-		e.healamount = 25;
-		e.healtype = 1;
+		setmodel(self, "maps/b_bh25.bsp");
+		self.noise = "items/health1.wav";
+		self.healamount = 25;
+		self.healtype = 1;
 	}
-	else if (type == 3)
+	else if (self.QualityType == 3)
 	{
-		setmodel(e, "maps/b_bh100.bsp");
-		e.noise = "items/r_item2.wav";
-		e.healamount = 100;
-		e.healtype = 2;
+		setmodel(self, "maps/b_bh100.bsp");
+		self.noise = "items/r_item2.wav";
+		self.healamount = 100;
+		self.healtype = 2;
 	}
-	setsize (e, '0 0 0', '32 32 56');
-	StartItem_Replaced (e);
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.healamount));
+	dprint(")");
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts item into an Armor suit
 // "type" contains whether it's a Green Armor, Yellow Armor or Red Armor
-void(entity e, float type) ConvertToArmor =
-{
-	e.touch = armor_touch;
-    setmodel (e, "progs/armor.mdl");
-    e.skin = type;
-    if(type == 0)
+void() ConvertToArmor =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = armor_touch;
+    setmodel (self, "progs/armor.mdl");
+    self.skin = self.QualityType - 1;
+    if(self.QualityType == 1)
     {
-        e.classname = "item_armor1";
+    	self.classname = "item_armor1";
     }
-    else if (type == 1)
+    else if (self.QualityType == 2)
     {
-        e.classname = "item_armor2";
+    	self.classname = "item_armor2";
     }
-    else if (type == 2)
+    else if (self.QualityType == 3)
     {
-        e.classname = "item_armorInv";
+    	self.classname = "item_armorInv";
     }
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // END PICKUPS
@@ -715,94 +824,130 @@ void(entity e, float type) ConvertToArmor =
 
 // Converts entity into a box of shells
 // "type" contains whether it's a small box (20) or a big box (40)
-void(entity e, float type) ConvertToShells =
-{
-	e.touch = ammo_touch;
-    e.classname = "item_shells";
-	if (type == 1)
+void() ConvertToShells =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_shells";
+	if (self.QualityType == 1)
 	{
-		setmodel (e, "maps/b_shell1.bsp");
-		e.aflag = 40;
+		setmodel (self, "maps/b_shell0.bsp");
+		self.aflag = 20;
 	}
-	else if (type == 2)
+	else if (self.QualityType == 2)
 	{
-		setmodel (e, "maps/b_shell0.bsp");
-		e.aflag = 20;
+		setmodel (self, "maps/b_shell1.bsp");
+		self.aflag = 40;
 	}
-	e.weapon = 1;
-	e.netname = "shells";
-	e.skin = 0;
-	setsize (e, '0 0 0', '32 32 56');
-	StartItem_Replaced (e);
+	self.weapon = 1;
+	self.netname = "shells";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a box of shells
 // "type" contains whether it's a small box (25) or a big box (50)
-void(entity e, float type) ConvertToNails =
-{
-	e.touch = ammo_touch;
-    e.classname = "item_spikes";
-	if (type == 1)
+void() ConvertToNails =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_spikes";
+	if (self.QualityType == 1)
 	{
-		setmodel (e, "maps/b_nail1.bsp");
-		e.aflag = 50;
+		setmodel (self, "maps/b_nail0.bsp");
+		self.aflag = 25;
 	}
-	else if (type == 2)
+	else if (self.QualityType == 2)
 	{
-		setmodel (e, "maps/b_nail0.bsp");
-		e.aflag = 25;
+		setmodel (self, "maps/b_nail1.bsp");
+		self.aflag = 50;
 	}
-	e.weapon = 2;
-	e.netname = "nails";
-	e.skin = 0;
-	setsize (e, '0 0 0', '32 32 56');
-	StartItem_Replaced (e);
+	self.weapon = 2;
+	self.netname = "nails";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a box of shells
 // "type" contains whether it's a small box (5) or a big box (10)
-void(entity e, float type) ConvertToRockets =
-{
-	e.touch = ammo_touch;
-    e.classname = "item_rockets";
-	if (type == 1)
+void() ConvertToRockets =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_rockets";
+	if (self.QualityType == 1)
 	{
-		setmodel (e, "maps/b_rock1.bsp");
-		e.aflag = 10;
+		setmodel (self, "maps/b_rock0.bsp");
+		self.aflag = 5;
 	}
-	else if (type == 2)
+	else if (self.QualityType == 2)
 	{
-		setmodel (e, "maps/b_rock0.bsp");
-		e.aflag = 5;
+		setmodel (self, "maps/b_rock1.bsp");
+		self.aflag = 10;
 	}
-	e.weapon = 3;
-	e.netname = "rockets";
-	e.skin = 0;
-	setsize (e, '0 0 0', '32 32 56');
-	StartItem_Replaced (e);
+	self.weapon = 3;
+	self.netname = "rockets";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a box of shells
 // "type" contains whether it's a small box (6) or a big box (12)
-void(entity e, float type) ConvertToCells =
-{
-	e.touch = ammo_touch;
-    e.classname = "item_cells";
-	if (type == 1)
+void() ConvertToCells =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_cells";
+	if (self.QualityType == 1)
 	{
-		setmodel (e, "maps/b_batt1.bsp");
-		e.aflag = 12;
+		setmodel (self, "maps/b_batt0.bsp");
+		self.aflag = 6;
 	}
-	else if (type == 2)
+	else if (self.QualityType == 2)
 	{
-		setmodel (e, "maps/b_batt0.bsp");
-		e.aflag = 6;
+		setmodel (self, "maps/b_batt1.bsp");
+		self.aflag = 12;
 	}
-	e.weapon = 4;
-	e.netname = "cells";
-	e.skin = 0;
-	setsize (e, '0 0 0', '32 32 56');
-	StartItem_Replaced (e);
+	self.weapon = 4;
+	self.netname = "cells";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	StartItem ();
 };
 
 // END AMMO
@@ -810,59 +955,83 @@ void(entity e, float type) ConvertToCells =
 // START POWERUPS
 
 // Converts entity into a Pentagram of Protection
-void(entity e) ConvertToPentagramOfProtection =
-{
-	e.touch = powerup_touch;
-    e.classname = "item_artifact_invulnerability";
-	e.noise = "items/protect.wav";
-	setmodel (e, "progs/invulner.mdl");
-	e.netname = "Pentagram of Protection";
-	e.items = IT_INVULNERABILITY;
-	e.skin = 0;
-	setsize (e, '-16 -16 -24', '16 16 32');
-	StartItem_Replaced (e);
+void() ConvertToPentagramOfProtection =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = powerup_touch;
+	self.classname = "item_artifact_invulnerability";
+	self.noise = "items/protect.wav";
+	setmodel (self, "progs/invulner.mdl");
+	self.netname = "Pentagram of Protection";
+	self.items = IT_INVULNERABILITY;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Biosuit
-void(entity e) ConvertToBiosuit =
-{
-	e.touch = powerup_touch;
-    e.classname = "item_artifact_envirosuit";
-	e.noise = "items/suit.wav";
-	setmodel (e, "progs/suit.mdl");
-	e.netname = "Biosuit";
-	e.items = IT_SUIT;
-	e.skin = 0;
-	setsize (e, '-16 -16 -24', '16 16 32');
-	StartItem_Replaced (e);
+void() ConvertToBiosuit =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = powerup_touch;
+	self.classname = "item_artifact_envirosuit";
+	self.noise = "items/suit.wav";
+	setmodel (self, "progs/suit.mdl");
+	self.netname = "Biosuit";
+	self.items = IT_SUIT;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Ring of Shadows
-void(entity e) ConvertToRingOfShadows =
-{
-	e.touch = powerup_touch;
-    e.classname = "item_artifact_invisibility";
-	e.noise = "items/inv1.wav";
-	setmodel (e, "progs/invisibl.mdl");
-	e.netname = "Ring of Shadows";
-	e.items = IT_INVISIBILITY;
-	e.skin = 0;
-	setsize (e, '-16 -16 -24', '16 16 32');
-	StartItem_Replaced (e);
+void() ConvertToRingOfShadows =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = powerup_touch;
+	self.classname = "item_artifact_invisibility";
+	self.noise = "items/inv1.wav";
+	setmodel (self, "progs/invisibl.mdl");
+	self.netname = "Ring of Shadows";
+	self.items = IT_INVISIBILITY;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Quad Damage
-void(entity e) ConvertToQuadDamage =
-{
-	e.touch = powerup_touch;
-    e.classname = "item_artifact_super_damage";
-	e.noise = "items/damage.wav";
-	setmodel (e, "progs/quaddama.mdl");
-	e.netname = "Quad Damage";
-	e.items = IT_QUAD;
-	e.skin = 0;
-	setsize (e, '-16 -16 -24', '16 16 32');
-	StartItem_Replaced (e);
+void() ConvertToQuadDamage =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = powerup_touch;
+	self.classname = "item_artifact_super_damage";
+	self.noise = "items/damage.wav";
+	setmodel (self, "progs/quaddama.mdl");
+	self.netname = "Quad Damage";
+	self.items = IT_QUAD;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // END POWERUPS
@@ -870,195 +1039,260 @@ void(entity e) ConvertToQuadDamage =
 // START WEAPONS
 
 // Converts entity into a Double-Barrelled Shotgun
-void(entity e) ConvertToDoubleBarrelledShotgun =
-{
-	setmodel (e, "progs/g_shot.mdl");
-    e.classname = "weapon_supershotgun";
-	e.weapon = IT_SUPER_SHOTGUN;
-	e.netname = "Double-barrelled Shotgun";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToDoubleBarrelledShotgun =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_shot.mdl");
+	self.classname = "weapon_supershotgun";
+	self.weapon = IT_SUPER_SHOTGUN;
+	self.netname = "Double-barrelled Shotgun";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Nailgun
-void(entity e) ConvertToNailgun =
-{
-	setmodel (e, "progs/g_nail.mdl");
-    e.classname = "weapon_nailgun";
-	e.weapon = IT_NAILGUN;
-	e.netname = "nailgun";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToNailgun =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_nail.mdl");
+	self.classname = "weapon_nailgun";
+	self.weapon = IT_NAILGUN;
+	self.netname = "nailgun";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Super Nailgun
-void(entity e) ConvertToSuperNailgun =
-{
-	setmodel (e, "progs/g_nail2.mdl");
-    e.classname = "weapon_supernailgun";
-	e.weapon = IT_SUPER_NAILGUN;
-	e.netname = "Super Nailgun";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToSuperNailgun =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_nail2.mdl");
+	self.classname = "weapon_supernailgun";
+	self.weapon = IT_SUPER_NAILGUN;
+	self.netname = "Super Nailgun";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Grenade Launcher
-void(entity e) ConvertToGrenadeLauncher =
-{
-	setmodel (e, "progs/g_rock.mdl");
-    e.classname = "weapon_grenadelauncher";
-	e.weapon = 3;
-	e.netname = "Grenade Launcher";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToGrenadeLauncher =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_rock.mdl");
+	self.classname = "weapon_grenadelauncher";
+	self.weapon = 3;
+	self.netname = "Grenade Launcher";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Rocket Launcher
-void(entity e) ConvertToRocketLauncher =
-{
-	setmodel (e, "progs/g_rock2.mdl");
-    e.classname = "weapon_rocketlauncher";
-	e.weapon = 3;
-	e.netname = "Rocket Launcher";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToRocketLauncher =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_rock2.mdl");
+	self.classname = "weapon_rocketlauncher";
+	self.weapon = 3;
+	self.netname = "Rocket Launcher";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // Converts entity into a Thunderbolt
-void(entity e) ConvertToThunderbolt =
-{
-	setmodel (e, "progs/g_light.mdl");
-    e.classname = "weapon_lightning";
-	e.weapon = 3;
-	e.netname = "Thunderbolt";
-	e.touch = weapon_touch;
-	e.skin = 0;
-	setsize (e, '-16 -16 0', '16 16 56');
-	StartItem_Replaced (e);
+void() ConvertToThunderbolt =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	setmodel (self, "progs/g_light.mdl");
+	self.classname = "weapon_lightning";
+	self.weapon = 3;
+	self.netname = "Thunderbolt";
+	self.touch = weapon_touch;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 56');
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
 // END WEAPONS
 
 // START SCRATCH1 = 1 ONLY
 
-void(entity e, float type) ConvertToWeaponBackpack =
-{
-	e.items = type;
-	e.ammo_shells = 0;
-	e.ammo_nails = 0;
-	e.ammo_rockets = 0;
-	e.ammo_cells = 0;
-	if (type == IT_SUPER_SHOTGUN)
+void() ConvertToWeaponBackpack =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.items = self.PickupType;
+	self.ammo_shells = 0;
+	self.ammo_nails = 0;
+	self.ammo_rockets = 0;
+	self.ammo_cells = 0;
+	self.skin = 0;
+	if (self.PickupType == IT_SUPER_SHOTGUN)
 	{
-		e.classname = "item_backpack_supershotgun";
-		e.netname = "Double-barrelled Shotgun";
-		e.ammo_shells = 5;
+		self.classname = "item_backpack_supershotgun";
+		self.netname = "Double-barrelled Shotgun";
+		self.ammo_shells = 5;
 	}
-	else if (type == IT_NAILGUN)
+	else if (self.PickupType == IT_NAILGUN)
 	{
-		e.classname = "item_backpack_nailgun";
-		e.netname = "Nailgun";
-		e.ammo_nails = 30;
+		self.classname = "item_backpack_nailgun";
+		self.netname = "Nailgun";
+		self.ammo_nails = 30;
 	}
-	else if (type == IT_SUPER_NAILGUN)
+	else if (self.PickupType == IT_SUPER_NAILGUN)
 	{
-		e.classname = "item_backpack_supernailgun";
-		e.netname = "Super Nailgun";
-		e.ammo_nails = 30;
+		self.classname = "item_backpack_supernailgun";
+		self.netname = "Super Nailgun";
+		self.ammo_nails = 30;
 	}
-	else if (type == IT_GRENADE_LAUNCHER)
+	else if (self.PickupType == IT_GRENADE_LAUNCHER)
 	{
-		e.classname = "item_backpack_grenadelauncher";
-		e.netname = "Grenade Launcher";
-		e.ammo_rockets = 5;
+		self.classname = "item_backpack_grenadelauncher";
+		self.netname = "Grenade Launcher";
+		self.ammo_rockets = 5;
 	}
-	else if (type == IT_ROCKET_LAUNCHER)
+	else if (self.PickupType == IT_ROCKET_LAUNCHER)
 	{
-		e.classname = "item_backpack_rocketlauncher";
-		e.netname = "Rocket Launcher";
-		e.ammo_rockets = 5;
+		self.classname = "item_backpack_rocketlauncher";
+		self.netname = "Rocket Launcher";
+		self.ammo_rockets = 5;
 	}
-	else if (type == IT_LIGHTNING)
+	else if (self.PickupType == IT_LIGHTNING)
 	{
-		e.classname = "item_backpack_lightning";
-		e.netname = "Thunderbolt";
-		e.ammo_cells = 15;
+		self.classname = "item_backpack_lightning";
+		self.netname = "Thunderbolt";
+		self.ammo_cells = 15;
 	}
 	else
 	{
-		e.netname = "";
-		dprint("Invalid weapon type\n");	
+		self.netname = "";
+		dprint("Invalid weapon type.");	
 		return;
 	}
 
-	e.flags = FL_ITEM;
-	e.solid = SOLID_TRIGGER;
-	e.movetype = MOVETYPE_TOSS;
-	setmodel (e, "progs/backpack.mdl");
-	setsize (e, '-16 -16 0', '16 16 56');
-	e.touch = BackpackTouch_Replaced;
-	StartItem_Replaced (e);
+	self.flags = FL_ITEM;
+	self.solid = SOLID_TRIGGER;
+	self.movetype = MOVETYPE_TOSS;
+	setmodel (self, "progs/backpack.mdl");
+	setsize (self, '-16 -16 0', '16 16 56');
+	self.touch = BackpackTouch_Replaced;
+	dprint(self.classname);
+	dprint("\n");
+	StartItem ();
 };
 
-void(entity e, float type, float size) ConvertToAmmoBackpack =
-{
-	e.items = 0;
-	if (type == 1) // Shells
+void() ConvertToAmmoBackpack =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.items = 0;
+	self.skin = 0;
+	if (self.PickupType == 1) // Shells
 	{
-		e.classname = "item_backpack_shells";
-		if(size == 1)
-			e.ammo_shells = 40;
-		else if(size == 2)
-			e.ammo_shells = 20;
+		self.classname = "item_backpack_shells";
+		if(self.QualityType == 1)
+			self.ammo_shells = 20;
+		else if(self.QualityType == 2)
+			self.ammo_shells = 40;
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_shells));
+		dprint(")");
 	}
-	else if (type == 2) // Nails
+	else if (self.PickupType == 2) // Nails
 	{
-		e.classname = "item_backpack_spikes";
-		if(size == 1)
-			e.ammo_nails = 50;
-		else if(size == 2)
-			e.ammo_nails = 25;
+		self.classname = "item_backpack_spikes";
+		if(self.QualityType == 1)
+			self.ammo_nails = 25;
+		else if(self.QualityType == 2)
+			self.ammo_nails = 50;
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_nails));
+		dprint(")");
 	}
-	else if (type == 3) // Rockets
+	else if (self.PickupType == 3) // Rockets
 	{
-		e.classname = "item_backpack_rockets";
-		if(size == 1)
-			e.ammo_rockets = 10;
-		else if(size == 2)
-			e.ammo_rockets = 5;
+		self.classname = "item_backpack_rockets";
+		if(self.QualityType == 1)
+			self.ammo_rockets = 5;
+		else if(self.QualityType == 2)
+			self.ammo_rockets = 10;
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_rockets));
+		dprint(")");
 	}
-	else if (type == 4) // Cells
+	else if (self.PickupType == 4) // Cells
 	{
-		e.classname = "item_backpack_cells";
-		if(size == 1)
-			e.ammo_cells = 12;
-		else if(size == 2)
-			e.ammo_cells = 6;
+		self.classname = "item_backpack_cells";
+		if(self.QualityType == 1)
+			self.ammo_cells = 6;
+		else if(self.QualityType == 2)
+			self.ammo_cells = 12;
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_cells));
+		dprint(")");
 	}
 	else
 	{
-		e.netname = "";
-		dprint("Invalid ammo type\n");	
+		self.netname = "";
+		dprint("Invalid ammo type.\n");	
 		return;
 	}
 
-	e.flags = FL_ITEM;
-	e.solid = SOLID_TRIGGER;
-	e.movetype = MOVETYPE_TOSS;
-	setmodel (e, "progs/backpack.mdl");
-	setsize (e, '-16 -16 0', '16 16 56');
-	e.touch = BackpackTouch_Replaced;
-	StartItem_Replaced (e);
+	self.flags = FL_ITEM;
+	self.solid = SOLID_TRIGGER;
+	self.movetype = MOVETYPE_TOSS;
+	setmodel (self, "progs/backpack.mdl");
+	setsize (self, '-16 -16 0', '16 16 56');
+	self.touch = BackpackTouch_Replaced;
+	dprint("\n");	
+	StartItem ();
 };
 
 // END SCRATCH1 = 1 ONLY

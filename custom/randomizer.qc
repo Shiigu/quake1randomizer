@@ -1,6 +1,5 @@
 void() Randomize;
 void() FlagEntities;
-void() ConvertEntities;
 void(entity e) ConvertToMonster;
 void(entity e) ConvertToMonsterOnGroundBiased;
 void(entity e) ConvertToMonsterOnGroundUnbiased;
@@ -15,13 +14,14 @@ void(entity e) ConvertToPowerupUnbiased;
 void(entity e) ConvertToWeaponBiased;
 void(entity e) ConvertToWeaponUnbiased;
 
-.string EntityType; 
-    /* Entities will be converted to one of the same type:
-       - "Monster" for Monsters
-       - "Pickup" for Health (except for Mega) and Armor (except for Red)
-       - "Ammo" for Ammunition (both small and big)
-       - "Weapon" for Weapons
-       - "Powerup" for Megahealth, Red Armor and Powerups */
+.void() th_convert; // Think function that will be used to convert an entity.
+
+/* Entities will be converted to one of the same type:
+    - "Monster" for Monsters
+    - "Pickup" for Health (except for Mega) and Armor (except for Red)
+    - "Ammo" for Ammunition (both small and big)
+    - "Weapon" for Weapons
+    - "Powerup" for Megahealth, Red Armor and Powerups */
 
 entity Placeholder;
 float RandomMode; // 1 (default) will be a biased mode to give the player a fairly fair fight. 2 will give every monster and item the same chance to show up.
@@ -86,9 +86,10 @@ void() FlagEntities = {
                 }
                 else 
                 {
-                    temp.EntityType = "Monster";
+                    temp.oldsize = temp.size;
+                    ConvertToMonster(temp);
                     temp.Converted = "0";
-                    dprint("Flagged as Monster.\n");
+                    dprint("\n");
                 }
             }
             else if(temp.flags & FL_ITEM)
@@ -104,31 +105,63 @@ void() FlagEntities = {
                 else if(temp.classname == "item_armor1" || temp.classname == "item_armor2"
                 || (temp.classname == "item_health" && !(temp.spawnflags & H_MEGA)))
                 {
-                    temp.EntityType = "Pickup";
+                    temp.oldsize = temp.size;
+                    if (RandomMode == 0)
+                    {
+                        ConvertToPickupBiased(temp);
+                    }
+                    else if (RandomMode == 1)
+                    {
+                        ConvertToPickupUnbiased(temp);
+                    }
                     temp.Converted = "0";
-                    dprint("Flagged as Pickup.\n");
+                    dprint("\n");
                 }
                 else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells")
                 {
-                    temp.EntityType = "Ammo";
+                    temp.oldsize = temp.size;
+                    if (RandomMode == 0)
+                    {
+                        ConvertToAmmoBiased(temp);
+                    }
+                    else if (RandomMode == 1)
+                    {
+                        ConvertToAmmoUnbiased(temp);
+                    }
                     temp.Converted = "0";
-                    dprint("Flagged as Ammo.\n");
+                    dprint("\n");
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage")
                 {
-                    temp.EntityType = "Powerup";
+                    temp.oldsize = temp.size;
+                    if (RandomMode == 0)
+                    {
+                        ConvertToPowerupBiased(temp);
+                    }
+                    else if (RandomMode == 1)
+                    {
+                        ConvertToPowerupUnbiased(temp);
+                    }
                     temp.Converted = "0";
-                    dprint("Flagged as Powerup.\n");
+                    dprint("\n");
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
                 || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning")
                 {
-                    temp.EntityType = "Weapon";
+                    temp.oldsize = temp.size;
+                    if (RandomMode == 0)
+                    {
+                        ConvertToWeaponBiased(temp);
+                    }
+                    else if (RandomMode == 1)
+                    {
+                        ConvertToWeaponUnbiased(temp);
+                    }
                     temp.Converted = "0";
-                    dprint("Flagged as Weapon.\n");
+                    dprint("\n");
                 }
             }
             else 
@@ -138,91 +171,8 @@ void() FlagEntities = {
         }
 		temp = find(temp, Converted, "");
 	}
-    Placeholder.think = ConvertEntities;
-    Placeholder.nextthink = time + 0.1;
-    dprint("----- Finished FlagEntities -----\n");
-};
-
-// Converts entities to one of the same type.
-void() ConvertEntities = {
-    local entity temp;
-    local vector oldsize, neworigin;
-	
-	temp = find(world, Converted, "0");
-
-    dprint("----- Starting ConvertEntities -----\n");
-	while (temp != world) // As long as it can find any entity that can be converted
-	{
-        dprint("Converted ");
-        dprint(temp.classname);
-        dprint(" to: ");
-        if(temp.classname != "worldspawn")
-        {
-            oldsize = temp.size;
-            if(temp.EntityType == "Monster")
-            {
-                ConvertToMonster(temp);
-            }
-            else if(temp.EntityType == "Pickup")
-            {
-                if (RandomMode == 0)
-                {
-                    ConvertToPickupBiased(temp);
-                }
-                else if (RandomMode == 1)
-                {
-                    ConvertToPickupUnbiased(temp);
-                }
-            }
-            else if(temp.EntityType == "Ammo")
-            {
-                if (RandomMode == 0)
-                {
-                    ConvertToAmmoBiased(temp);
-                }
-                else if (RandomMode == 1)
-                {
-                    ConvertToAmmoUnbiased(temp);
-                }
-            }
-            else if(temp.EntityType == "Powerup")
-            {
-                if (RandomMode == 0)
-                {
-                    ConvertToPowerupBiased(temp);
-                }
-                else if (RandomMode == 1)
-                {
-                    ConvertToPowerupUnbiased(temp);
-                }
-            }
-            else if(temp.EntityType == "Weapon")
-            {
-                if (RandomMode == 0)
-                {
-                    ConvertToWeaponBiased(temp);
-                }
-                else if (RandomMode == 1)
-                {
-                    ConvertToWeaponUnbiased(temp);
-                }
-            }
-            else {
-                temp.Converted = "1"; // Just in case something that shouldn't have been flagged was actually flagged.
-            }
-            if((temp.flags & FL_ITEM) && oldsize_z < temp.size_z)
-            {
-                // If an item was converted into a taller one (e.g. Ammo to weapon, or between powerups)...
-                // ... move it a bit higher to not instantly flag it as stuck. Turning into a smaller item is fair game though.
-                neworigin = temp.origin;
-                neworigin_z = neworigin_z + fabs(temp.size_z - oldsize_z);
-                temp.origin = neworigin;
-            }
-        }
-		temp = find(temp, Converted, "0");
-	}
     remove(Placeholder);
-    dprint("----- Finished ConvertEntities -----\n");
+    dprint("----- Finished FlagEntities -----\n");
 };
 
 // Converts a monster from one type to another randomly.
@@ -249,15 +199,8 @@ void(entity e) ConvertToMonster = {
         {
             ConvertToMonsterOnGroundUnbiased(e);
         }
-        if(e.classname != "monster_wizard") // if Monster isn't a Scrag, drop it to the ground.
-        {
-            e.velocity_z = 100 + 100*random();
-            e.flags = e.flags - (e.flags & FL_ONGROUND);
-        }
     }
     e.Converted = "1";
-    dprint(e.classname);
-    dprint("\n");
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
@@ -267,52 +210,53 @@ void(entity e) ConvertToMonsterOnGroundUnbiased = {
     rng = Random(1, 12);
     if(rng == 1)
     { 
-        ConvertToFiend(e);
+        e.think = ConvertToFiend;
     }
     else if(rng == 2)
     { 
-        ConvertToDog(e);
+        e.think = ConvertToDog;
     }
     else if(rng == 3)
     { 
-        ConvertToEnforcer(e);
+        e.think = ConvertToEnforcer;
     }
     else if(rng == 4)
     { 
-        ConvertToDeathKnight(e);
+        e.think = ConvertToDeathKnight;
     }
     else if(rng == 5)
     { 
-        ConvertToKnight(e);
+        e.think = ConvertToKnight;
     }
     else if(rng == 6)
     { 
-        ConvertToZombie(e);
+        e.think = ConvertToZombie;
     }
     else if(rng == 7)
     { 
-        ConvertToVore(e);
+        e.think = ConvertToVore;
     }
     else if(rng == 8)
     { 
-        ConvertToShambler(e);
+        e.think = ConvertToShambler;
     }
     else if(rng == 9)
     { 
-        ConvertToGrunt(e);
+        e.think = ConvertToGrunt;
     }
     else if(rng == 10)
     { 
-        ConvertToSpawn(e);
+        e.think = ConvertToSpawn;
     }
     else if(rng == 11)
     { 
-        ConvertToScrag(e);
+        e.think = ConvertToScrag;
     }
     else if(rng == 12)
     { 
-        ConvertToOgre(e);
+        e.think = ConvertToOgre;
     }
+    e.nextthink = time + 0.1;
 };
 
 // To convert a monster present in water.
@@ -322,56 +266,57 @@ void(entity e) ConvertToMonsterOnWaterUnbiased = {
     rng = Random(1, 13);
     if(rng == 1)
     { 
-        ConvertToFiend(e);
+        e.think = ConvertToFiend;
     }
     else if(rng == 2)
     { 
-        ConvertToDog(e);
+        e.think = ConvertToDog;
     }
     else if(rng == 3)
     { 
-        ConvertToEnforcer(e);
+        e.think = ConvertToEnforcer;
     }
     else if(rng == 4)
     { 
-        ConvertToDeathKnight(e);
+        e.think = ConvertToDeathKnight;
     }
     else if(rng == 5)
     { 
-        ConvertToKnight(e);
+        e.think = ConvertToKnight;
     }
     else if(rng == 6)
     { 
-        ConvertToZombie(e);
+        e.think = ConvertToZombie;
     }
     else if(rng == 7)
     { 
-        ConvertToVore(e);
+        e.think = ConvertToVore;
     }
     else if(rng == 8)
     {
-        ConvertToShambler(e);
+        e.think = ConvertToShambler;
     }
     else if(rng == 9)
     { 
-        ConvertToGrunt(e);
+        e.think = ConvertToGrunt;
     }
     else if(rng == 10)
     { 
-        ConvertToSpawn(e);
+        e.think = ConvertToSpawn;
     }
     else if(rng == 11)
     { 
-        ConvertToScrag(e);
+        e.think = ConvertToScrag;
     }
     else if(rng == 12)
     { 
-        ConvertToOgre(e);
+        e.think = ConvertToOgre;
     }
     else if(rng == 13)
     { 
-        ConvertToRotfish(e);
+        e.think = ConvertToRotfish;
     }
+    e.nextthink = time + 0.1;
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
@@ -381,52 +326,53 @@ void(entity e) ConvertToMonsterOnGroundBiased = {
     rng = Random(1, 100);
     if(rng >= 1 && rng <= 7)
     { 
-        ConvertToFiend(e);
+        e.think = ConvertToFiend;
     }
     else if(rng >= 8 && rng <= 14)
     { 
-        ConvertToDog(e);
+        e.think = ConvertToDog;
     }
     else if(rng >= 15 && rng <= 23)
     { 
-        ConvertToEnforcer(e);
+        e.think = ConvertToEnforcer;
     }
     else if(rng >= 24 && rng <= 33)
     { 
-        ConvertToDeathKnight(e);
+        e.think = ConvertToDeathKnight;
     }
     else if(rng >= 34 && rng <= 45)
     { 
-        ConvertToKnight(e);
+        e.think = ConvertToKnight;
     }
     else if(rng >= 46 && rng <= 54)
     { 
-        ConvertToZombie(e);
+        e.think = ConvertToZombie;
     }
     else if(rng >= 55 && rng <= 57)
     { 
-        ConvertToVore(e);
+        e.think = ConvertToVore;
     }
     else if(rng >= 58 && rng <= 59)
     { 
-        ConvertToShambler(e);
+        e.think = ConvertToShambler;
     }
     else if(rng >= 60 && rng <= 72)
     { 
-        ConvertToGrunt(e);
+        e.think = ConvertToGrunt;
     }
     else if(rng >= 73 && rng <= 75)
     {
-        ConvertToSpawn(e);
+        e.think = ConvertToSpawn;
     }
     else if(rng >= 76 && rng <= 87)
     { 
-        ConvertToScrag(e);
+        e.think = ConvertToScrag;
     }
     else if(rng >= 88 && rng <= 100)
     { 
-        ConvertToOgre(e);
+        e.think = ConvertToOgre;
     }
+    e.nextthink = time + 0.1;
 };
 
 // To convert a monster present in water.
@@ -436,48 +382,49 @@ void(entity e) ConvertToMonsterOnWaterBiased = {
     rng = Random(1, 100);
     if(rng >= 1 && rng <= 6)
     { 
-        ConvertToFiend(e);
+        e.think = ConvertToFiend;
     }
     else if(rng >= 7 && rng <= 18)
     { 
-        ConvertToEnforcer(e);
+        e.think = ConvertToEnforcer;
     }
     else if(rng >= 19 && rng <= 30)
     { 
-        ConvertToDeathKnight(e);
+        e.think = ConvertToDeathKnight;
     }
     else if(rng >= 31 && rng <= 41)
     { 
-        ConvertToZombie(e);
+        e.think = ConvertToZombie;
     }
     else if(rng >= 42 && rng <= 44)
     { 
-        ConvertToVore(e);
+        e.think = ConvertToVore;
     }
     else if(rng >= 45 && rng <= 46)
     { 
-        ConvertToShambler(e);
+        e.think = ConvertToShambler;
     }
     else if(rng >= 47 && rng <= 59)
     { 
-        ConvertToGrunt(e);
+        e.think = ConvertToGrunt;
     }
     else if(rng >= 60 && rng <= 62)
     { 
-        ConvertToSpawn(e);
+        e.think = ConvertToSpawn;
     }
     else if(rng >= 63 && rng <= 75)
     { 
-        ConvertToScrag(e);
+        e.think = ConvertToScrag;
     }
     else if(rng >= 76 && rng <= 84)
     { 
-        ConvertToOgre(e);
+        e.think = ConvertToOgre;
     }
     else if(rng >= 85 && rng <= 100)
     { 
-        ConvertToRotfish(e);
+        e.think = ConvertToRotfish;
     }
+    e.nextthink = time + 0.1;
 };
 
 // Converts a pickup of one type to another randomly.
@@ -486,30 +433,27 @@ void(entity e) ConvertToPickupUnbiased = {
     local float rng;
     rng = Random(1, 4);
     if(rng == 1)
-    { 
-        ConvertToHealth(e, 1);
-        dprint(e.classname);
-        dprint(" (15)\n");
+    {
+        e.QualityType = 1;
+        e.think = ConvertToHealth;
     }
     else if(rng == 2)
-    { 
-        ConvertToHealth(e, 2);
-        dprint(e.classname);
-        dprint(" (25)\n");
+    {
+        e.QualityType = 2;
+        e.think = ConvertToHealth;
     }
     else if(rng == 3)
-    { 
-        ConvertToArmor(e, 0);
-        dprint(e.classname);
-        dprint("\n");
+    {
+        e.QualityType = 1;
+        e.think = ConvertToArmor;
     }
     else if(rng == 4)
-    { 
-        ConvertToArmor(e, 1);
-        dprint(e.classname);
-        dprint("\n");
+    {
+        e.QualityType = 2;
+        e.think = ConvertToArmor;
     }
     e.Converted = "1";
+    e.nextthink = time + 0.1;
 };
 
 // Converts a pickup of one type to another randomly.
@@ -522,44 +466,38 @@ void(entity e) ConvertToPickupBiased = {
     {
         if(rng >= 1 && rng <= 45)
         { 
-            ConvertToHealth(e, 1);
-            dprint(e.classname);
-            dprint(" (15)\n");
+            e.QualityType = 1;
+            e.think = ConvertToHealth;
         }
         else if(rng >= 46 && rng <= 90)
-        { 
-            ConvertToHealth(e, 2);
-            dprint(e.classname);
-            dprint(" (25)\n");
+        {
+            e.QualityType = 2;
+            e.think = ConvertToHealth;
         }
         else if(rng >= 91 && rng <= 95)
         { 
             if(!IsNearOtherArmor(e))
             {
-                ConvertToArmor(e, 0);
-                dprint(e.classname);
-                dprint("\n");
+                e.QualityType = 1;
+                e.think = ConvertToArmor;
             }
             else
             {
-                ConvertToHealth(e, 1);
-                dprint(e.classname);
-                dprint(" (15)\n");
+                e.QualityType = 1;
+                e.think = ConvertToHealth;
             }
         }
         else if(rng >= 96 && rng <= 100)
         { 
             if(!IsNearOtherArmor(e))
             {
-                ConvertToArmor(e, 1);
-                dprint(e.classname);
-                dprint("\n");
+                e.QualityType = 1;
+                e.think = ConvertToArmor;
             }
             else
             {
-                ConvertToHealth(e, 2);
-                dprint(e.classname);
-                dprint(" (25)\n");
+                e.QualityType = 2;
+                e.think = ConvertToHealth;
             }
         }
     }
@@ -567,47 +505,42 @@ void(entity e) ConvertToPickupBiased = {
     {
         if(rng >= 1 && rng <= 5)
         { 
-            ConvertToHealth(e, 1);
-            dprint(e.classname);
-            dprint(" (15)\n");
+            e.QualityType = 1;
+            e.think = ConvertToHealth;
         }
         else if(rng >= 6 && rng <= 10)
         { 
-            ConvertToHealth(e, 2);
-            dprint(e.classname);
-            dprint(" (25)\n");
+            e.QualityType = 2;
+            e.think = ConvertToHealth;
         }
         else if(rng >= 11 && rng <= 55)
         { 
             if(!IsNearOtherArmor(e))
             {
-                ConvertToArmor(e, 0);
-                dprint(e.classname);
-                dprint("\n");
+                e.QualityType = 1;
+                e.think = ConvertToArmor;
             }
             else
             {
-                ConvertToHealth(e, 1);
-                dprint(e.classname);
-                dprint(" (15)\n");
+                e.QualityType = 1;
+                e.think = ConvertToHealth;
             }
         }
         else if(rng >= 56 && rng <= 100)
         { 
             if(!IsNearOtherArmor(e))
             {
-                ConvertToArmor(e, 1);
-                dprint(e.classname);
-                dprint("\n");
+                e.QualityType = 2;
+                e.think = ConvertToArmor;
             }
             else
             {
-                ConvertToHealth(e, 2);
-                dprint(e.classname);
-                dprint(" (25)\n");
+                e.QualityType = 2;
+                e.think = ConvertToHealth;
             }
         }
     }
+    e.nextthink = time + 0.1;
     e.Converted = "1";
 };
 
@@ -620,43 +553,31 @@ void(entity e) ConvertToAmmoUnbiased = {
     AmmoSizeRng = Random(1, 2);
     if(!HideInBackpacks)
     {
+        e.QualityType = AmmoSizeRng;
         if(AmmoTypeRng == 1)
         {
-            ConvertToShells(e, AmmoSizeRng);
+            e.think = ConvertToShells;
         }
         else if(AmmoTypeRng == 2)
         { 
-            ConvertToNails(e, AmmoSizeRng);
+            e.think = ConvertToNails;
         }
         else if(AmmoTypeRng == 3)
         { 
-            ConvertToRockets(e, AmmoSizeRng);
+            e.think = ConvertToRockets;
         }
         else if(AmmoTypeRng == 4)
         { 
-            ConvertToCells(e, AmmoSizeRng);
+            e.think = ConvertToCells;
         }
     }
     else
     {
-        ConvertToAmmoBackpack(e, AmmoTypeRng, AmmoSizeRng);
+        e.PickupType = AmmoTypeRng;
+        e.QualityType = AmmoSizeRng;
+        e.think = ConvertToAmmoBackpack;
     }
-    dprint(e.classname);
-    if(AmmoSizeRng == 1)
-    {
-        dprint(" (BIG)");
-    }
-    else if(AmmoSizeRng == 2)
-    {
-        dprint(" (SMALL)");
-    }
-    else
-    {
-        dprint(" (INVALID AMMO SIZE TYPE OF ");
-        dprint(ftos(AmmoSizeRng));
-        dprint(")");
-    }
-    dprint("\n");
+    e.nextthink = time + 0.1;
     e.Converted = "1";
 };
 
@@ -671,57 +592,60 @@ void(entity e) ConvertToAmmoBiased = {
     AmmoSizeRng = Random(1, 100);
     if(AmmoSizeRng >= 1 && AmmoSizeRng <= 65)
     {
-        AmmoPackSize = 2;
+        AmmoPackSize = 1;
     }
     else if (AmmoSizeRng >= 66 && AmmoSizeRng <= 100)
     {
-        AmmoPackSize = 1;
+        AmmoPackSize = 2;
     }
+    e.QualityType = AmmoPackSize;
     if(AmmoTypeRng >= 1 && AmmoTypeRng <= 30)
     {
         if(!HideInBackpacks)
-            ConvertToShells(e, AmmoPackSize);
+            e.think = ConvertToShells;
         else
-            ConvertToAmmoBackpack(e, 1, AmmoPackSize);
+        {
+            e.PickupType = 1;
+            e.think = ConvertToAmmoBackpack;
+        }
     }
     else if(AmmoTypeRng >= 31 && AmmoTypeRng <= 60)
     { 
         if(!HideInBackpacks)
-            ConvertToNails(e, AmmoPackSize);
+            e.think = ConvertToNails;
         else
-            ConvertToAmmoBackpack(e, 2, AmmoPackSize);
+        {
+            e.PickupType = 2;
+            e.think = ConvertToAmmoBackpack;
+        }
     }
     else if(AmmoTypeRng >= 61 && AmmoTypeRng <= 75)
     { 
         if(!HideInBackpacks)
-            ConvertToRockets(e, AmmoPackSize);
+            e.think = ConvertToRockets;
         else
-            ConvertToAmmoBackpack(e, 3, AmmoPackSize);
+        {
+            e.PickupType = 3;
+            e.think = ConvertToAmmoBackpack;
+        }
     }
     else if(AmmoTypeRng >= 76 && AmmoTypeRng <= 90)
     { 
         if(!HideInBackpacks)
-            ConvertToCells(e, AmmoPackSize);
+            e.think = ConvertToCells;
         else
-            ConvertToAmmoBackpack(e, 4, AmmoPackSize);
+        {
+            e.PickupType = 4;
+            e.think = ConvertToAmmoBackpack;
+        }
     }
     else if(AmmoTypeRng >= 91 && AmmoTypeRng <= 100)
     {
-        dprint("(WEAPON!) ");
         ConvertToWeaponBiased(e);
         return;
     }
-    dprint(e.classname);
-    if(AmmoPackSize == 1)
-    {
-        dprint(" (BIG)");
-    }
-    else if(AmmoPackSize == 2)
-    {
-        dprint(" (SMALL)");
-    }
-    dprint("\n");
     e.Converted = "1";
+    e.nextthink = time + 0.1;
 };
 
 // Converts a powerup of one type to another randomly.
@@ -731,41 +655,32 @@ void(entity e) ConvertToPowerupUnbiased = {
     rng = Random(1, 6);
     if(rng == 1)
     { 
-        ConvertToPentagramOfProtection(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToPentagramOfProtection;
     }
     else if(rng == 2)
     { 
-        ConvertToQuadDamage(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToQuadDamage;
     }
     else if(rng == 3)
     { 
-        ConvertToRingOfShadows(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToRingOfShadows;
     }
     else if(rng == 4)
     { 
-        ConvertToHealth(e, 3);
-        dprint(e.classname);
-        dprint(" (100)\n");
+        e.QualityType = 3;
+        e.think = ConvertToHealth;
     }
     else if(rng == 5)
-    { 
-        ConvertToArmor(e, 2);
-        dprint(e.classname);
-        dprint("\n");
+    {
+        e.QualityType = 3;
+        e.think = ConvertToArmor;
     }
     else if(rng == 6)
     { 
-        ConvertToBiosuit(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToBiosuit;
     }
     e.Converted = "1";
+    e.nextthink = time + 0.1;
 };
 
 // Used to FORCE a weapon to convert into any powerup, no strings attached.
@@ -775,29 +690,23 @@ void(entity e) ConvertToGuaranteedPowerup = {
     rng = Random(1, 4);
     if(rng == 1)
     { 
-        ConvertToPentagramOfProtection(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToPentagramOfProtection;
     }
     else if(rng == 2)
     { 
-        ConvertToQuadDamage(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToQuadDamage;
     }
     else if(rng == 3)
     { 
-        ConvertToRingOfShadows(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToRingOfShadows;
     }
     else if(rng == 4)
     { 
-        ConvertToHealth(e, 3);
-        dprint(e.classname);
-        dprint(" (100)\n");
+        e.QualityType = 3;
+        e.think = ConvertToHealth;
     }
     e.Converted = "1";
+    e.nextthink = time + 0.1;
 };
 
 // Converts a powerup of one type to another randomly.
@@ -808,39 +717,30 @@ void(entity e) ConvertToPowerupBiased = {
     rng = Random(1, 100);
     if(rng >= 1 && rng <= 18)
     { 
-        ConvertToPentagramOfProtection(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToPentagramOfProtection;
     }
     else if(rng >= 19 && rng <= 36)
     { 
-        ConvertToQuadDamage(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToQuadDamage;
     }
     else if(rng >= 37 && rng <= 54)
     { 
-        ConvertToRingOfShadows(e);
-        dprint(e.classname);
-        dprint("\n");
+        e.think = ConvertToRingOfShadows;
     }
     else if(rng >= 55 && rng <= 72)
     { 
-        ConvertToHealth(e, 3);
-        dprint(e.classname);
-        dprint(" (100)\n");
+        e.QualityType = 3;
+        e.think = ConvertToHealth;
     }
     else if(rng >= 73 && rng <= 90)
     {
         if(!IsNearOtherArmor(e))
         {
-            ConvertToArmor(e, 2);
-            dprint(e.classname);
-            dprint("\n");
+            e.QualityType = 3;
+            e.think = ConvertToArmor;
         }
         else
         {
-            dprint(" (WEAPON!) ");
             ConvertToWeaponBiased(e);
         }
     }
@@ -848,17 +748,14 @@ void(entity e) ConvertToPowerupBiased = {
     {
         if(IsNearAWaterSurface(e))
         { 
-            dprint(" (WATER!) ");
-            ConvertToBiosuit(e);
-            dprint(e.classname);
-            dprint("\n");
+            e.think = ConvertToBiosuit;
         }
         else
         {
-            dprint(" (WEAPON!) ");
             ConvertToWeaponBiased(e);
         }
     }
+    e.nextthink = time + 0.1;
     e.Converted = "1";
 };
 
@@ -870,47 +767,64 @@ void(entity e) ConvertToWeaponUnbiased = {
     if(rng == 1)
     { 
         if(!HideInBackpacks)
-            ConvertToDoubleBarrelledShotgun(e);
+            e.think = ConvertToDoubleBarrelledShotgun;
         else
-            ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
+        {
+            e.PickupType = IT_SUPER_SHOTGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
     else if(rng == 2)
     { 
         if(!HideInBackpacks)
-            ConvertToNailgun(e);
+            e.think = ConvertToNailgun;
         else
-            ConvertToWeaponBackpack(e, IT_NAILGUN);
+        {
+            e.PickupType = IT_NAILGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
     else if(rng == 3)
     { 
         if(!HideInBackpacks)
-            ConvertToSuperNailgun(e);
+            e.think = ConvertToSuperNailgun;
         else
-            ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
+        {
+            e.PickupType = IT_SUPER_NAILGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
     else if(rng == 4)
     { 
         if(!HideInBackpacks)
-            ConvertToGrenadeLauncher(e);
+            e.think = ConvertToGrenadeLauncher;
         else
-            ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
+        {
+            e.PickupType = IT_GRENADE_LAUNCHER;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
     else if(rng == 5)
     { 
         if(!HideInBackpacks)
-            ConvertToRocketLauncher(e);
+            e.think = ConvertToRocketLauncher;
         else
-            ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
+        {
+            e.PickupType = IT_ROCKET_LAUNCHER;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
     else if(rng == 6)
     { 
         if(!HideInBackpacks)
-            ConvertToThunderbolt(e);
+            e.think = ConvertToThunderbolt;
         else
-            ConvertToWeaponBackpack(e, IT_LIGHTNING);
+        {
+            e.PickupType = IT_LIGHTNING;
+            e.think = ConvertToWeaponBackpack;
+        }
     }
-    dprint(e.classname);
-    dprint("\n");
+    e.nextthink = time + 0.1;
     e.Converted = "1";
 };
 
@@ -926,7 +840,6 @@ void(entity e) ConvertToWeaponBiased = {
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
         SpawnedWeapons & IT_LIGHTNING)
     {
-        dprint("(NOT A WEAPON) ");
         ConvertToGuaranteedPowerup(e);
         SpawnedWeapons = 0;
         return;
@@ -935,112 +848,145 @@ void(entity e) ConvertToWeaponBiased = {
     if(rng == 1 && !(SpawnedWeapons & IT_SUPER_SHOTGUN))
     {
         if(!HideInBackpacks)
-            ConvertToDoubleBarrelledShotgun(e);
+            e.think = ConvertToDoubleBarrelledShotgun;
         else
-            ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
+        {
+            e.PickupType = IT_SUPER_SHOTGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_SUPER_SHOTGUN;
     }
     else if(rng == 2 && !(SpawnedWeapons & IT_NAILGUN))
     { 
         if(!HideInBackpacks)
-            ConvertToNailgun(e);
+            e.think = ConvertToNailgun;
         else
-            ConvertToWeaponBackpack(e, IT_NAILGUN);
+        {
+            e.PickupType = IT_NAILGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_NAILGUN;
     }
     else if(rng == 3 && !(SpawnedWeapons & IT_SUPER_NAILGUN))
     { 
         if(!HideInBackpacks)
-            ConvertToSuperNailgun(e);
+            e.think = ConvertToSuperNailgun;
         else
-            ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
+        {
+            e.PickupType = IT_SUPER_NAILGUN;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_SUPER_NAILGUN;
     }
     else if(rng == 4 && !(SpawnedWeapons & IT_GRENADE_LAUNCHER))
     { 
         if(!HideInBackpacks)
-            ConvertToGrenadeLauncher(e);
+            e.think = ConvertToGrenadeLauncher;
         else
-            ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
+        {
+            e.PickupType = IT_GRENADE_LAUNCHER;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_GRENADE_LAUNCHER;
     }
     else if(rng == 5 && !(SpawnedWeapons & IT_ROCKET_LAUNCHER))
     { 
         if(!HideInBackpacks)
-            ConvertToRocketLauncher(e);
+            e.think = ConvertToRocketLauncher;
         else
-            ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
+        {
+            e.PickupType = IT_ROCKET_LAUNCHER;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
     }
     else if(rng == 6 && !(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
     { 
         if(!HideInBackpacks)
-            ConvertToThunderbolt(e);
+            e.think = ConvertToThunderbolt;
         else
-            ConvertToWeaponBackpack(e, IT_LIGHTNING);
+        {
+            e.PickupType = IT_LIGHTNING;
+            e.think = ConvertToWeaponBackpack;
+        }
         SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
     }
     else
     {
         // If it rolled an already-spawned weapon (or tried to spawn a Thunderbolt in water), it will instead spawn the lowest-ranked weapon not yet present.
-        dprint("(DEFAULT) ");
         if (!(SpawnedWeapons & IT_SUPER_SHOTGUN))
         {
             if(!HideInBackpacks)
-                ConvertToDoubleBarrelledShotgun(e);
+                e.think = ConvertToDoubleBarrelledShotgun;
             else
-                ConvertToWeaponBackpack(e, IT_SUPER_SHOTGUN);
+            {
+                e.PickupType = IT_SUPER_SHOTGUN;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_SUPER_SHOTGUN;
         }
         else if (!(SpawnedWeapons & IT_NAILGUN))
         {
             if(!HideInBackpacks)
-                ConvertToNailgun(e);
+                e.think = ConvertToNailgun;
             else
-                ConvertToWeaponBackpack(e, IT_NAILGUN);
+            {
+                e.PickupType = IT_NAILGUN;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_NAILGUN;
         }
         else if (!(SpawnedWeapons & IT_SUPER_NAILGUN))
         {
             if(!HideInBackpacks)
-                ConvertToSuperNailgun(e);
+                e.think = ConvertToSuperNailgun;
             else
-                ConvertToWeaponBackpack(e, IT_SUPER_NAILGUN);
+            {
+                e.PickupType = IT_SUPER_NAILGUN;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_SUPER_NAILGUN;
         }
         else if (!(SpawnedWeapons & IT_GRENADE_LAUNCHER))
-        {        
+        {
             if(!HideInBackpacks)
-                ConvertToGrenadeLauncher(e);
+                e.think = ConvertToGrenadeLauncher;
             else
-                ConvertToWeaponBackpack(e, IT_GRENADE_LAUNCHER);
+            {
+                e.PickupType = IT_GRENADE_LAUNCHER;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_GRENADE_LAUNCHER;
         }
         else if (!(SpawnedWeapons & IT_ROCKET_LAUNCHER))
         {
             if(!HideInBackpacks)
-                ConvertToRocketLauncher(e);
+                e.think = ConvertToRocketLauncher;
             else
-                ConvertToWeaponBackpack(e, IT_ROCKET_LAUNCHER);
+            {
+                e.PickupType = IT_ROCKET_LAUNCHER;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_ROCKET_LAUNCHER;
         }
         else if (!(SpawnedWeapons & IT_LIGHTNING) && pointcontents(e.origin) == CONTENT_EMPTY)
         {
             if(!HideInBackpacks)
-                ConvertToThunderbolt(e);
+                e.think = ConvertToThunderbolt;
             else
-                ConvertToWeaponBackpack(e, IT_LIGHTNING);
+            {
+                e.PickupType = IT_LIGHTNING;
+                e.think = ConvertToWeaponBackpack;
+            }
             SpawnedWeapons = SpawnedWeapons | IT_LIGHTNING;
         }
         else 
         {
             // If all weapons were rolled (or yet again tried to spawn a Thunderbolt in water), it will instead spawn a powerup.
-            dprint("(NOT A WEAPON) ");
             ConvertToGuaranteedPowerup(e);
             return;
         }
     }
-    dprint(e.classname);
-    dprint("\n");
+    e.nextthink = time + 0.1;
     e.Converted = "1";
 };

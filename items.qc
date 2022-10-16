@@ -1,5 +1,4 @@
 void() W_SetCurrentAmmo;
-void(entity e) StartItem_Replaced;
 void() BackpackTouch_Replaced;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
@@ -37,7 +36,7 @@ plants the object on the floor
 */
 void() PlaceItem =
 {
-	local vector old;
+	local vector old, neworigin;
 	local float IS_IN_TELEPORTER;
 
 	self.mdl = self.model;		// so it can be restored on respawn
@@ -45,6 +44,17 @@ void() PlaceItem =
 	self.solid = SOLID_TRIGGER;
 	self.movetype = MOVETYPE_TOSS;	
 	self.velocity = '0 0 0';
+
+	if((self.flags & FL_ITEM) && self.oldsize_z < self.size_z)
+	{
+		// If an item was converted into a taller one (e.g. Ammo to weapon, or between powerups)...
+		// ... move it a bit higher to not instantly flag it as stuck. Turning into a smaller item is fair game though.
+		neworigin = self.origin;
+		neworigin_z = neworigin_z + fabs(self.size_z - self.oldsize_z);
+		self.origin = neworigin;
+		droptofloor();
+	}
+
 	self.origin_z = self.origin_z + 1;
 	
 	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
@@ -83,13 +93,6 @@ void() StartItem =
 {
 	self.nextthink = time + 0.2;	// items start after other solids
 	self.think = PlaceItem;
-};
-
-// StartItem for a replaced entity
-void(entity e) StartItem_Replaced =
-{
-	e.nextthink = time + 0.2;	// items start after other solids
-	e.think = PlaceItem;
 };
 
 /*
@@ -1442,7 +1445,14 @@ void() BackpackTouch_Replaced =
 	
 	sprint (other, "\n");
 // backpack touch sound
-	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
+	if(self.items)
+	{
+		sound (other, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
+	}
+	else
+	{
+		sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);		
+	}
 	stuffcmd (other, "bf\n");
 
 // change to the weapon
