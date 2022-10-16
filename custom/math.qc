@@ -2,6 +2,7 @@ float sqrt(float x);
 float pow(float x, float y);
 float max(float a, float b);
 float min(float a, float b);
+float mod(float a, float b);
 
 /*
 * sqrt
@@ -72,4 +73,17 @@ float min(float a, float b) = {
     if(a <= b)
         return a;
     return b;
+};
+
+/*
+* mod
+*
+* QuakeC lacks a modulo operator unlike C.
+* This function provides the reminder of the division between a and b.
+* (In other words, it returns a % b)
+* 
+*/
+
+float mod(float a, float b) = {
+    return a - (floor(a/b) * b);
 };

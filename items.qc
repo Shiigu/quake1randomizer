@@ -8,6 +8,7 @@ void() SUB_regen =
 {
 	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
+	self.frame = 0;
 	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// play respawn sound
 	setorigin (self, self.origin);
 };
@@ -59,7 +60,7 @@ void() PlaceItem =
 	
 	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-	if (Space_Occupied(self) && !IS_IN_TELEPORTER)
+	if ((Space_Occupied(self) || !droptofloor()) && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
@@ -67,7 +68,7 @@ void() PlaceItem =
 		UnstuckObject(self);
 	}
 	
-	if (Space_Occupied(self) && !IS_IN_TELEPORTER)
+	if ((Space_Occupied(self) || !droptofloor()) && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
@@ -1359,6 +1360,7 @@ void() BackpackTouch_Replaced =
 	local float	best, old, new;
 	local entity stemp;
 	local float	acount;
+	local float leave;
 	
 	if (other.classname != "player")
 		return;
@@ -1377,17 +1379,25 @@ void() BackpackTouch_Replaced =
 		if (other.ammo_cells >= 100)
 			return;
 
+	if (deathmatch == 2 || coop)
+		leave = 1;
+	else
+		leave = 0;
+
 	acount = 0;
+	if(self.items)
+		if (leave && (other.items & self.items))
+			return;
+
 	sprint (other, "You get ");
-
 	if (self.items)
-		{
-			acount = 1;
-			sprint (other, "the ");
-			sprint (other, self.netname);
-		}
+	{
+		acount = 1;
+		sprint (other, "the ");
+		sprint (other, self.netname);
+	}
 
-// if the player was using his best weapon, change up to the new one if better		
+// if the player was using his best weapon, change up to the new one if better
 	stemp = self;
 	self = other;
 	best = W_BestWeapon();
@@ -1458,13 +1468,23 @@ void() BackpackTouch_Replaced =
 // change to the weapon
 	if (self.items)
 		other.weapon = self.items;
-
-// remove the backpack, change self to the player
-	remove(self);
+	
+	stemp = self;
 	self = other;
-
-
 	W_SetCurrentAmmo ();
+	self = stemp;
+
+	if (self.items && leave)
+		return;
+
+// remove it in single player, or setup for respawning in deathmatch
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+	if (deathmatch == 1)
+	{
+		self.think = SUB_regen;
+		self.nextthink = time + 1;
+	}
 };
 
 /*

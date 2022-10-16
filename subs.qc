@@ -1,9 +1,6 @@
 
 
 float(float lower, float upper) Random;
-float(float lower, float upper) RandomTwoPositives;
-float(float lower, float upper) RandomTwoNegatives;
-float(float lower, float upper) RandomDiffSigns;
 void(entity e, float flying) UnstuckMonster;
 void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
@@ -328,42 +325,7 @@ void (void() thinkst) SUB_CheckRefire =
 
 float(float lower, float upper) Random =
 {
-	if(lower >= 0 && upper >= 0)
-		return RandomTwoPositives(lower, upper);
-	else if(lower < 0 && upper < 0)
-		return RandomTwoNegatives(lower, upper);
-	else if(lower < 0 && upper >= 0)
-		return RandomDiffSigns(lower, upper);
-};
-
-float(float lower, float upper) RandomTwoPositives =
-{
-	local float num = random();
-	num = num * (upper - lower + 1);
-	num = num + lower;
-	return floor(num);
-};
-
-float(float lower, float upper) RandomTwoNegatives =
-{
-	local float num = random();
-	local float newlower = upper * -1;
-	local float newupper = lower * -1;
-	num = num * (newupper - newlower + 1);
-	num = num + newlower;
-	num = num * -1;
-	return floor(num);
-};
-
-float(float lower, float upper) RandomDiffSigns =
-{
-	local float num = random();
-	local float diff = (lower * -1);
-	local float newlower = 0;
-	local float newupper = upper + diff;
-	num = num * newupper + 1;
-	num = num - diff;
-	return floor(num);
+	return floor (lower + random() * (upper - lower + 1));
 };
 
 void(entity e, float flying) UnstuckMonster = 
@@ -376,6 +338,7 @@ void(entity e, float flying) UnstuckMonster =
 	local vector min;
 	local vector max;
 	local vector diff;
+	local float occupied, canMove;
 
 	oldself = self;
 	self = e;
@@ -418,14 +381,16 @@ void(entity e, float flying) UnstuckMonster =
 		if(!flying)
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
-		if(!walkmove(0,0) || Space_Occupied(self))
+		occupied = Space_Occupied(self);
+		canMove = walkmove(0,0);
+		if(!occupied && canMove)
 		{ 
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while((!walkmove(0,0) || Space_Occupied(self)) && CURRENT_TRY < MAX_TRIES);
+	while((occupied || !canMove) && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
 };
 
@@ -439,6 +404,7 @@ void(entity e) UnstuckObject =
 	local vector min;
 	local vector max;
 	local vector diff;
+	local float occupied, dropped;
 
 	oldself = self;
 	self = e;
@@ -479,14 +445,16 @@ void(entity e) UnstuckObject =
 		fixvector_z = Random(min_z, max_z);
 		setorigin(self, fixvector);
 		CURRENT_TRY = CURRENT_TRY + 1;
-		if(!Space_Occupied(e))
-		{ 
+		occupied = Space_Occupied(self);
+		dropped = droptofloor();
+		if(!occupied && dropped)
+		{
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while(Space_Occupied(e) && CURRENT_TRY < MAX_TRIES);
+	while((occupied || !dropped) && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
 };
 

@@ -89,9 +89,6 @@ void() walkmonster_start_go =
 		old_x = self.origin_x;
 		old_y = self.origin_y;
 		old_z = self.origin_z;
-		dprint ("walkmonster ");
-		dprint (self.classname);
-		dprint (" is stuck. Beginning unstuck.\n");
 		UnstuckMonster(self, 0);
 	}
 
@@ -180,9 +177,6 @@ void() flymonster_start_go =
 		old_x = self.origin_x;
 		old_y = self.origin_y;
 		old_z = self.origin_z;
-		dprint ("flymonster ");
-		dprint (self.classname);
-		dprint (" is stuck. Beginning unstuck.\n");
 		UnstuckMonster(self, 1);
 	}
 
