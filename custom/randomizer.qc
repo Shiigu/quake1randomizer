@@ -84,9 +84,9 @@ void() ConvertEntities = {
                 }
                 else 
                 {
+                    temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     ConvertToMonster(temp);
-                    temp.Converted = "0";
                     dprint("\n");
                 }
             }
@@ -103,6 +103,7 @@ void() ConvertEntities = {
                 else if(temp.classname == "item_armor1" || temp.classname == "item_armor2"
                 || (temp.classname == "item_health" && !(temp.spawnflags & H_MEGA)))
                 {
+                    temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     if (RandomMode == 0)
                     {
@@ -112,11 +113,11 @@ void() ConvertEntities = {
                     {
                         ConvertToPickupUnbiased(temp);
                     }
-                    temp.Converted = "0";
                     dprint("\n");
                 }
                 else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells")
                 {
+                    temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     if (RandomMode == 0)
                     {
@@ -126,13 +127,13 @@ void() ConvertEntities = {
                     {
                         ConvertToAmmoUnbiased(temp);
                     }
-                    temp.Converted = "0";
                     dprint("\n");
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage")
                 {
+                    temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     if (RandomMode == 0)
                     {
@@ -142,13 +143,13 @@ void() ConvertEntities = {
                     {
                         ConvertToPowerupUnbiased(temp);
                     }
-                    temp.Converted = "0";
                     dprint("\n");
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
                 || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning")
                 {
+                    temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     if (RandomMode == 0)
                     {
@@ -158,7 +159,6 @@ void() ConvertEntities = {
                     {
                         ConvertToWeaponUnbiased(temp);
                     }
-                    temp.Converted = "0";
                     dprint("\n");
                 }
             }
@@ -198,7 +198,6 @@ void(entity e) ConvertToMonster = {
             ConvertToMonsterOnGroundUnbiased(e);
         }
     }
-    e.Converted = "1";
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
@@ -210,7 +209,6 @@ void(entity e) ConvertToMonsterOnGroundUnbiased = {
     rng = Random(1, 12);
     e.think = Converters[rng - 1];
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // To convert a monster present in water.
@@ -222,7 +220,6 @@ void(entity e) ConvertToMonsterOnWaterUnbiased = {
     rng = Random(1, 13);
     e.think = Converters[rng - 1];
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
@@ -249,7 +246,6 @@ void(entity e) ConvertToMonsterOnGroundBiased = {
         }
         i++;
     }
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -277,7 +273,6 @@ void(entity e) ConvertToMonsterOnWaterBiased = {
         }
         i++;
     }
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -290,7 +285,6 @@ void(entity e) ConvertToPickupUnbiased = {
     rngQuality = Random(1, 2);
     e.think = Converters[rngType - 1];
     e.QualityType = floor(rngQuality);
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -311,20 +305,14 @@ void(entity e) ConvertToPickupBiased = {
         }
         else
         {
-            if(!IsNearOtherArmor(e))
-                e.think = ConvertToArmor;
-            else
-                e.think = ConvertToHealth;
+            e.think = ConvertToArmor;
         }
     }
     else if(e.classname == "item_armor1" || e.classname == "item_armor2")
     {
         if(rngType >= 1 && rngType <= ProbabilityForSameType)
         { 
-            if(!IsNearOtherArmor(e))
-                e.think = ConvertToArmor;
-            else
-                e.think = ConvertToHealth;
+            e.think = ConvertToArmor;
         }
         else
         {
@@ -332,7 +320,6 @@ void(entity e) ConvertToPickupBiased = {
         }
     }
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // Converts ammo of one type to another randomly.
@@ -355,7 +342,6 @@ void(entity e) ConvertToAmmoUnbiased = {
         e.think = ConvertToAmmoBackpack;
     }
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // Converts ammo of one type to another randomly.
@@ -402,7 +388,6 @@ void(entity e) ConvertToAmmoBiased = {
         ConvertToWeaponBiased(e);
         return;
     }
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -415,7 +400,6 @@ void(entity e) ConvertToPowerupUnbiased = {
     if(rng == 4 || rng == 5)
         e.QualityType = 3;
     e.think = Converters[rng - 1];
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -428,7 +412,6 @@ void(entity e) ConvertToGuaranteedPowerup = {
     if(rng == 4)
         e.QualityType = 3;
     e.think = Converters[rng - 1];
-    e.Converted = "1";
     e.nextthink = time;
 };
 
@@ -465,7 +448,6 @@ void(entity e) ConvertToPowerupBiased = {
         i++;
     }
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // Converts a weapon of one type to another randomly.
@@ -483,7 +465,6 @@ void(entity e) ConvertToWeaponUnbiased = {
         e.think = ConvertToWeaponBackpack;
     }
     e.nextthink = time;
-    e.Converted = "1";
 };
 
 // Converts a weapon of one type to another randomly.
@@ -562,5 +543,4 @@ void(entity e) ConvertToWeaponBiased = {
         }
     }
     e.nextthink = time;
-    e.Converted = "1";
 };

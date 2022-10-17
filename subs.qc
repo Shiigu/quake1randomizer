@@ -502,12 +502,10 @@ float(entity head) IsNearOtherArmor =
 
 		// Search for all entities in a 256 unit radius
 		e = findradius(head.origin, 256);
-
 		while(e)
 		{
 			if(e.Converted == "1" && (e.classname == "item_armor1" || e.classname == "item_armor2" || e.classname == "item_armorInv"))
 			{
-				dprint(" (REROLL ARMOR) ");
 				return TRUE;
 			}
 			e = e.chain;

@@ -242,8 +242,9 @@ void() ConvertToFiend =
 	self.th_melee = Demon_MeleeAttack;		// one of two attacks
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -284,8 +285,9 @@ void() ConvertToDog =
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
 
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -325,8 +327,9 @@ void() ConvertToEnforcer =
 	self.th_missile = enf_atk1;
 	self.th_melee = SUB_Null;
 
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -367,8 +370,9 @@ void() ConvertToRotfish =
 	self.th_melee = f_attack1;
 	self.th_missile = SUB_Null;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	swimmonster_start ();
 };
@@ -409,8 +413,9 @@ void() ConvertToDeathKnight =
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -450,8 +455,9 @@ void() ConvertToKnight =
 	self.th_die = knight_die;
 	self.th_missile = SUB_Null;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -492,8 +498,9 @@ void() ConvertToOgre =
 	self.th_missile = ogre_nail1;
 	self.th_pain = ogre_pain;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -533,8 +540,9 @@ void() ConvertToVore =
 	self.th_missile = shal_attack1;
 	self.th_melee = SUB_Null;
 
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -574,8 +582,9 @@ void() ConvertToShambler =
 	self.th_missile = sham_magic1;
 	self.th_pain = sham_pain;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -615,8 +624,9 @@ void() ConvertToGrunt =
 	self.th_die = army_die;
 	self.th_melee = SUB_Null;
 
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -657,8 +667,9 @@ void() ConvertToSpawn =
 	self.th_die = tbaby_die1;
 	self.th_pain = SUB_Null;
 	
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -699,8 +710,9 @@ void() ConvertToScrag =
 	self.th_die = wiz_die;
 	self.th_melee = SUB_Null;
 		
-	dprint(self.classname);
+	dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	flymonster_start ();
 };
@@ -739,8 +751,9 @@ void() ConvertToZombie =
 	self.th_missile = zombie_missile;
 	self.th_melee = SUB_Null;
 
-    dprint(self.classname);
+    dprint(self.classname);	
 	dprint("\n");	
+	self.Converted = "1";	
 
 	walkmonster_start();
 };
@@ -784,15 +797,23 @@ void() ConvertToHealth =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.healamount));
-	dprint(")");
-	dprint("\n");
+	dprint(")");	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
 // Converts item into an Armor suit
 // "type" contains whether it's a Green Armor, Yellow Armor or Red Armor
+// If there's nearby armor, it will turn into a Health Pack of the same quality instead.
 void() ConvertToArmor =
-{	
+{
+	if(IsNearOtherArmor(self))
+	{
+		dprint(" (armor to health) ");
+		ConvertToHealth();
+		return;
+	}
 	dprint("Converted ");
 	dprint(self.classname);
 	dprint(" to ");
@@ -813,8 +834,9 @@ void() ConvertToArmor =
     	self.classname = "item_armorInv";
     }
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -849,8 +871,9 @@ void() ConvertToShells =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");
-	dprint("\n");
+	dprint(")");	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -881,8 +904,9 @@ void() ConvertToNails =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");
-	dprint("\n");
+	dprint(")");	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -913,8 +937,9 @@ void() ConvertToRockets =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");
-	dprint("\n");
+	dprint(")");	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -945,8 +970,9 @@ void() ConvertToCells =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");
-	dprint("\n");
+	dprint(")");	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -969,8 +995,9 @@ void() ConvertToPentagramOfProtection =
 	self.items = IT_INVULNERABILITY;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -989,8 +1016,9 @@ void() ConvertToBiosuit =
 	self.items = IT_SUIT;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1009,8 +1037,9 @@ void() ConvertToRingOfShadows =
 	self.items = IT_INVISIBILITY;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1029,8 +1058,9 @@ void() ConvertToQuadDamage =
 	self.items = IT_QUAD;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1052,8 +1082,9 @@ void() ConvertToDoubleBarrelledShotgun =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1071,8 +1102,9 @@ void() ConvertToNailgun =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1090,8 +1122,9 @@ void() ConvertToSuperNailgun =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1109,8 +1142,9 @@ void() ConvertToGrenadeLauncher =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1128,8 +1162,9 @@ void() ConvertToRocketLauncher =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1147,8 +1182,9 @@ void() ConvertToThunderbolt =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1217,8 +1253,9 @@ void() ConvertToWeaponBackpack =
 	setmodel (self, "progs/backpack.mdl");
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.touch = BackpackTouch_Replaced;
-	dprint(self.classname);
-	dprint("\n");
+	dprint(self.classname);	
+	dprint("\n");	
+	self.Converted = "1";
 	StartItem ();
 };
 
@@ -1290,8 +1327,9 @@ void() ConvertToAmmoBackpack =
 	self.movetype = MOVETYPE_TOSS;
 	setmodel (self, "progs/backpack.mdl");
 	setsize (self, '-16 -16 0', '16 16 56');
-	self.touch = BackpackTouch_Replaced;
+	self.touch = BackpackTouch_Replaced;	
 	dprint("\n");	
+	self.Converted = "1";	
 	StartItem ();
 };
 
