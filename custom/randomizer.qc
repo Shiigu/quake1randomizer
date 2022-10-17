@@ -87,7 +87,7 @@ void() ConvertEntities = {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     ConvertToMonster(temp);
-                    dprint("\n");
+                    dprint("Flagged as a monster.\n");
                 }
             }
             else if(temp.flags & FL_ITEM)
@@ -113,7 +113,7 @@ void() ConvertEntities = {
                     {
                         ConvertToPickupUnbiased(temp);
                     }
-                    dprint("\n");
+                    dprint("Flagged as a pickup.\n");
                 }
                 else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells")
                 {
@@ -127,7 +127,7 @@ void() ConvertEntities = {
                     {
                         ConvertToAmmoUnbiased(temp);
                     }
-                    dprint("\n");
+                    dprint("Flagged as ammo.\n");
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
@@ -143,7 +143,7 @@ void() ConvertEntities = {
                     {
                         ConvertToPowerupUnbiased(temp);
                     }
-                    dprint("\n");
+                    dprint("Flagged as a powerup.\n");
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
@@ -159,7 +159,7 @@ void() ConvertEntities = {
                     {
                         ConvertToWeaponUnbiased(temp);
                     }
-                    dprint("\n");
+                    dprint("Flagged as a weapon.\n");
                 }
             }
             else 
@@ -439,11 +439,13 @@ void(entity e) ConvertToPowerupBiased = {
                 e.QualityType = 3;
             if(i == 5)
             {
-                if(IsNearAWaterSurface(e))
-                    e.think = Converters[i];
-                else
+                if(!IsNearAWaterSurface(e))
+                {
                     ConvertToWeaponBiased(e);
+                    return;
+                }
             }
+            e.think = Converters[i];
         }
         i++;
     }
