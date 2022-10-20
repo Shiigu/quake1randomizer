@@ -1,6 +1,7 @@
 ../progs.dat
 
 defs.qc
+custom/menu.qc
 custom/extras.qc
 custom/math.qc
 subs.qc

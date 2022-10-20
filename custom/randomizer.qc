@@ -22,36 +22,32 @@ void(entity e) ConvertToWeaponUnbiased;
     - "Powerup" for Megahealth, Red Armor and Powerups */
 
 entity Placeholder;
-float RandomMode; // 1 (default) will be a biased mode to give the player a fairly fair fight. 2 will give every monster and item the same chance to show up.
-                  // Same value as gamecfg cvar.
 
 float SpawnedWeapons; // For Biased mode. Includes which weapons have been added.
-float HideInBackpacks; // If TRUE, all Weapons and Ammo are "hidden" as backpacks.
+
 
 void() Randomize = {
-    RandomMode = cvar("gamecfg");
-    HideInBackpacks = cvar("scratch1");
+    RandomMode = cvar("savedgamecfg");
+    UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
+    HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;
     SpawnedWeapons = 0;
     dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
     dprint(ftos(RandomMode));
+    dprint(".\n");
+    dprint("UnbiasedMode is ");
+    dprint(ftos(UnbiasedMode));
     dprint(". ");
-    if (RandomMode == 0)
-    {
-        dprint("Starting biased randomizer.\n");
-    }
-    else if (RandomMode == 1)
+    if (UnbiasedMode)
     {
         dprint("Starting unbiased randomizer. Don't say I didn't warn you.\n");
     }
-    else if (RandomMode < 0 || RandomMode > 1)
-    {
-        dprint("Mode is invalid. Must be 0 or 1. Cancelling randomizing.\n");
-        return;
-    }
+    dprint("HideInBackpacks is ");
+    dprint(ftos(HideInBackpacks));
+    dprint(". ");
     if(HideInBackpacks)
     {
-        dprint("scratch1 is 1. All weapons and ammo will be disguised as backpacks.\n");
+        dprint("Backpack Mode is enabled. All weapons and ammo will be disguised as backpacks.\n");
     }
     Placeholder = spawn(); // Temporary entity to call the randomizer functions in order    
 	Placeholder.think = ConvertEntities;
@@ -105,11 +101,11 @@ void() ConvertEntities = {
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
-                    if (RandomMode == 0)
+                    if (!UnbiasedMode)
                     {
                         ConvertToPickupBiased(temp);
                     }
-                    else if (RandomMode == 1)
+                    else
                     {
                         ConvertToPickupUnbiased(temp);
                     }
@@ -119,11 +115,11 @@ void() ConvertEntities = {
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
-                    if (RandomMode == 0)
+                    if (!UnbiasedMode)
                     {
                         ConvertToAmmoBiased(temp);
                     }
-                    else if (RandomMode == 1)
+                    else
                     {
                         ConvertToAmmoUnbiased(temp);
                     }
@@ -135,11 +131,11 @@ void() ConvertEntities = {
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
-                    if (RandomMode == 0)
+                    if (!UnbiasedMode)
                     {
                         ConvertToPowerupBiased(temp);
                     }
-                    else if (RandomMode == 1)
+                    else
                     {
                         ConvertToPowerupUnbiased(temp);
                     }
@@ -151,11 +147,11 @@ void() ConvertEntities = {
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
-                    if (RandomMode == 0)
+                    if (!UnbiasedMode)
                     {
                         ConvertToWeaponBiased(temp);
                     }
-                    else if (RandomMode == 1)
+                    else
                     {
                         ConvertToWeaponUnbiased(temp);
                     }
@@ -178,22 +174,22 @@ void() ConvertEntities = {
 void(entity e) ConvertToMonster = {
     if(pointcontents(e.origin) != CONTENT_EMPTY)
     {
-        if (RandomMode == 0)
+        if (!UnbiasedMode)
         {
             ConvertToMonsterOnWaterBiased(e);
         }
-        else if (RandomMode == 1)
+        else
         {
             ConvertToMonsterOnWaterUnbiased(e);
         }
     }
     else
     {
-        if (RandomMode == 0)
+        if (!UnbiasedMode)
         {
             ConvertToMonsterOnGroundBiased(e);
         }
-        else if (RandomMode == 1)
+        else
         {
             ConvertToMonsterOnGroundUnbiased(e);
         }

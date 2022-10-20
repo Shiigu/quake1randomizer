@@ -1353,7 +1353,7 @@ void() BackpackTouch =
 	W_SetCurrentAmmo ();
 };
 
-// BackpackTouch for items disguised as backpacks ("scratch1" = 1)
+// BackpackTouch for items disguised as backpacks
 void() BackpackTouch_Replaced =
 {
 	local string s;

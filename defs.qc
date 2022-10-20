@@ -690,4 +690,12 @@ float (entity e, float healamount, float ignore) T_Heal; // health function
 
 float(entity targ, entity inflictor) CanDamage;
 
+// custom/randomizer.qc
+
+float RandomMode;          			// Contains all the flags for Random Mode. Same value as savedgamecfg cvar.
+float RANDOM_UNBIASED_MODE = 1; 	// If present, it enters unbiased mode where the randomizer will NOT play fair.
+float RANDOM_BACKPACK_MODE = 2;   	// If present, it hides all weapons and ammo in backpacks.
+
+float UnbiasedMode; // If TRUE, randomizer won't play fair.
+float HideInBackpacks; // If TRUE, all Weapons and Ammo are "hidden" as backpacks.
 

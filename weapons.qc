@@ -947,6 +947,8 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
+	if(InRandomMenu) return; // Don't change weapons if in the menu
+
 	local	float	it, am, fl;
 	
 	it = self.items;
@@ -1231,6 +1233,13 @@ ImpulseCommands
 */
 void() ImpulseCommands =
 {
+	if(InRandomMenu)
+	{
+		CheckMenuImpulses();
+		self.impulse = 0;
+		return;
+	}
+
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 
@@ -1242,7 +1251,8 @@ void() ImpulseCommands =
 		ServerflagsCommand ();
 	if (self.impulse == 12)
 		CycleWeaponReverseCommand ();
-
+	if (self.impulse == 24)
+		EnterRandomMenu ();
 	if (self.impulse == 255)
 		QuadCheat ();
 		
