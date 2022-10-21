@@ -6,8 +6,11 @@ This mod (compatible with both the classic and remastered releases of Quake 1) h
 
 To set up the game modes, press the 'M' key, and a menu will show up. Follow the instructions in there.
 
-> In case you accidentally overwrote the 'M' keybind, the command to bring up the menu is "impulse 24".
-> The Randomizer modes are stored in the savedgamecfg cvar.
+> In case you accidentally overwrote the 'M' keybind, the command to bring up the menu is `impulse 24`.
+
+> The Randomizer modes are stored in the `savedgamecfg` cvar.
+
+> It is possible to preset a seed by storing it in the `gamecfg` cvar. In the "Seed settings" menu you can see the seed used for the actual level in case you wish to keep it (as well as the option to force the game to reuse that seed until it's closed or the option is changed).
 
 ## Item categories
 
@@ -74,6 +77,7 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Armor Suit|Armor Suit|90%|
 
 > Either quality of Health Pack (15 or 25) or Armor Suit (Green or Yellow) is equally likely to be picked.
+
 > An Armor Suit cannot spawn if there's another Armor Suit (regardless of color) up to 256 units away from it. If there is, it spawns a Health Crate of the same quality level instead.
 
 #### Ammo replacement chances on Biased Mode
@@ -109,7 +113,9 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |A weapon or a Biosuit|10%|
 
 > A Red Armor suit cannot spawn if there's another suit of armor (regardless of color) up to 256 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
+
 > Whether a weapon or a Biosuit is spawned depends on whether there's a liquid surface up to 256 units away from its center.
+
 > The odds for which weapon to be spawned are defined below.
 
 #### Weapon replacement chances on Biased Mode
