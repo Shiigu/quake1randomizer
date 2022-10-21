@@ -30,6 +30,14 @@ void() Randomize = {
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
     HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;
+	fixedSeed = floor(cvar("gamecfg"));
+	if(fixedSeed > 0)
+	{
+        seed = fixedSeed;
+        seedIsFixed = 1;
+    }
+	else
+		seed = floor(2147483647 * random());
     SpawnedWeapons = 0;
     dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
@@ -37,7 +45,10 @@ void() Randomize = {
     dprint(".\n");
     dprint("UnbiasedMode is ");
     dprint(ftos(UnbiasedMode));
-    dprint(". ");
+    dprint(".\n");
+    dprint("Seed is ");
+    dprint(ftos(seed));
+    dprint(".\n");
     if (UnbiasedMode)
     {
         dprint("Starting unbiased randomizer. Don't say I didn't warn you.\n");

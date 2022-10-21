@@ -3,6 +3,7 @@ float pow(float x, float y);
 float max(float a, float b);
 float min(float a, float b);
 float mod(float a, float b);
+float rand();
 
 /*
 * sqrt
@@ -86,4 +87,23 @@ float min(float a, float b) = {
 
 float mod(float a, float b) = {
     return a - (floor(a/b) * b);
+};
+
+/*
+*
+* POSIX-like linear congruent random number generation.
+* Provides the ability to use a specific seed.
+* 
+*/
+
+float seed, next, seedIsFixed;
+
+float rand() = {
+    float rng;
+    float a = 214013;
+    float c = 2531011;
+    float m = 2147483647;
+    if(next == 0) next = seed;
+    next = (next * a + c) % m;
+    return next / 65536;                // Bitshift 16 to the right
 };

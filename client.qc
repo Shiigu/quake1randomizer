@@ -7,7 +7,7 @@ void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 
-float	modelindex_eyes, modelindex_player;
+float	modelindex_eyes, modelindex_player, fixedSeed;
 
 /*
 =============================================================================
@@ -485,7 +485,6 @@ void() Randomize;
 void() PutClientInServer =
 {
 	local	entity spot;
-
 	spot = SelectSpawnPoint ();
 	Randomize();
 	self.classname = "player";
