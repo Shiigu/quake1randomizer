@@ -37,7 +37,8 @@ void() Randomize = {
         seedIsFixed = 1;
     }
 	else
-		seed = floor(2147483647 * random());
+		seed = floor(1000000 * random());
+    next = 0;
     SpawnedWeapons = 0;
     dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
@@ -48,6 +49,8 @@ void() Randomize = {
     dprint(".\n");
     dprint("Seed is ");
     dprint(ftos(seed));
+    if(seedIsFixed)
+        dprint(" (FIXED)");
     dprint(".\n");
     if (UnbiasedMode)
     {
@@ -55,11 +58,11 @@ void() Randomize = {
     }
     dprint("HideInBackpacks is ");
     dprint(ftos(HideInBackpacks));
-    dprint(". ");
     if(HideInBackpacks)
     {
-        dprint("Backpack Mode is enabled. All weapons and ammo will be disguised as backpacks.\n");
+        dprint("Backpack Mode is enabled. All weapons and ammo will be disguised as backpacks");
     }
+    dprint(".\n");
     Placeholder = spawn(); // Temporary entity to call the randomizer functions in order    
 	Placeholder.think = ConvertEntities;
 	Placeholder.nextthink = time;

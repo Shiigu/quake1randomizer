@@ -99,11 +99,10 @@ float mod(float a, float b) = {
 float seed, next, seedIsFixed;
 
 float rand() = {
-    float rng;
-    float a = 214013;
-    float c = 2531011;
-    float m = 2147483647;
+    float a = 11;
+    float c = 10653;
+    float m = 1000000;
     if(next == 0) next = seed;
-    next = (next * a + c) % m;
-    return next / 65536;                // Bitshift 16 to the right
+    next = floor((next * a + c) % m);
+    return next;
 };

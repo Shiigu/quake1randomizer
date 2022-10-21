@@ -58,7 +58,7 @@ void() PlaceItem =
 
 	self.origin_z = self.origin_z + 1;
 	
-	if(self.classname == "item_key1" || self.classname == "item_key2" || self.classname == "item_sigil")
+	if(self.Converted != "1" || self.classname == "item_key1" || self.classname == "item_key2" || self.classname == "item_sigil")
 		return;
 	
 	IS_IN_TELEPORTER = IsTouchingTeleporter(self);

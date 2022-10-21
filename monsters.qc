@@ -77,33 +77,36 @@ void() walkmonster_start_go =
 	local float IS_IN_TELEPORTER;
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 
-	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
+	if(self.Converted == "1")
+	{
+		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-	if(!IS_IN_TELEPORTER)
-	{
-		droptofloor();
-	}
-	
-	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
-	{
-		old_x = self.origin_x;
-		old_y = self.origin_y;
-		old_z = self.origin_z;
-		UnstuckMonster(self, 0);
-	}
+		if(!IS_IN_TELEPORTER)
+		{
+			droptofloor();
+		}
+		
+		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		{
+			old_x = self.origin_x;
+			old_y = self.origin_y;
+			old_z = self.origin_z;
+			UnstuckMonster(self, 0);
+		}
 
-	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
-	{
-		self.origin_x = old_x;
-		self.origin_y = old_y;
-		self.origin_z = old_z;
-		dprint ("\nUnstuck failed. walkmonster ");
-		dprint (self.classname);
-		dprint (" killed at: ");
-		dprint (vtos(self.origin));
-		T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
-		dprint ("\n");
-		return;
+		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		{
+			self.origin_x = old_x;
+			self.origin_y = old_y;
+			self.origin_z = old_z;
+			dprint ("\nUnstuck failed. walkmonster ");
+			dprint (self.classname);
+			dprint (" killed at: ");
+			dprint (vtos(self.origin));
+			T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
+			dprint ("\n");
+			return;
+		}
 	}
 	
 	self.takedamage = DAMAGE_AIM;
@@ -170,28 +173,31 @@ void() flymonster_start_go =
 	self.flags = self.flags | FL_FLY;
 	self.flags = self.flags | FL_MONSTER;
 
-	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
-
-	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+	if(self.Converted == "1")
 	{
-		old_x = self.origin_x;
-		old_y = self.origin_y;
-		old_z = self.origin_z;
-		UnstuckMonster(self, 1);
-	}
+		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-	if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
-	{
-		self.origin_x = old_x;
-		self.origin_y = old_y;
-		self.origin_z = old_z;
-		dprint ("\nUnstuck failed. flymonster ");
-		dprint (self.classname);
-		dprint (" killed at: ");
-		dprint (vtos(self.origin));
-		T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
-		dprint ("\n");
-		return;
+		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		{
+			old_x = self.origin_x;
+			old_y = self.origin_y;
+			old_z = self.origin_z;
+			UnstuckMonster(self, 1);
+		}
+
+		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		{
+			self.origin_x = old_x;
+			self.origin_y = old_y;
+			self.origin_z = old_z;
+			dprint ("\nUnstuck failed. flymonster ");
+			dprint (self.classname);
+			dprint (" killed at: ");
+			dprint (vtos(self.origin));
+			T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
+			dprint ("\n");
+			return;
+		}
 	}
 
 	if (self.target)
