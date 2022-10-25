@@ -325,7 +325,7 @@ void() ConvertToEnforcer =
 	self.th_pain = enf_pain;
 	self.th_die = enf_die;
 	self.th_missile = enf_atk1;
-	self.th_melee = SUB_Null;
+	self.th_melee = enf_atk1;
 
 	dprint(self.classname);	
 	dprint("\n");	
@@ -538,7 +538,7 @@ void() ConvertToVore =
 	self.th_die = shalrath_die;
 	self.th_pain = shalrath_pain;
 	self.th_missile = shal_attack1;
-	self.th_melee = SUB_Null;
+	self.th_melee = shal_attack1;
 
 	dprint(self.classname);	
 	dprint("\n");	
@@ -622,7 +622,7 @@ void() ConvertToGrunt =
 	self.th_missile = army_atk1;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
-	self.th_melee = SUB_Null;
+	self.th_melee = army_atk1;
 
 	dprint(self.classname);	
 	dprint("\n");	
@@ -708,7 +708,7 @@ void() ConvertToScrag =
 	self.th_missile = Wiz_Missile;
 	self.th_pain = Wiz_Pain;
 	self.th_die = wiz_die;
-	self.th_melee = SUB_Null;
+	self.th_melee = Wiz_Missile;
 		
 	dprint(self.classname);	
 	dprint("\n");	
@@ -749,7 +749,7 @@ void() ConvertToZombie =
 	self.th_pain = zombie_pain;
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
-	self.th_melee = SUB_Null;
+	self.th_melee = zombie_missile;
 
     dprint(self.classname);	
 	dprint("\n");	
