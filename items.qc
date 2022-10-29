@@ -229,6 +229,10 @@ void() health_touch =
 				self.nextthink = time + 20;
 			self.think = SUB_regen;
 		}
+		else
+		{
+			self.think = SUB_Null;
+		}
 	}
 	
 	activator = other;
@@ -254,6 +258,10 @@ void() item_megahealth_rot =
 	{
 		self.nextthink = time + 20;
 		self.think = SUB_regen;
+	}
+	else
+	{
+		self.think = SUB_Null;
 	}
 };
 
@@ -304,8 +312,14 @@ void() armor_touch =
 	self.solid = SOLID_NOT;
 	self.model = string_null;
 	if (deathmatch == 1)
+	{	
 		self.nextthink = time + 20;
-	self.think = SUB_regen;
+		self.think = SUB_regen;
+	}
+	else
+	{
+		self.think = SUB_Null;
+	}
 
 	sprint(other, "You got armor\n");
 // armor touch sound
@@ -524,8 +538,14 @@ void() weapon_touch =
 	self.model = string_null;
 	self.solid = SOLID_NOT;
 	if (deathmatch == 1)
+	{
 		self.nextthink = time + 30;
-	self.think = SUB_regen;
+		self.think = SUB_regen;
+	}
+	else
+	{
+		self.think = SUB_Null;
+	}
 	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
@@ -705,8 +725,14 @@ local float		best;
 	self.model = string_null;
 	self.solid = SOLID_NOT;
 	if (deathmatch == 1)
+	{	
 		self.nextthink = time + 30;
-	self.think = SUB_regen;
+		self.think = SUB_regen;
+	}
+	else
+	{
+		self.think = SUB_Null;
+	}
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
@@ -1132,7 +1158,11 @@ local float		best;
 			self.nextthink = time + 60;
 		
 		self.think = SUB_regen;
-	}	
+	}
+	else
+	{
+		self.think = SUB_Null;
+	}
 
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
@@ -1486,7 +1516,11 @@ void() BackpackTouch_Replaced =
 	if (deathmatch == 1)
 	{
 		self.think = SUB_regen;
-		self.nextthink = time + 1;
+		self.nextthink = time + 30;
+	}
+	else
+	{
+		self.think = SUB_Null;
 	}
 };
 
