@@ -2,7 +2,7 @@ float InRandomMenu; // 1 if in the menus, 0 otherwise. Used to take priority on 
 float CurrentMenu;  // Contains the current menu the player is
     float MAIN_MENU = 1;        // Main Menu
     float UNBIASED_MENU = 2;    // Menu to enable or disable Unbiased Mode
-    float BACKPACKS_MENU = 3;   // Menu to enable or disable Backpacks Mode
+    float BACKPACKS_MENU = 3;   // Menu to enable or disable Backpack Mode
     float SEED_MENU = 4;       // Seed Menu
     float ABOUT_MENU = 5;       // "About" Menu
 
@@ -37,13 +37,13 @@ void() EnterRandomMenu = {
 
 void() MainMenu = {
     if(!UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpacks Mode is Disabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
     else if(UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Unbiased\nBackpacks Mode is Disabled\n\n", "[1] Set Randomizer to Biased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Unbiased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Biased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
     else if(!UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpacks Mode is Enabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
     else if(UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpacks Mode is Enabled\n\n", "[1] Set Randomizer to Biased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Biased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
     CurrentMenu = MAIN_MENU;
     InputCapturer.nextthink = time + CaptureTime;
 };
@@ -59,9 +59,9 @@ void() UnbiasedMenu = {
 
 void() BackpacksMenu = {
     if(HideInBackpacks)
-        centerprint (Client, "=== Backpacks Mode ===\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "Do you want to\ndisable Backpacks Mode?\n\n", "[1] Yes\n[2] No");
+        centerprint (Client, "=== Backpack Mode ===\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "Do you want to\ndisable Backpack Mode?\n\n", "[1] Yes\n[2] No");
     else
-        centerprint (Client, "=== Backpacks Mode ===\n\n", "WARNING\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "Do you really want to\nenable Backpacks Mode?\n\n", "[1] Yes\n[2] No");
+        centerprint (Client, "=== Backpack Mode ===\n\n", "WARNING\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "Do you really want to\nenable Backpack Mode?\n\n", "[1] Yes\n[2] No");
     CurrentMenu = BACKPACKS_MENU;
     InputCapturer.nextthink = time + CaptureTime;
 };
@@ -124,13 +124,13 @@ void() CheckMenuImpulses = {
         {
             if(HideInBackpacks)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpacks Mode DISABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode DISABLED\n\n", "(This won't take effect until\n a level is loaded)");
                 RandomMode = RandomMode - (RandomMode & RANDOM_BACKPACK_MODE);
                 HideInBackpacks = 0;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpacks Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)");
                 RandomMode = RandomMode | RANDOM_BACKPACK_MODE;
                 HideInBackpacks = 1;
             }
