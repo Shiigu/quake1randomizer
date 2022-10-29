@@ -122,12 +122,11 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 Every weapon has an even chance to be spawned.
 
-**However**, there's a specific procedure to select a weapon:
-1. First, the game rolls any weapon.
-2. It then checks if it has already spawned. If it hasn't and the weapon can be spawned*, the weapon spawns successfully. Otherwise, move on to step 3.
-3. The game instead tries to spawn the lowest-ranked weapon that hasn't spawned yet.
-4. If all weapons have spawned or the game can't spawn the picked weapon, it spawns a powerup (except for a Red Armor Suit or a Biosuit) instead.
-5. The game returns to the initial state of thinking no weapon has spawned yet (allowing duplicates).
+It works as follows:
+1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt), with the weapons the player already has placed first.
+2. It moves across the "bag" until it finds a weapon that hasn't been spawned yet and can be spawned in the target location*.
+3. If it reaches the end of the bag without picking a weapon that can be spawned in the target location*, it spawns a powerup (except for a Biosuit or Red Armor suit) instead.
+4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
 > * The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces.
 
