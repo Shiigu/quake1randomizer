@@ -486,7 +486,6 @@ void() PutClientInServer =
 {
 	local	entity spot;
 	spot = SelectSpawnPoint ();
-	Randomize();
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;
@@ -505,6 +504,13 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 
 	DecodeLevelParms ();
+	SpawnedWeapons = (self.items & IT_SUPER_SHOTGUN) | 
+        (self.items & IT_NAILGUN) | 
+        (self.items & IT_SUPER_NAILGUN) | 
+        (self.items & IT_GRENADE_LAUNCHER) | 
+        (self.items & IT_ROCKET_LAUNCHER) | 
+        (self.items & IT_LIGHTNING);
+	Randomize();
 	
 	W_SetCurrentAmmo ();
 

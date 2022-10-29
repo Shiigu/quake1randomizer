@@ -13,6 +13,7 @@ void(entity e) ConvertToPowerupBiased;
 void(entity e) ConvertToPowerupUnbiased;
 void(entity e) ConvertToWeaponBiased;
 void(entity e) ConvertToWeaponUnbiased;
+void() CreateWeaponPermutation;
 
 /* Entities will be converted to one of the same type:
     - "Monster" for Monsters
@@ -22,9 +23,7 @@ void(entity e) ConvertToWeaponUnbiased;
     - "Powerup" for Megahealth, Red Armor and Powerups */
 
 entity Placeholder;
-
-float SpawnedWeapons; // For Biased mode. Includes which weapons have been added.
-
+float IndexPermutation[6];
 
 void() Randomize = {
     RandomMode = cvar("savedgamecfg");
@@ -37,9 +36,14 @@ void() Randomize = {
         seedIsFixed = 1;
     }
 	else
-		seed = floor(1000000 * random());
+    {
+        if(time == 0)
+		    seed = floor((10000000000 * time) % 40000000);
+        else
+            seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+    }
     next = 0;
-    SpawnedWeapons = 0;
+    CreateWeaponPermutation();
     dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
     dprint(ftos(RandomMode));
@@ -69,8 +73,16 @@ void() Randomize = {
 };
 
 void() ConvertEntities = {
-    local entity temp;
-    SpawnedWeapons = 0;	
+    local entity temp;    
+    if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
+        SpawnedWeapons & IT_NAILGUN && 
+        SpawnedWeapons & IT_SUPER_NAILGUN && 
+        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
+        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
+        SpawnedWeapons & IT_LIGHTNING)
+    {
+        SpawnedWeapons = 0;
+    }
 	temp = find(world, Converted, "");
 
     dprint("----- Starting ConvertEntities -----\n");
@@ -417,8 +429,8 @@ void(entity e) ConvertToPowerupUnbiased = {
 // It can't become a Biosuit or a Red Armor. Even chances for everything.
 void(entity e) ConvertToGuaranteedPowerup = {
     local float rng;
-    rng = Random(1, 4);
     local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth };
+    rng = Random(1, 4);
     if(rng == 4)
         e.QualityType = 3;
     e.think = Converters[rng - 1];
@@ -459,6 +471,11 @@ void(entity e) ConvertToPowerupBiased = {
         }
         i++;
     }
+    if(!DONE)
+    {
+        ConvertToWeaponBiased(e);
+        return;
+    }
     e.nextthink = time;
 };
 
@@ -479,10 +496,59 @@ void(entity e) ConvertToWeaponUnbiased = {
     e.nextthink = time;
 };
 
+void() CreateWeaponPermutation = {
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
+    local float numbers[] = { 0, 1, 2, 3, 4, 5 };
+    local float shuffledNumbers[6];
+    local float rng, count, i, j, shuffled;
+    count = 6;
+    // If the player owns SOME of the spawnable weapons, but not all of them, place them first in the shuffled list because they will be skipped
+    if(SpawnedWeapons && !(SpawnedWeapons & IT_SUPER_SHOTGUN && 
+        SpawnedWeapons & IT_NAILGUN && 
+        SpawnedWeapons & IT_SUPER_NAILGUN && 
+        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
+        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
+        SpawnedWeapons & IT_LIGHTNING))
+    {
+        rng = 0;
+        shuffled = 1;
+        for(j = 0; j < 6 && shuffled; j++)
+        {
+            shuffled = 0;
+            for(i = 0; i < count; i++)
+            {
+                if(rng < 6)
+                {
+                    if(SpawnedWeapons & PickupTypes[i])
+                    {
+                        shuffled = 1;
+                        shuffledNumbers[rng] = numbers[i];
+                        numbers[i] = numbers[count - 1];
+                        PickupTypes[i] = PickupTypes[count - 1];
+                        count = count - 1;
+                        rng = rng + 1;
+                    }
+                }
+            }
+        }
+    }
+    for(i = (6 - count); i < 5; i++)
+    {
+        rng = Random(0, (count - 1));
+        shuffledNumbers[i] = numbers[rng];
+        numbers[rng] = numbers[count - 1];
+        PickupTypes[rng] = PickupTypes[count - 1];
+        count = count - 1;
+    }
+    shuffledNumbers[i] = numbers[count - 1];
+    for(i = 0; i < 6; i++)
+        IndexPermutation[i] = shuffledNumbers[i];
+};
+
 // Converts a weapon of one type to another randomly.
 // Chances are completely even, even in Biased mode. However, in Biased mode, a weapon may not appear more than once if any of the other weapons hasn't appeared yet.
 // If all weapons have spawned, it will instead spawn a powerup. Then it will allow weapons again.
-// Thunderbolts can't be spawned in liquid surfaces.
+// Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup instead.
 void(entity e) ConvertToWeaponBiased = {
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
@@ -493,66 +559,48 @@ void(entity e) ConvertToWeaponBiased = {
     {
         ConvertToGuaranteedPowerup(e);
         SpawnedWeapons = 0;
+        CreateWeaponPermutation();
         return;
     }
-    local float rng, DONE, i, amountOfChoices, currentSurface, isValidSurface;
+    local float i, currentSurface, isValidSurface;
     local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
-    local float PickedWeapon;
-    amountOfChoices = PickupTypes.length;
-    DONE = 0;
-    rng = Random(1, 6);
-    PickedWeapon = PickupTypes[rng - 1];
-    if(PickedWeapon != IT_LIGHTNING)
-        isValidSurface = 1;
-    else
+    local float WeaponPermutation[6];
+    local void() ConvertersPermutation[6];
+    for(i = 0; i < 6; i++)
     {
-        currentSurface = pointcontents(e.origin);
-        isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
+        ConvertersPermutation[i] = Converters[IndexPermutation[i]];
+        WeaponPermutation[i] = PickupTypes[IndexPermutation[i]];
     }
-    if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
+    local float PickedWeapon;
+    for(i = 0; i < 6; i++)
     {
-        if(!HideInBackpacks)
-            e.think = Converters[rng - 1];
+        PickedWeapon = WeaponPermutation[i];
+        if(PickedWeapon != IT_LIGHTNING)
+            isValidSurface = 1;
         else
         {
-            e.PickupType = PickedWeapon;
-            e.think = ConvertToWeaponBackpack;
+            currentSurface = pointcontents(e.origin);
+            isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
         }
-        SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-    }
-    else
-    {
-        // If it rolled an already-spawned weapon (or tried to spawn a Thunderbolt in a liquid), it will instead spawn the lowest-ranked weapon not yet present.
-        for(i = 0; i < amountOfChoices && !DONE; i++)
+        if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
         {
-            PickedWeapon = PickupTypes[i];
-            if(PickedWeapon != IT_LIGHTNING)
-                isValidSurface = 1;
+            if(!HideInBackpacks)
+                e.think = ConvertersPermutation[i];
             else
             {
-                currentSurface = pointcontents(e.origin);
-                isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
+                e.PickupType = PickedWeapon;
+                e.think = ConvertToWeaponBackpack;
             }
-            if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
-            {
-                DONE = 1;
-                if(!HideInBackpacks)
-                    e.think = Converters[i];
-                else
-                {
-                    e.PickupType = PickedWeapon;
-                    e.think = ConvertToWeaponBackpack;
-                }
-                SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-            }
+            SpawnedWeapons = SpawnedWeapons | PickedWeapon;
+            break;
         }
-        if(!DONE) 
-        {
-            // If all weapons were rolled (or yet again tried to spawn a Thunderbolt in water), it will instead spawn a powerup.
-            ConvertToGuaranteedPowerup(e);
-            return;
-        }
+    }
+    if(i == 6) 
+    {
+        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup.
+        ConvertToGuaranteedPowerup(e);
+        return;
     }
     e.nextthink = time;
 };

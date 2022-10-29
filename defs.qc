@@ -696,6 +696,7 @@ float RandomMode;          			// Contains all the flags for Random Mode. Same va
 float RANDOM_UNBIASED_MODE = 1; 	// If present, it enters unbiased mode where the randomizer will NOT play fair.
 float RANDOM_BACKPACK_MODE = 2;   	// If present, it hides all weapons and ammo in backpacks.
 
-float UnbiasedMode; // If TRUE, randomizer won't play fair.
-float HideInBackpacks; // If TRUE, all Weapons and Ammo are "hidden" as backpacks.
-
+float UnbiasedMode;    				// If TRUE, randomizer won't play fair.
+float HideInBackpacks; 				// If TRUE, all Weapons and Ammo are "hidden" as backpacks.
+float SpawnedWeapons;  				// For Biased mode. Includes which weapons have been added.
+					   				// The player's current weapons are included in the list to favor spawning unobtained weapons.

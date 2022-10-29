@@ -810,7 +810,6 @@ void() ConvertToArmor =
 {
 	if(IsNearOtherArmor(self))
 	{
-		dprint(" (armor to health) ");
 		ConvertToHealth();
 		return;
 	}
