@@ -104,5 +104,5 @@ float rand() = {
     float m = 1000000;
     if(next == 0) next = seed;
     next = floor((next * a + c) % m);
-    return next;
+    return (next / m);
 };

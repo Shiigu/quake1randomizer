@@ -325,7 +325,7 @@ void (void() thinkst) SUB_CheckRefire =
 
 float(float lower, float upper) Random =
 {
-	return floor((rand() % (upper - lower + 1)) + lower);
+	return floor((rand() * (upper - lower + 1)) + lower);
 	//return floor (lower + rand() * (upper - lower + 1));
 };
 
@@ -546,7 +546,7 @@ float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
 	return FALSE;
 };
 
-// Checks if there are liquid surfaces around 256 away from the object
+// Checks if there are liquid surfaces around 256 units away from the object
 // (It does NOT check if there are liquid surfaces above the object, as that is likely to be separated by a wall)
 float(entity head) IsNearAWaterSurface =
 {
