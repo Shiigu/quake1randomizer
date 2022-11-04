@@ -1,18 +1,18 @@
 void() Randomize;
 void() ConvertEntities;
-void(entity e) ConvertToMonster;
-void(entity e) ConvertToMonsterOnGroundBiased;
-void(entity e) ConvertToMonsterOnGroundUnbiased;
-void(entity e) ConvertToMonsterOnWaterBiased;
-void(entity e) ConvertToMonsterOnWaterUnbiased;
-void(entity e) ConvertToPickupBiased;
-void(entity e) ConvertToPickupUnbiased;
-void(entity e) ConvertToAmmoBiased;
-void(entity e) ConvertToAmmoUnbiased;
-void(entity e) ConvertToPowerupBiased;
-void(entity e) ConvertToPowerupUnbiased;
-void(entity e) ConvertToWeaponBiased;
-void(entity e) ConvertToWeaponUnbiased;
+void() ConvertToMonster;
+void() ConvertToMonsterOnGroundBiased;
+void() ConvertToMonsterOnGroundUnbiased;
+void() ConvertToMonsterOnWaterBiased;
+void() ConvertToMonsterOnWaterUnbiased;
+void() ConvertToPickupBiased;
+void() ConvertToPickupUnbiased;
+void() ConvertToAmmoBiased;
+void() ConvertToAmmoUnbiased;
+void() ConvertToPowerupBiased;
+void() ConvertToPowerupUnbiased;
+void() ConvertToWeaponBiased;
+void() ConvertToWeaponUnbiased;
 void() CreateWeaponPermutation;
 
 /* Entities will be converted to one of the same type:
@@ -67,13 +67,15 @@ void() Randomize = {
         dprint("Backpack Mode is enabled. All weapons and ammo will be disguised as backpacks");
     }
     dprint(".\n");
-    Placeholder = spawn(); // Temporary entity to call the randomizer functions in order    
+    Placeholder = spawn(); // Temporary entity to call the randomizer functions in order 
 	Placeholder.think = ConvertEntities;
 	Placeholder.nextthink = time;
 };
 
 void() ConvertEntities = {
-    local entity temp;    
+    local entity temp;
+    local float i;
+    local float MAX_PER_CALL = 500;
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
         SpawnedWeapons & IT_SUPER_NAILGUN && 
@@ -84,10 +86,11 @@ void() ConvertEntities = {
         SpawnedWeapons = 0;
     }
 	temp = find(world, Converted, "");
-
+    i = 0;
     dprint("----- Starting ConvertEntities -----\n");
-	while (temp != world) // As long as it can find any entity that can be converted
+	while (temp != world && i < MAX_PER_CALL) // As long as it can find any entity that can be converted
 	{
+        temp.Converted = "0";
         if(temp.classname != "worldspawn")
         {
             if(temp.flags & FL_MONSTER)
@@ -108,7 +111,8 @@ void() ConvertEntities = {
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
-                    ConvertToMonster(temp);
+                    temp.think = ConvertToMonster;
+                    temp.nextthink = time;
                     dprint("Flagged as a monster.\n");
                 }
             }
@@ -129,26 +133,28 @@ void() ConvertEntities = {
                     temp.oldsize = temp.size;
                     if (!UnbiasedMode)
                     {
-                        ConvertToPickupBiased(temp);
+                        temp.think = ConvertToPickupBiased;
                     }
                     else
                     {
-                        ConvertToPickupUnbiased(temp);
+                        temp.think = ConvertToPickupUnbiased;
                     }
+                    temp.nextthink = time;
                     dprint("Flagged as a pickup.\n");
                 }
-                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells")
+                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon")
                 {
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
                     if (!UnbiasedMode)
                     {
-                        ConvertToAmmoBiased(temp);
+                        temp.think = ConvertToAmmoBiased;
                     }
                     else
                     {
-                        ConvertToAmmoUnbiased(temp);
+                        temp.think = ConvertToAmmoUnbiased;
                     }
+                    temp.nextthink = time;
                     dprint("Flagged as ammo.\n");
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
@@ -159,12 +165,13 @@ void() ConvertEntities = {
                     temp.oldsize = temp.size;
                     if (!UnbiasedMode)
                     {
-                        ConvertToPowerupBiased(temp);
+                        temp.think = ConvertToPowerupBiased;
                     }
                     else
                     {
-                        ConvertToPowerupUnbiased(temp);
+                        temp.think = ConvertToPowerupUnbiased;
                     }
+                    temp.nextthink = time;
                     dprint("Flagged as a powerup.\n");
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
@@ -175,12 +182,13 @@ void() ConvertEntities = {
                     temp.oldsize = temp.size;
                     if (!UnbiasedMode)
                     {
-                        ConvertToWeaponBiased(temp);
+                        temp.think = ConvertToWeaponBiased;
                     }
                     else
                     {
-                        ConvertToWeaponUnbiased(temp);
+                        temp.think = ConvertToWeaponUnbiased;
                     }
+                    temp.nextthink = time;
                     dprint("Flagged as a weapon.\n");
                 }
             }
@@ -190,63 +198,74 @@ void() ConvertEntities = {
             }
         }
 		temp = find(temp, Converted, "");
+        i++;
 	}
-    remove(Placeholder);
-    dprint("----- Finished ConvertEntities -----\n");
+    if(temp == world || i < MAX_PER_CALL)
+    {
+        remove(Placeholder);
+        dprint("----- Finished ConvertEntities -----\n");
+    }
+    else
+    {
+        Placeholder.think = ConvertEntities;
+        Placeholder.nextthink = time;
+    }
 };
+
 
 // Converts a monster from one type to another randomly.
 // Chances are completely even
-void(entity e) ConvertToMonster = {
-    if(pointcontents(e.origin) != CONTENT_EMPTY)
+void() ConvertToMonster = {
+    if(pointcontents(self.origin) != CONTENT_EMPTY)
     {
         if (!UnbiasedMode)
         {
-            ConvertToMonsterOnWaterBiased(e);
+            self.think = ConvertToMonsterOnWaterBiased;
         }
         else
         {
-            ConvertToMonsterOnWaterUnbiased(e);
+            self.think = ConvertToMonsterOnWaterUnbiased;
         }
     }
     else
     {
         if (!UnbiasedMode)
         {
-            ConvertToMonsterOnGroundBiased(e);
+            self.think = ConvertToMonsterOnGroundBiased;
         }
         else
         {
-            ConvertToMonsterOnGroundUnbiased(e);
+            self.think = ConvertToMonsterOnGroundUnbiased;
         }
     }
+    self.nextthink = time;
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
 // Every monster has an equal chance to be appear.
-void(entity e) ConvertToMonsterOnGroundUnbiased = {
+void() ConvertToMonsterOnGroundUnbiased = {
     local float rng;
     local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
                                 ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
     rng = Random(1, 12);
-    e.think = Converters[rng - 1];
-    e.nextthink = time;
+    self.think = Converters[rng - 1];
+    self.nextthink = time;
 };
 
 // To convert a monster present in water.
 // Every monster has an equal chance to be appear.
-void(entity e) ConvertToMonsterOnWaterUnbiased = {
+void() ConvertToMonsterOnWaterUnbiased = {
     local float rng;
     local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, ConvertToZombie,
                                 ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
     rng = Random(1, 13);
-    e.think = Converters[rng - 1];
-    e.nextthink = time;
+    self.think = Converters[rng - 1];
+    self.nextthink = time;
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground.
 // Monsters have an arbitrarily "fair" chance to appear.
-void(entity e) ConvertToMonsterOnGroundBiased = {
+void() ConvertToMonsterOnGroundBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
                                 ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
@@ -264,16 +283,16 @@ void(entity e) ConvertToMonsterOnGroundBiased = {
         if(rng >= minrng && rng <= maxrng)
         {
             DONE = 1;
-            e.think = Converters[i];
+            self.think = Converters[i];
         }
         i++;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // To convert a monster present in water.
 // Monsters have an arbitrarily "fair" chance to appear. Dogs and Knights are not allowed to spawn in water (because they are melee-only, and thus useless there).
-void(entity e) ConvertToMonsterOnWaterBiased = {
+void() ConvertToMonsterOnWaterBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
                                  ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
@@ -291,90 +310,90 @@ void(entity e) ConvertToMonsterOnWaterBiased = {
         if(rng >= minrng && rng <= maxrng)
         {
             DONE = 1;
-            e.think = Converters[i];
+            self.think = Converters[i];
         }
         i++;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // Converts a pickup of one type to another randomly.
 // Even chance for a non-Mega Health Pickup or a non-Red Armor Pickup.
-void(entity e) ConvertToPickupUnbiased = {
+void() ConvertToPickupUnbiased = {
     local float rngType, rngQuality;
     local void() Converters[] = { ConvertToHealth, ConvertToArmor };
     rngType = Random(1, 2);
     rngQuality = Random(1, 2);
-    e.think = Converters[rngType - 1];
-    e.QualityType = floor(rngQuality);
-    e.nextthink = time;
+    self.think = Converters[rngType - 1];
+    self.QualityType = floor(rngQuality);
+    self.nextthink = time;
 };
 
 // Converts a pickup of one type to another randomly.
 // 90% chance of being a pickup of the type it already is (Health or Armor, but quality can change), 10% of becoming of the other type.
 // If there are nearby sources of armor, it will spawn a health pack instead
-void(entity e) ConvertToPickupBiased = {
+void() ConvertToPickupBiased = {
     local float rngType, rngQuality;
     local float ProbabilityForSameType = 90;
     rngType = Random(1, 100);
     rngQuality = Random(1, 2);
-    e.QualityType = rngQuality;
-    if(e.classname == "item_health")
+    self.QualityType = rngQuality;
+    if(self.classname == "item_health")
     {
         if(rngType >= 1 && rngType <= ProbabilityForSameType)
         { 
-            e.think = ConvertToHealth;
+            self.think = ConvertToHealth;
         }
         else
         {
-            e.think = ConvertToArmor;
+            self.think = ConvertToArmor;
         }
     }
-    else if(e.classname == "item_armor1" || e.classname == "item_armor2")
+    else if(self.classname == "item_armor1" || self.classname == "item_armor2")
     {
         if(rngType >= 1 && rngType <= ProbabilityForSameType)
         { 
-            e.think = ConvertToArmor;
+            self.think = ConvertToArmor;
         }
         else
         {
-            e.think = ConvertToHealth;
+            self.think = ConvertToHealth;
         }
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // Converts ammo of one type to another randomly.
 // Even chance for all ammo types and sizes
-void(entity e) ConvertToAmmoUnbiased = {
+void() ConvertToAmmoUnbiased = {
     local float AmmoTypeRng, AmmoSizeRng;
     local void() Converters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
     local string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
-    e.QualityType = AmmoSizeRng;
-    e.netname = AmmoNetNames[AmmoTypeRng - 1];
+    self.QualityType = AmmoSizeRng;
+    self.netname = AmmoNetNames[AmmoTypeRng - 1];
     if(!HideInBackpacks)
     {    
-        e.think = Converters[AmmoTypeRng - 1];
+        self.think = Converters[AmmoTypeRng - 1];
     }
     else
     {
-        e.PickupType = AmmoTypeRng;
-        e.think = ConvertToAmmoBackpack;
+        self.PickupType = AmmoTypeRng;
+        self.think = ConvertToAmmoBackpack;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // Converts ammo of one type to another randomly.
-// 30% chance of being Shells, 30% chance of being Nails, 15% chance of being Rockets, 15% chance of being Cells, 10% chance of being any weapon (!)
+// 32% chance of being Shells, 31% chance of being Nails, 16% chance of being Rockets, 16% chance of being Cells, 5% chance of being any weapon (!)
 // For ammo, 65% chance of being a small pack, 35% chance of being a big pack
-void(entity e) ConvertToAmmoBiased = {
+void() ConvertToAmmoBiased = {
     local float AmmoTypeRng, AmmoSizeRng, AmmoPackSize, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
     local string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
     local float ProbabilityForSmallPack = 65;
-    local float AmmoTypeProbabilities[] = { 30, 30, 15, 15 };
+    local float AmmoTypeProbabilities[] = { 32, 31, 16, 16 };
     AmmoTypeRng = Random(1, 100);
     AmmoSizeRng = Random(1, 100);
     if(AmmoSizeRng <= ProbabilityForSmallPack)
@@ -386,6 +405,7 @@ void(entity e) ConvertToAmmoBiased = {
     maxrng = 0;
     DONE = 0;
     i = 0;
+    self.netname = string_null;
     while(!DONE && minrng < 100 && i < amountOfChoices)
     {
         minrng = maxrng + 1;
@@ -393,58 +413,70 @@ void(entity e) ConvertToAmmoBiased = {
         if(AmmoTypeRng >= minrng && AmmoTypeRng <= maxrng)
         {
             DONE = 1;
-            e.QualityType = AmmoPackSize;
-            e.netname = AmmoNetNames[i];
+            self.QualityType = AmmoPackSize;
+            self.netname = AmmoNetNames[i];
             if(!HideInBackpacks)
-                e.think = Converters[i];
+                self.think = Converters[i];
             else
             {
-                e.PickupType = i + 1;
-                e.think = ConvertToAmmoBackpack;
+                self.PickupType = i + 1;
+                self.think = ConvertToAmmoBackpack;
             }
         }
         i++;
     }
-    if(!DONE)
+    if(!DONE || self.netname == string_null)
     {
-        ConvertToWeaponBiased(e);
+        self.think = ConvertToWeaponBiased;
+        self.nextthink = time;
         return;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // Converts a powerup of one type to another randomly.
 // Equal chance for a Megahealth, Red Armor, Pentagram of Protection, Quad Damage, Ring of Shadows or Biosuit
-void(entity e) ConvertToPowerupUnbiased = {
+void() ConvertToPowerupUnbiased = {
     local float rng;
     local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
     rng = Random(1, 6);
     if(rng == 4 || rng == 5)
-        e.QualityType = 3;
-    e.think = Converters[rng - 1];
-    e.nextthink = time;
+        self.QualityType = 3;
+    self.think = Converters[rng - 1];
+    self.nextthink = time;
 };
 
 // Used to FORCE a weapon to convert into any powerup, no strings attached.
-// It can't become a Biosuit or a Red Armor. Even chances for everything.
-void(entity e) ConvertToGuaranteedPowerup = {
+// It can't become a Biosuit or a Red Armor. Even chances for everything. Will give no regard to whether there are idential powerups nearby.
+void() ConvertToGuaranteedPowerup = {
     local float rng;
     local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth };
     rng = Random(1, 4);
     if(rng == 4)
-        e.QualityType = 3;
-    e.think = Converters[rng - 1];
-    e.nextthink = time;
+        self.QualityType = 3;
+    self.think = Converters[rng - 1];
+    self.nextthink = time;
 };
 
 // Converts a powerup of one type to another randomly.
-// 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
-// It spawns a weapon instead if it's trying to spawn in invalid conditions (Red Armor near another suit of armor, or Biosuit when there are no nearby liquid surfaces)
-void(entity e) ConvertToPowerupBiased = {    
+// If there's water nearby: 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
+// If there's no water nearby: 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a Weapon
+// It spawns a weapon instead if it's trying to spawn in invalid conditions (Red Armor near another suit of armor, Powerup of the same type nearby)
+void() ConvertToPowerupBiased = {    
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
+    local string Classnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", string_null, string_null, "item_artifact_envirosuit" };
     local float Probabilities[] = { 18, 18, 18, 18, 18, 10 };
     amountOfChoices = Probabilities.length;
+    if(!IsNearAWaterSurface(self))
+    {
+        // Adjust possibilities to allow weapons in case there's no nearby water body
+        Converters[amountOfChoices - 1] = ConvertToWeaponBiased;
+        Classnames[amountOfChoices - 1] = string_null;
+        for(i = 0; i < 5; i++)
+            Probabilities[i] = 19;
+        Probabilities[amountOfChoices - 1] = 5;
+    }
     rng = Random(1, 100);
     minrng = 0;
     maxrng = 0;
@@ -456,46 +488,45 @@ void(entity e) ConvertToPowerupBiased = {
         maxrng = maxrng + Probabilities[i];
         if(rng >= minrng && rng <= maxrng)
         {
+            if(i != 4)
+            {
+                if(IsNearOneOf(self, Classnames[i], string_null, string_null))
+                    break;
+            }
             DONE = 1;
             if(i == 3 || i == 4)
-                e.QualityType = 3;
-            if(i == 5)
-            {
-                if(!IsNearAWaterSurface(e))
-                {
-                    ConvertToWeaponBiased(e);
-                    return;
-                }
-            }
-            e.think = Converters[i];
+                self.QualityType = 3;
+            self.think = Converters[i];
         }
         i++;
     }
     if(!DONE)
     {
-        ConvertToWeaponBiased(e);
+        self.think = ConvertToWeaponBiased;
+        self.nextthink = time;
         return;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
 // Converts a weapon of one type to another randomly.
 // Chances are completely even, even in Biased mode.
-void(entity e) ConvertToWeaponUnbiased = {
+void() ConvertToWeaponUnbiased = {
     local float rng;
     local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
     rng = Random(1, 6);
     if(!HideInBackpacks)
-        e.think = Converters[rng - 1];
+        self.think = Converters[rng - 1];
     else
     {
-        e.PickupType = PickupTypes[rng - 1];
-        e.think = ConvertToWeaponBackpack;
+        self.PickupType = PickupTypes[rng - 1];
+        self.think = ConvertToWeaponBackpack;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };
 
+// Creates a "bag" of six randomly permutated weapons
 void() CreateWeaponPermutation = {
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
     local float numbers[] = { 0, 1, 2, 3, 4, 5 };
@@ -549,7 +580,7 @@ void() CreateWeaponPermutation = {
 // Chances are completely even, even in Biased mode. However, in Biased mode, a weapon may not appear more than once if any of the other weapons hasn't appeared yet.
 // If all weapons have spawned, it will instead spawn a powerup. Then it will allow weapons again.
 // Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup instead.
-void(entity e) ConvertToWeaponBiased = {
+void() ConvertToWeaponBiased = {
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
         SpawnedWeapons & IT_SUPER_NAILGUN && 
@@ -557,7 +588,8 @@ void(entity e) ConvertToWeaponBiased = {
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
         SpawnedWeapons & IT_LIGHTNING)
     {
-        ConvertToGuaranteedPowerup(e);
+        self.think = ConvertToGuaranteedPowerup;
+        self.nextthink = time;
         SpawnedWeapons = 0;
         CreateWeaponPermutation();
         return;
@@ -565,6 +597,7 @@ void(entity e) ConvertToWeaponBiased = {
     local float i, currentSurface, isValidSurface;
     local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
+    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning" };
     local float WeaponPermutation[6];
     local void() ConvertersPermutation[6];
     for(i = 0; i < 6; i++)
@@ -580,27 +613,31 @@ void(entity e) ConvertToWeaponBiased = {
             isValidSurface = 1;
         else
         {
-            currentSurface = pointcontents(e.origin);
+            currentSurface = pointcontents(self.origin);
             isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
         }
         if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
         {
-            if(!HideInBackpacks)
-                e.think = ConvertersPermutation[i];
-            else
+            if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
             {
-                e.PickupType = PickedWeapon;
-                e.think = ConvertToWeaponBackpack;
+                if(!HideInBackpacks)
+                    self.think = ConvertersPermutation[i];
+                else
+                {
+                    self.PickupType = PickedWeapon;
+                    self.think = ConvertToWeaponBackpack;
+                }
+                SpawnedWeapons = SpawnedWeapons | PickedWeapon;
+                break;
             }
-            SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-            break;
         }
     }
     if(i == 6) 
     {
         // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup.
-        ConvertToGuaranteedPowerup(e);
+        self.think = ConvertToGuaranteedPowerup;
+        self.nextthink = time;
         return;
     }
-    e.nextthink = time;
+    self.nextthink = time;
 };

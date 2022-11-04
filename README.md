@@ -86,11 +86,11 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 |Name|Odds|
 |----|----|
-|Shells|30%|
-|Nails|30%|
-|Rockets|15%|
-|Cells|15%|
-|A weapon|10%|
+|Shells|32%|
+|Nails|31%|
+|Rockets|16%|
+|Cells|16%|
+|A weapon|5%|
 
 > The odds for which weapon to be spawned are defined below.
 
@@ -103,6 +103,8 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 #### Powerup replacement chances on Biased Mode
 
+- If there's a liquid body within 256 units of distance
+
 |Name|Odds|
 |----|----|
 |Pentagram of Protection|18%|
@@ -110,11 +112,22 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Ring of Shadows|18%|
 |100 Health Pack|18%|
 |Red Armor Suit|18%|
-|A weapon or a Biosuit|10%|
+|Biosuit|10%|
+
+- If there's no liquid body within 256 units of distance
+
+|Name|Odds|
+|----|----|
+|Pentagram of Protection|19%|
+|Quad Damage|19%|
+|Ring of Shadows|19%|
+|100 Health Pack|19%|
+|Red Armor Suit|19%|
+|A weapon|5%|
 
 > A Red Armor suit cannot spawn if there's another suit of armor (regardless of color) up to 256 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
 
-> Whether a weapon or a Biosuit is spawned depends on whether there's a liquid surface up to 256 units away from its center.
+> Preferably, Powerups of the same type will avoid spawning within 256 units of distance from each other. It should only happen when no other powerup or weapon is available for spawning instead.
 
 > The odds for which weapon to be spawned are defined below.
 
@@ -124,15 +137,17 @@ Every weapon has an even chance to be spawned.
 
 It works as follows:
 1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt), with the weapons the player already has placed first.
-2. It moves across the "bag" until it finds a weapon that hasn't been spawned yet and can be spawned in the target location*.
+2. It moves across the "bag" until it finds a weapon that hasn't been spawned yet and can be spawned in the target location*. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
 3. If it reaches the end of the bag without picking a weapon that can be spawned in the target location*, it spawns a powerup (except for a Biosuit or Red Armor suit) instead.
 4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
-> * The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces.
+> * The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces, due to the fact it will instantly kill a non-invulnerable player if used in there.
 
 ### Unbiased Mode
 
-Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type. Have fun!
+Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type, with the exclusive exception that Rotfish can't spawn outside of water surfaces because they wouldn't be able to move.
+
+Have fun!
 
 ### Backpack Mode
 

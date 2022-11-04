@@ -76,12 +76,12 @@ void() precache_everything =
 	precache_sound2 ("fish/idle.wav");
 	precache_model2 ("progs/hknight.mdl");
 	precache_model2 ("progs/k_spike.mdl");
-	precache_model2 ("progs/h_hellkn.mdl");	
+	precache_model2 ("progs/h_hellkn.mdl");
 	precache_sound2 ("hknight/attack1.wav");
 	precache_sound2 ("hknight/death1.wav");
 	precache_sound2 ("hknight/pain1.wav");
 	precache_sound2 ("hknight/sight1.wav");
-	precache_sound ("hknight/hit.wav");		// used by C code, so don't sound2
+	precache_sound ("hknight/hit.wav");// used by C code, so don't sound2
 	precache_sound2 ("hknight/slash1.wav");
 	precache_sound2 ("hknight/idle.wav");
 	precache_sound2 ("hknight/grunt.wav");
@@ -107,7 +107,7 @@ void() precache_everything =
 	precache_sound ("ogre/ogwake.wav");
 	precache_model2 ("progs/shalrath.mdl");
 	precache_model2 ("progs/h_shal.mdl");
-	precache_model2 ("progs/v_spike.mdl");	
+	precache_model2 ("progs/v_spike.mdl");
 	precache_sound2 ("shalrath/attack.wav");
 	precache_sound2 ("shalrath/attack2.wav");
 	precache_sound2 ("shalrath/death.wav");
@@ -117,7 +117,7 @@ void() precache_everything =
 	precache_model ("progs/shambler.mdl");
 	precache_model ("progs/s_light.mdl");
 	precache_model ("progs/h_shams.mdl");
-	precache_model ("progs/bolt.mdl");	
+	precache_model ("progs/bolt.mdl");
 	precache_sound ("shambler/sattck1.wav");
 	precache_sound ("shambler/sboom.wav");
 	precache_sound ("shambler/sdeath.wav");
@@ -138,7 +138,7 @@ void() precache_everything =
 	precache_sound ("soldier/pain2.wav");
 	precache_sound ("soldier/sattck1.wav");
 	precache_sound ("soldier/sight1.wav");
-	precache_sound ("player/udeath.wav");		// gib death    
+	precache_sound ("player/udeath.wav");// gib death    
 	precache_model2 ("progs/tarbaby.mdl");
 	precache_sound2 ("blob/death1.wav");
 	precache_sound2 ("blob/hit1.wav");
@@ -147,7 +147,7 @@ void() precache_everything =
 	precache_model ("progs/wizard.mdl");
 	precache_model ("progs/h_wizard.mdl");
 	precache_model ("progs/w_spike.mdl");
-	precache_sound ("wizard/hit.wav");		// used by c code
+	precache_sound ("wizard/hit.wav");// used by c code
 	precache_sound ("wizard/wattack.wav");
 	precache_sound ("wizard/wdeath.wav");
 	precache_sound ("wizard/widle1.wav");
@@ -239,13 +239,14 @@ void() ConvertToFiend =
 	self.th_walk = demon1_walk1;
 	self.th_run = demon1_run1;
 	self.th_die = demon_die;
-	self.th_melee = Demon_MeleeAttack;		// one of two attacks
-	self.th_missile = demon1_jump1;			// jump attack
+	self.th_melee = Demon_MeleeAttack;// one of two attacks
+	self.th_missile = demon1_jump1;// jump attack
 	self.th_pain = demon1_pain;
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_FIEND);
 	walkmonster_start();
 };
 
@@ -285,10 +286,11 @@ void() ConvertToDog =
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
 
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_ROTTWEILER);
 	walkmonster_start();
 };
 
@@ -327,10 +329,11 @@ void() ConvertToEnforcer =
 	self.th_missile = enf_atk1;
 	self.th_melee = enf_atk1;
 
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_ENFORCER);
 	walkmonster_start();
 };
 
@@ -370,10 +373,11 @@ void() ConvertToRotfish =
 	self.th_melee = f_attack1;
 	self.th_missile = SUB_Null;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_ROTFISH);
 	swimmonster_start ();
 };
 
@@ -413,10 +417,11 @@ void() ConvertToDeathKnight =
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_DEATH_KNIGHT);
 	walkmonster_start();
 };
 
@@ -455,10 +460,11 @@ void() ConvertToKnight =
 	self.th_die = knight_die;
 	self.th_missile = SUB_Null;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_KNIGHT);
 	walkmonster_start();
 };
 
@@ -498,10 +504,11 @@ void() ConvertToOgre =
 	self.th_missile = ogre_nail1;
 	self.th_pain = ogre_pain;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_OGRE);
 	walkmonster_start();
 };
 
@@ -540,10 +547,11 @@ void() ConvertToVore =
 	self.th_missile = shal_attack1;
 	self.th_melee = shal_attack1;
 
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_VORE);
 	walkmonster_start();
 };
 
@@ -582,10 +590,11 @@ void() ConvertToShambler =
 	self.th_missile = sham_magic1;
 	self.th_pain = sham_pain;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_SHAMBLER);
 	walkmonster_start();
 };
 
@@ -624,10 +633,11 @@ void() ConvertToGrunt =
 	self.th_die = army_die;
 	self.th_melee = army_atk1;
 
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_GRUNT);
 	walkmonster_start();
 };
 
@@ -667,10 +677,11 @@ void() ConvertToSpawn =
 	self.th_die = tbaby_die1;
 	self.th_pain = SUB_Null;
 	
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_SPAWN);
 	walkmonster_start();
 };
 
@@ -710,10 +721,11 @@ void() ConvertToScrag =
 	self.th_die = wiz_die;
 	self.th_melee = Wiz_Missile;
 		
-	dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_SCRAG);
 	flymonster_start ();
 };
 
@@ -751,10 +763,11 @@ void() ConvertToZombie =
 	self.th_missile = zombie_missile;
 	self.th_melee = zombie_missile;
 
-    dprint(self.classname);	
-	dprint("\n");	
-	self.Converted = "1";	
+    dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
 
+	RegisterEntity(ENTITY_DISPLAY_NAME_ZOMBIE);
 	walkmonster_start();
 };
 
@@ -778,6 +791,7 @@ void() ConvertToHealth =
 		self.noise = "items/r_item1.wav";
 		self.healamount = 15;
 		self.healtype = 0;
+		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_15);
 	}
 	else if (self.QualityType == 2)
 	{		
@@ -785,6 +799,7 @@ void() ConvertToHealth =
 		self.noise = "items/health1.wav";
 		self.healamount = 25;
 		self.healtype = 1;
+		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_25);
 	}
 	else if (self.QualityType == 3)
 	{
@@ -792,13 +807,14 @@ void() ConvertToHealth =
 		self.noise = "items/r_item2.wav";
 		self.healamount = 100;
 		self.healtype = 2;
+		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_100);
 	}
 	setsize (self, '0 0 0', '32 32 56');
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.healamount));
-	dprint(")");	
-	dprint("\n");	
+	dprint(")");
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -808,7 +824,7 @@ void() ConvertToHealth =
 // If there's nearby armor, it will turn into a Health Pack of the same quality instead.
 void() ConvertToArmor =
 {
-	if(IsNearOtherArmor(self))
+	if(IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
 	{
 		ConvertToHealth();
 		return;
@@ -823,18 +839,21 @@ void() ConvertToArmor =
     if(self.QualityType == 1)
     {
     	self.classname = "item_armor1";
+		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_100);
     }
     else if (self.QualityType == 2)
     {
     	self.classname = "item_armor2";
+		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_150);
     }
     else if (self.QualityType == 3)
     {
     	self.classname = "item_armorInv";
+		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_200);
     }
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -857,11 +876,13 @@ void() ConvertToShells =
 	{
 		setmodel (self, "maps/b_shell0.bsp");
 		self.aflag = 20;
+		RegisterEntity(ENTITY_DISPLAY_NAME_SHELLS_SMALL);
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_shell1.bsp");
 		self.aflag = 40;
+		RegisterEntity(ENTITY_DISPLAY_NAME_SHELLS_BIG);
 	}
 	self.weapon = 1;
 	self.netname = "shells";
@@ -870,8 +891,8 @@ void() ConvertToShells =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");	
-	dprint("\n");	
+	dprint(")");
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -889,11 +910,13 @@ void() ConvertToNails =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_nail0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_NAILS_SMALL);
 		self.aflag = 25;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_nail1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_NAILS_BIG);
 		self.aflag = 50;
 	}
 	self.weapon = 2;
@@ -903,8 +926,8 @@ void() ConvertToNails =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");	
-	dprint("\n");	
+	dprint(")");
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -922,11 +945,13 @@ void() ConvertToRockets =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_rock0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_ROCKETS_SMALL);
 		self.aflag = 5;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_rock1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_ROCKETS_BIG);
 		self.aflag = 10;
 	}
 	self.weapon = 3;
@@ -936,8 +961,8 @@ void() ConvertToRockets =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");	
-	dprint("\n");	
+	dprint(")");
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -955,11 +980,13 @@ void() ConvertToCells =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_batt0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_CELLS_SMALL);
 		self.aflag = 6;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_batt1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_CELLS_BIG);
 		self.aflag = 12;
 	}
 	self.weapon = 4;
@@ -969,8 +996,8 @@ void() ConvertToCells =
 	dprint(self.classname);
 	dprint(" (");
 	dprint(ftos(self.aflag));
-	dprint(")");	
-	dprint("\n");	
+	dprint(")");
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -994,10 +1021,11 @@ void() ConvertToPentagramOfProtection =
 	self.items = IT_INVULNERABILITY;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_PENTAGRAM_OF_PROTECTION);
 };
 
 // Converts entity into a Biosuit
@@ -1015,10 +1043,11 @@ void() ConvertToBiosuit =
 	self.items = IT_SUIT;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_BIOSUIT);
 };
 
 // Converts entity into a Ring of Shadows
@@ -1036,10 +1065,11 @@ void() ConvertToRingOfShadows =
 	self.items = IT_INVISIBILITY;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_RING_OF_SHADOWS);
 };
 
 // Converts entity into a Quad Damage
@@ -1057,10 +1087,11 @@ void() ConvertToQuadDamage =
 	self.items = IT_QUAD;
 	self.skin = 0;
 	setsize (self, '-16 -16 -24', '16 16 32');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_QUAD_DAMAGE);
 };
 
 // END POWERUPS
@@ -1081,10 +1112,11 @@ void() ConvertToDoubleBarrelledShotgun =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_DOUBLE_BARRELED_SHOTGUN);
 };
 
 // Converts entity into a Nailgun
@@ -1097,14 +1129,15 @@ void() ConvertToNailgun =
 	setmodel (self, "progs/g_nail.mdl");
 	self.classname = "weapon_nailgun";
 	self.weapon = IT_NAILGUN;
-	self.netname = "nailgun";
+	self.netname = "Nailgun";
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_NAILGUN);
 };
 
 // Converts entity into a Super Nailgun
@@ -1121,10 +1154,11 @@ void() ConvertToSuperNailgun =
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_SUPER_NAILGUN);
 };
 
 // Converts entity into a Grenade Launcher
@@ -1136,15 +1170,16 @@ void() ConvertToGrenadeLauncher =
 
 	setmodel (self, "progs/g_rock.mdl");
 	self.classname = "weapon_grenadelauncher";
-	self.weapon = 3;
+	self.weapon = IT_GRENADE_LAUNCHER;
 	self.netname = "Grenade Launcher";
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_GRENADE_LAUNCHER);
 };
 
 // Converts entity into a Rocket Launcher
@@ -1156,15 +1191,16 @@ void() ConvertToRocketLauncher =
 
 	setmodel (self, "progs/g_rock2.mdl");
 	self.classname = "weapon_rocketlauncher";
-	self.weapon = 3;
+	self.weapon = IT_ROCKET_LAUNCHER;
 	self.netname = "Rocket Launcher";
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_ROCKET_LAUNCHER);
 };
 
 // Converts entity into a Thunderbolt
@@ -1176,20 +1212,21 @@ void() ConvertToThunderbolt =
 
 	setmodel (self, "progs/g_light.mdl");
 	self.classname = "weapon_lightning";
-	self.weapon = 3;
+	self.weapon = IT_LIGHTNING;
 	self.netname = "Thunderbolt";
 	self.touch = weapon_touch;
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_THUNDERBOLT);
 };
 
 // END WEAPONS
 
-// START SCRATCH1 = 1 ONLY
+// START BACKPACKS
 
 void() ConvertToWeaponBackpack =
 {	
@@ -1208,41 +1245,47 @@ void() ConvertToWeaponBackpack =
 		self.classname = "item_backpack_supershotgun";
 		self.netname = "Double-barrelled Shotgun";
 		self.ammo_shells = 5;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_DOUBLE_BARRELED_SHOTGUN);
 	}
 	else if (self.PickupType == IT_NAILGUN)
 	{
 		self.classname = "item_backpack_nailgun";
 		self.netname = "Nailgun";
 		self.ammo_nails = 30;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILGUN);
 	}
 	else if (self.PickupType == IT_SUPER_NAILGUN)
 	{
 		self.classname = "item_backpack_supernailgun";
 		self.netname = "Super Nailgun";
 		self.ammo_nails = 30;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN);
 	}
 	else if (self.PickupType == IT_GRENADE_LAUNCHER)
 	{
 		self.classname = "item_backpack_grenadelauncher";
 		self.netname = "Grenade Launcher";
 		self.ammo_rockets = 5;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER);
 	}
 	else if (self.PickupType == IT_ROCKET_LAUNCHER)
 	{
 		self.classname = "item_backpack_rocketlauncher";
 		self.netname = "Rocket Launcher";
 		self.ammo_rockets = 5;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER);
 	}
 	else if (self.PickupType == IT_LIGHTNING)
 	{
 		self.classname = "item_backpack_lightning";
 		self.netname = "Thunderbolt";
 		self.ammo_cells = 15;
+		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT);
 	}
 	else
 	{
 		self.netname = "";
-		dprint("Invalid weapon type.");	
+		dprint("Invalid weapon type.");
 		return;
 	}
 
@@ -1252,8 +1295,8 @@ void() ConvertToWeaponBackpack =
 	setmodel (self, "progs/backpack.mdl");
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.touch = BackpackTouch_Replaced;
-	dprint(self.classname);	
-	dprint("\n");	
+	dprint(self.classname);
+	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
 };
@@ -1270,9 +1313,15 @@ void() ConvertToAmmoBackpack =
 	{
 		self.classname = "item_backpack_shells";
 		if(self.QualityType == 1)
+		{
 			self.ammo_shells = 20;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL);
+		}
 		else if(self.QualityType == 2)
+		{
 			self.ammo_shells = 40;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG);
+		}
 		dprint(self.classname);
 		dprint(" (");
 		dprint(ftos(self.ammo_shells));
@@ -1282,9 +1331,15 @@ void() ConvertToAmmoBackpack =
 	{
 		self.classname = "item_backpack_spikes";
 		if(self.QualityType == 1)
+		{	
 			self.ammo_nails = 25;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_SMALL);
+		}
 		else if(self.QualityType == 2)
+		{	
 			self.ammo_nails = 50;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_BIG);
+		}
 		dprint(self.classname);
 		dprint(" (");
 		dprint(ftos(self.ammo_nails));
@@ -1294,9 +1349,15 @@ void() ConvertToAmmoBackpack =
 	{
 		self.classname = "item_backpack_rockets";
 		if(self.QualityType == 1)
+		{
 			self.ammo_rockets = 5;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_SMALL);
+		}
 		else if(self.QualityType == 2)
+		{
 			self.ammo_rockets = 10;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_BIG);
+		}
 		dprint(self.classname);
 		dprint(" (");
 		dprint(ftos(self.ammo_rockets));
@@ -1306,9 +1367,15 @@ void() ConvertToAmmoBackpack =
 	{
 		self.classname = "item_backpack_cells";
 		if(self.QualityType == 1)
+		{
 			self.ammo_cells = 6;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_SMALL);
+		}
 		else if(self.QualityType == 2)
+		{
 			self.ammo_cells = 12;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_BIG);
+		}
 		dprint(self.classname);
 		dprint(" (");
 		dprint(ftos(self.ammo_cells));
@@ -1317,7 +1384,7 @@ void() ConvertToAmmoBackpack =
 	else
 	{
 		self.netname = "";
-		dprint("Invalid ammo type.\n");	
+		dprint("Invalid ammo type.\n");
 		return;
 	}
 
@@ -1326,10 +1393,10 @@ void() ConvertToAmmoBackpack =
 	self.movetype = MOVETYPE_TOSS;
 	setmodel (self, "progs/backpack.mdl");
 	setsize (self, '-16 -16 0', '16 16 56');
-	self.touch = BackpackTouch_Replaced;	
-	dprint("\n");	
-	self.Converted = "1";	
+	self.touch = BackpackTouch_Replaced;
+	dprint("\n");
+	self.Converted = "1";
 	StartItem ();
 };
 
-// END SCRATCH1 = 1 ONLY
+// END BACKPACKS
