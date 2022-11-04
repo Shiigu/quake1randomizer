@@ -86,7 +86,7 @@ void() walkmonster_start_go =
 			droptofloor();
 		}
 		
-		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 		{
 			old_x = self.origin_x;
 			old_y = self.origin_y;
@@ -94,7 +94,7 @@ void() walkmonster_start_go =
 			UnstuckMonster(self, 0);
 		}
 
-		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 		{
 			self.origin_x = old_x;
 			self.origin_y = old_y;
@@ -177,7 +177,7 @@ void() flymonster_start_go =
 	{
 		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 		{
 			old_x = self.origin_x;
 			old_y = self.origin_y;
@@ -185,7 +185,7 @@ void() flymonster_start_go =
 			UnstuckMonster(self, 1);
 		}
 
-		if ((!walkmove(0,0) || Space_Occupied(self)) && !IS_IN_TELEPORTER)
+		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 		{
 			self.origin_x = old_x;
 			self.origin_y = old_y;

@@ -63,7 +63,7 @@ void() PlaceItem =
 	
 	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
-	if ((Space_Occupied(self) || !droptofloor()) && !IS_IN_TELEPORTER)
+	if (!droptofloor() && !IS_IN_TELEPORTER)
 	{
 		old_x = self.origin_x;
 		old_y = self.origin_y;
@@ -71,7 +71,7 @@ void() PlaceItem =
 		UnstuckObject(self);
 	}
 	
-	if ((Space_Occupied(self) || !droptofloor()) && !IS_IN_TELEPORTER)
+	if (!droptofloor() && !IS_IN_TELEPORTER)
 	{
 		self.origin_x = old_x;
 		self.origin_y = old_y;
