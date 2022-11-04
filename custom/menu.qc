@@ -3,8 +3,9 @@ float CurrentMenu;  // Contains the current menu the player is
     float MAIN_MENU = 1;        // Main Menu
     float UNBIASED_MENU = 2;    // Menu to enable or disable Unbiased Mode
     float BACKPACKS_MENU = 3;   // Menu to enable or disable Backpack Mode
-    float SEED_MENU = 4;       // Seed Menu
-    float ABOUT_MENU = 5;       // "About" Menu
+    float RANDOMIZED_LIST_MENU = 4;       // Randomized List Menu
+    float SEED_MENU = 5;       // Seed Menu
+    float FINAL_MENU = 6;       // All Menus whose only option is to return to the main menu
 
 entity InputCapturer; // Will take hold of the number keys until the player closes the menu or its think time expires
 entity Client;     // Stores the client entity.
@@ -15,8 +16,9 @@ void() EnterRandomMenu;
 void() MainMenu;
 void() UnbiasedMenu;
 void() BackpacksMenu;
-void() AboutMenu;
+void() RandomizedListMenu;
 void() SeedMenu;
+void() AboutMenu;
 void() ExitRandomMenu;
 void() CheckMenuImpulses;
 
@@ -37,13 +39,13 @@ void() EnterRandomMenu = {
 
 void() MainMenu = {
     if(!UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Enable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
     else if(UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Unbiased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Biased\n[2] Enable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Unbiased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Biased\n[2] Enable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
     else if(!UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Disable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
     else if(UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Biased\n[2] Disable Backpack Mode\n[3] Seed settings\n[4] About\n[5] Exit Menu");
+        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Biased\n[2] Disable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
     CurrentMenu = MAIN_MENU;
     InputCapturer.nextthink = time + CaptureTime;
 };
@@ -66,6 +68,11 @@ void() BackpacksMenu = {
     InputCapturer.nextthink = time + CaptureTime;
 };
 
+void() RandomizedListMenu = {
+    centerprint (Client, "=== RANDOMIZER LOG ===\n\n", "You wish to see the list of\nentities after randomization.\n\nThis is almost like cheating.\nDo you want to do this?\n\n", "[1] List of randomized objects\n[2] Return to Main Menu");
+    CurrentMenu = RANDOMIZED_LIST_MENU;
+};
+
 void() SeedMenu = {
     if(seedIsFixed)
         centerprint (Client, "Current seed is\n", ftos(seed), "\n\nThe seed is currently fixed.\nThe same map will ALWAYS give\nthe same entities.\n\n", "Do you wish to make\nthe seed dynamic again?\n\n", "[1] Yes\n[2] No");
@@ -75,12 +82,17 @@ void() SeedMenu = {
 };
 
 void() AboutMenu = {
-    centerprint (Client, "=== About the Quake Randomizer Mod ===\n\n", "Created by Shiigu\n\n", "Source Code:https://github.com/\nShiigu/quake1randomizer\n\n", "(Help is appreciated!)");
-    CurrentMenu = ABOUT_MENU;
+    centerprint (Client, "=== About the Quake Randomizer Mod ===\n\n", "Created by Shiigu\n\n", "Source Code:https://github.com/\nShiigu/quake1randomizer\n\n", "(Help is appreciated!)\n\n[1] Return to Main Menu");
+    CurrentMenu = FINAL_MENU;
     InRandomMenu = 0;
 };
 
 void() CheckMenuImpulses = {
+    if(CurrentMenu == FINAL_MENU)
+    {
+        if(self.impulse == 1)
+            MainMenu();
+    }
     if(CurrentMenu == MAIN_MENU)
     {
         if(self.impulse == 1)
@@ -88,10 +100,12 @@ void() CheckMenuImpulses = {
         if(self.impulse == 2)
             BackpacksMenu();
         if(self.impulse == 3)
-            SeedMenu();
+            RandomizedListMenu();
         if(self.impulse == 4)
-            AboutMenu();
+            SeedMenu();
         if(self.impulse == 5)
+            AboutMenu();
+        if(self.impulse == 6)
             ExitRandomMenu();
         return;
     }
@@ -101,15 +115,17 @@ void() CheckMenuImpulses = {
         {
             if(UnbiasedMode)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Biased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Biased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
                 RandomMode = RandomMode - (RandomMode & RANDOM_UNBIASED_MODE);
                 UnbiasedMode = 0;
+                CurrentMenu = FINAL_MENU;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Unbiased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Unbiased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
                 RandomMode = RandomMode | RANDOM_UNBIASED_MODE;
                 UnbiasedMode = 1;
+                CurrentMenu = FINAL_MENU;
             }
             cvar_set("savedgamecfg", ftos(RandomMode));
             InRandomMenu = 0;
@@ -124,15 +140,17 @@ void() CheckMenuImpulses = {
         {
             if(HideInBackpacks)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode DISABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode DISABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
                 RandomMode = RandomMode - (RandomMode & RANDOM_BACKPACK_MODE);
                 HideInBackpacks = 0;
+                CurrentMenu = FINAL_MENU;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)");
+                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
                 RandomMode = RandomMode | RANDOM_BACKPACK_MODE;
                 HideInBackpacks = 1;
+                CurrentMenu = FINAL_MENU;
             }
             cvar_set("savedgamecfg", ftos(RandomMode));
             InRandomMenu = 0;
@@ -141,21 +159,34 @@ void() CheckMenuImpulses = {
             ExitRandomMenu();
         return;
     }
+    if(CurrentMenu == RANDOMIZED_LIST_MENU)
+    {
+        if(self.impulse == 1)
+        {
+            LogResults();
+            centerprint (Client, "You can see the list of randomized\nentities in the console.\n\nEntities like bosses, keys or runes\nare not present in the list\nbecause they are never converted.\n\n[1] Return to Main Menu");
+            CurrentMenu = FINAL_MENU;
+        }
+        if(self.impulse == 2)
+            MainMenu();
+    }
     if(CurrentMenu == SEED_MENU)
     {
         if(self.impulse == 1)
         {
             if(seedIsFixed)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\n a level is loaded)", "\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed));
+                centerprint (Client, "=== WARNING ===\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\n a level is loaded)", "\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                 cvar_set("gamecfg", "0");
                 seedIsFixed = 0;
+                CurrentMenu = FINAL_MENU;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Seed is now fixed to ", ftos(seed), "\n\n", "(This won't take effect until\n a level is loaded)", "\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed));
+                centerprint (Client, "=== WARNING ===\n\n", "Seed is now fixed to ", ftos(seed), "\n\n", "(This won't take effect until\n a level is loaded)", "\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                 cvar_set("gamecfg", ftos(seed));
                 seedIsFixed = 1;
+                CurrentMenu = FINAL_MENU;
             }
             InRandomMenu = 0;
         }

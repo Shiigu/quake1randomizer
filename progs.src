@@ -3,6 +3,7 @@
 defs.qc
 custom/extras.qc
 custom/math.qc
+custom/randomdictionary.qc
 custom/menu.qc
 subs.qc
 fight.qc

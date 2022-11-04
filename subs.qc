@@ -5,7 +5,7 @@ void(entity e, float flying) UnstuckMonster;
 void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
 float(entity head) IsNearAWaterSurface;
-float(entity head) IsNearOtherArmor;
+float(entity head, string classname1, string classname2, string classname3) IsNearOneOf;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
 
@@ -339,7 +339,7 @@ void(entity e, float flying) UnstuckMonster =
 	local vector min;
 	local vector max;
 	local vector diff;
-	local float occupied, canMove;
+	local float canMove;
 
 	oldself = self;
 	self = e;
@@ -382,16 +382,15 @@ void(entity e, float flying) UnstuckMonster =
 		if(!flying)
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
-		occupied = Space_Occupied(self);
 		canMove = walkmove(0,0);
-		if(!occupied && canMove)
+		if(canMove)
 		{ 
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while((occupied || !canMove) && CURRENT_TRY < MAX_TRIES);
+	while(!canMove && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
 };
 
@@ -405,7 +404,7 @@ void(entity e) UnstuckObject =
 	local vector min;
 	local vector max;
 	local vector diff;
-	local float occupied, dropped;
+	local float dropped;
 
 	oldself = self;
 	self = e;
@@ -446,16 +445,15 @@ void(entity e) UnstuckObject =
 		fixvector_z = Random(min_z, max_z);
 		setorigin(self, fixvector);
 		CURRENT_TRY = CURRENT_TRY + 1;
-		occupied = Space_Occupied(self);
 		dropped = droptofloor();
-		if(!occupied && dropped)
+		if(dropped)
 		{
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
 			dprint(" attempt(s).\n");
 		}
 	}
-	while((occupied || !dropped) && CURRENT_TRY < MAX_TRIES);
+	while(!dropped && CURRENT_TRY < MAX_TRIES);
 	self = oldself;
 };
 
@@ -494,8 +492,8 @@ float(entity head) IsTouchingTeleporter =
 		return FALSE;
 };
 
-// Checks if there are already-converted Armor suits nearby
-float(entity head) IsNearOtherArmor =
+// Checks if there are already-converted nearby objects of the specified classes (up to 3).
+float(entity head, string classname1, string classname2, string classname3) IsNearOneOf =
 {
         local entity e;
 		local vector center = head.origin;
@@ -505,7 +503,7 @@ float(entity head) IsNearOtherArmor =
 		e = findradius(head.origin, 256);
 		while(e)
 		{
-			if(e.Converted == "1" && (e.classname == "item_armor1" || e.classname == "item_armor2" || e.classname == "item_armorInv"))
+			if(e.Converted == "1" && ((classname1 != string_null && e.classname == classname1) || (classname2 != string_null && e.classname == classname2) || (classname3 != string_null && e.classname == classname3)))
 			{
 				return TRUE;
 			}
