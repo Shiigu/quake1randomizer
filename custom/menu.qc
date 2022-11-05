@@ -88,11 +88,6 @@ void() AboutMenu = {
 };
 
 void() CheckMenuImpulses = {
-    if(CurrentMenu == FINAL_MENU)
-    {
-        if(self.impulse == 1)
-            MainMenu();
-    }
     if(CurrentMenu == MAIN_MENU)
     {
         if(self.impulse == 1)
@@ -169,6 +164,7 @@ void() CheckMenuImpulses = {
         }
         if(self.impulse == 2)
             MainMenu();
+        return;
     }
     if(CurrentMenu == SEED_MENU)
     {
@@ -192,6 +188,13 @@ void() CheckMenuImpulses = {
         }
         if(self.impulse == 2)
             ExitRandomMenu();
+        return;
+    }
+    if(CurrentMenu == FINAL_MENU)
+    {
+        if(self.impulse == 1)
+            MainMenu();
+        return;
     }
 };
 
