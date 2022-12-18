@@ -2,6 +2,10 @@
 
 This mod (compatible with both the classic and remastered releases of Quake 1) has a very simple task: replace ALL the monsters and objects in a level with another of the same type. That first Grunt you encounter in E1M1? Now it could be an Enforcer, a Knight... or maybe a Shambler!
 
+## How to start playing
+
+This mod is installed like any other. Extract the zip file as a folder where your Quake executable is located, then use the `-game` launch parameter so that it executes the mod on launch (some source ports also have a mod selection menu).
+
 ## How to configure
 
 To set up the game modes, press the 'M' key, and a menu will show up. Follow the instructions in there.
