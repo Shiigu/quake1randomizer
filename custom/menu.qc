@@ -84,7 +84,6 @@ void() SeedMenu = {
 void() AboutMenu = {
     centerprint (Client, "=== About the Quake Randomizer Mod ===\n\n", "Created by Shiigu\n\n", "Source Code:https://github.com/\nShiigu/quake1randomizer\n\n", "(Help is appreciated!)\n\n[1] Return to Main Menu");
     CurrentMenu = FINAL_MENU;
-    InRandomMenu = 0;
 };
 
 void() CheckMenuImpulses = {
@@ -123,7 +122,6 @@ void() CheckMenuImpulses = {
                 CurrentMenu = FINAL_MENU;
             }
             cvar_set("savedgamecfg", ftos(RandomMode));
-            InRandomMenu = 0;
         }
         if(self.impulse == 2)
             ExitRandomMenu();
@@ -148,7 +146,6 @@ void() CheckMenuImpulses = {
                 CurrentMenu = FINAL_MENU;
             }
             cvar_set("savedgamecfg", ftos(RandomMode));
-            InRandomMenu = 0;
         }
         if(self.impulse == 2)
             ExitRandomMenu();
@@ -184,7 +181,6 @@ void() CheckMenuImpulses = {
                 seedIsFixed = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            InRandomMenu = 0;
         }
         if(self.impulse == 2)
             ExitRandomMenu();
