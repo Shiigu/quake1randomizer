@@ -78,7 +78,7 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 > Either quality of Health Pack (15 or 25) or Armor Suit (Green or Yellow) is equally likely to be picked.
 
-> An Armor Suit cannot spawn if there's another Armor Suit (regardless of color) up to 256 units away from it. If there is, it spawns a Health Crate of the same quality level instead.
+> An Armor Suit cannot spawn if there's another Armor Suit (regardless of color) up to 512 units away from it. If there is, it spawns a Health Crate of the same quality level instead.
 
 #### Ammo replacement chances on Biased Mode
 
@@ -103,7 +103,7 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 #### Powerup replacement chances on Biased Mode
 
-- If there's a liquid body within 256 units of distance
+- If there's a liquid body within 512 units of distance
 
 |Name|Odds|
 |----|----|
@@ -114,7 +114,7 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Red Armor Suit|18%|
 |Biosuit|10%|
 
-- If there's no liquid body within 256 units of distance
+- If there's no liquid body within 512 units of distance
 
 |Name|Odds|
 |----|----|
@@ -125,9 +125,9 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Red Armor Suit|19%|
 |A weapon|5%|
 
-> A Red Armor suit cannot spawn if there's another suit of armor (regardless of color) up to 256 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
+> A Red Armor suit cannot spawn if there's another suit of armor (regardless of color) up to 512 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
 
-> Preferably, Powerups of the same type will avoid spawning within 256 units of distance from each other. It should only happen when no other powerup or weapon is available for spawning instead.
+> Preferably, Powerups of the same type will avoid spawning within 512 units of distance from each other. It should only happen when no other powerup or weapon is available for spawning instead.
 
 > The odds for which weapon to be spawned are defined below.
 
@@ -136,8 +136,8 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 Every weapon has an even chance to be spawned.
 
 It works as follows:
-1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt), with the weapons the player already has placed first.
-2. It moves across the "bag" until it finds a weapon that hasn't been spawned yet and can be spawned in the target location*. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
+1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt). If the map has been loaded via `changelevel` (such as by reaching a map exit), the weapons that were spawned in the previous map will be skipped (prioritizing weapons that the player could not have obtained yet); otherwise, the ones to be skipped will be the weapons the player already owns.
+2. It moves across the "bag" until it finds a weapon that hasn't been spawned or skipped yet and can be spawned in the target location*. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
 3. If it reaches the end of the bag without picking a weapon that can be spawned in the target location*, it spawns a powerup (except for a Biosuit or Red Armor suit) instead.
 4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
@@ -161,5 +161,6 @@ This mode is disabled by default. Here, all the weapons and ammo pickups are "di
 
 The mod works as intended, but there are still a bunch of things in the mod that can be done better, which are as follows:
 - Give more 'fair' odds for the Biased mode.
+- Create forks of this mod in which it can fully work for Scourge of Armagon and Dissolution of Eternity.
 - Have the mod use its own, custom cvar instead of `savedgamecfg`.
 - Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 300 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
