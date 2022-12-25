@@ -484,7 +484,7 @@ float(entity head) IsTouchingTeleporter =
 				dprint(" (");
 				dprint(vtos(head.origin));
 				dprint(")");
-				dprint(" is tied to a teleporter. Excluded from unstuck checks.\n");
+				dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 				return TRUE;
 			}
 			e = e.chain;
@@ -497,15 +497,20 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 {
         local entity e;
 		local vector center = head.origin;
-		local float radius, side;
+		local float radius, side, distance;
 
-		// Search for all entities in a 256 unit radius
-		e = findradius(head.origin, 256);
+		distance = 512;
+
+		// Search for all entities in the radius distance that will be considered "close"
+		e = findradius(head.origin, distance);
 		while(e)
 		{
-			if(e.Converted == "1" && ((classname1 != string_null && e.classname == classname1) || (classname2 != string_null && e.classname == classname2) || (classname3 != string_null && e.classname == classname3)))
+			if(e.Converted == "1")
 			{
-				return TRUE;
+				if(((classname1 != string_null && e.classname == classname1) || (classname2 != string_null && e.classname == classname2) || (classname3 != string_null && e.classname == classname3)))
+				{
+					return TRUE;
+				}
 			}
 			e = e.chain;
 		}
@@ -549,46 +554,49 @@ float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
 float(entity head) IsNearAWaterSurface =
 {
 		local vector center = head.origin;
-		local float IsNearLiquid;
+		local float IsNearLiquid, PositiveDistance, NegativeDistance;
+
+		PositiveDistance = 512;
+		NegativeDistance = PositiveDistance * -1;
 
 		IsNearLiquid = 0;
 
 		// Plane in the center
 
-		IsNearLiquid = GoesThroughALiquid(center, 256, 0, 0);		// RIGHT?
+		IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, 0, 0);		// RIGHT?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, 0, 0);		// LEFT?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, 0, 0);		// LEFT?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, 256, 0);		// UP?
+			IsNearLiquid = GoesThroughALiquid(center, 0, PositiveDistance, 0);		// UP?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, -256, 0);		// DOWN?
+			IsNearLiquid = GoesThroughALiquid(center, 0, NegativeDistance, 0);		// DOWN?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 256, 256, 0);		// UPPER RIGHT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, PositiveDistance, 0);		// UPPER RIGHT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 256, -256, 0); 	// LOWER RIGHT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, NegativeDistance, 0); 	// LOWER RIGHT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, 256, 0);	// UPPER LEFT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, PositiveDistance, 0);	// UPPER LEFT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, -256, 0);	// LOWER LEFT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, NegativeDistance, 0);	// LOWER LEFT CORNER?
 
 		// LOWER HALF OF THE OBJECT
 
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 256, 0, -256);		// RIGHT?
+			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, 0, NegativeDistance);		// RIGHT?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, 0, -256);		// LEFT?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, 0, NegativeDistance);		// LEFT?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, 256, -256);		// UP?
+			IsNearLiquid = GoesThroughALiquid(center, 0, PositiveDistance, NegativeDistance);		// UP?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, -256, -256);		// DOWN?
+			IsNearLiquid = GoesThroughALiquid(center, 0, NegativeDistance, NegativeDistance);		// DOWN?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 256, 256, -256);		// UPPER RIGHT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, PositiveDistance, NegativeDistance);		// UPPER RIGHT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 256, -256, -256); 	// LOWER RIGHT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, NegativeDistance, NegativeDistance); 	// LOWER RIGHT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, 256, -256);		// UPPER LEFT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, PositiveDistance, NegativeDistance);		// UPPER LEFT CORNER?
 		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, -256, -256, -256);	// LOWER LEFT CORNER?
+			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, NegativeDistance, NegativeDistance);	// LOWER LEFT CORNER?
 
 		// We don't pay attention to the upper half because having water above the object might mean it's in a different floor altogether
 		return IsNearLiquid;
