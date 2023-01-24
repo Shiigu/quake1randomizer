@@ -245,8 +245,8 @@ void() ConvertToFiend =
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
-
-	RegisterEntity(ENTITY_DISPLAY_NAME_FIEND);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_FIEND;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -289,8 +289,8 @@ void() ConvertToDog =
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
-
-	RegisterEntity(ENTITY_DISPLAY_NAME_ROTTWEILER);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ROTTWEILER;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -333,7 +333,8 @@ void() ConvertToEnforcer =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_ENFORCER);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ENFORCER;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -377,7 +378,8 @@ void() ConvertToRotfish =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_ROTFISH);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ROTFISH;
+	RegisterEntity(self.EntityDisplayName);
 	swimmonster_start ();
 };
 
@@ -421,7 +423,8 @@ void() ConvertToDeathKnight =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_DEATH_KNIGHT);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_DEATH_KNIGHT;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -464,7 +467,8 @@ void() ConvertToKnight =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_KNIGHT);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_KNIGHT;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -508,7 +512,8 @@ void() ConvertToOgre =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_OGRE);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_OGRE;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -551,7 +556,8 @@ void() ConvertToVore =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_VORE);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_VORE;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -594,7 +600,8 @@ void() ConvertToShambler =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_SHAMBLER);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SHAMBLER;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -637,7 +644,8 @@ void() ConvertToGrunt =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_GRUNT);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_GRUNT;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
@@ -681,11 +689,12 @@ void() ConvertToSpawn =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_SPAWN);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SPAWN;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 
-// Replaces entity with an Scrag
+// Replaces entity with a Scrag
 void() ConvertToScrag =
 {
 	if (deathmatch)
@@ -725,7 +734,8 @@ void() ConvertToScrag =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_SCRAG);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SCRAG;
+	RegisterEntity(self.EntityDisplayName);
 	flymonster_start ();
 };
 
@@ -767,7 +777,8 @@ void() ConvertToZombie =
 	dprint("\n");
 	self.Converted = "1";
 
-	RegisterEntity(ENTITY_DISPLAY_NAME_ZOMBIE);
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ZOMBIE;
+	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
 };
 

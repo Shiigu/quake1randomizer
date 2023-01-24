@@ -3,6 +3,7 @@
 // So, this file and its functions will work as a pseudo dictionary.
 
 float AMOUNT_OF_ENTITY_TYPES = 51;
+float AMOUNT_OF_MONSTER_TYPES = 13;
 
 string ENTITY_DISPLAY_NAME_DEATH_KNIGHT = "Monster -> Death Knight";
 string ENTITY_DISPLAY_NAME_ENFORCER = "Monster -> Enforcer";
@@ -34,8 +35,8 @@ string ENTITY_DISPLAY_NAME_CELLS_BIG = "Ammo -> Cells (12)";
 
 string ENTITY_DISPLAY_NAME_BIOSUIT = "Powerup -> Biosuit";
 string ENTITY_DISPLAY_NAME_PENTAGRAM_OF_PROTECTION = "Powerup -> Pentagram of Protection";
-string ENTITY_DISPLAY_NAME_QUAD_DAMAGE = "Powerup -> Ring of Shadows";
-string ENTITY_DISPLAY_NAME_RING_OF_SHADOWS = "Powerup -> Quad Damage";
+string ENTITY_DISPLAY_NAME_QUAD_DAMAGE = "Powerup -> Quad Damage";
+string ENTITY_DISPLAY_NAME_RING_OF_SHADOWS = "Powerup -> Ring of Shadows";
 string ENTITY_DISPLAY_NAME_HEALTH_100 = "Powerup -> Health Pack (100)";
 string ENTITY_DISPLAY_NAME_ARMOR_200 = "Powerup -> Armor (Red)";
 
@@ -77,8 +78,10 @@ string EntityNames[] = { ENTITY_DISPLAY_NAME_DEATH_KNIGHT, ENTITY_DISPLAY_NAME_E
                             ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN, ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER, ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER, 
                             ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT };
 float EntityQuantities[AMOUNT_OF_ENTITY_TYPES];
+float DeadEntityQuantities[AMOUNT_OF_MONSTER_TYPES];
 
-void(string classname) RegisterEntity;
+void(string key) RegisterEntity;
+void(string key) RegisterDeadEntity;
 void() LogResults;
 
 void() LogResults = {
@@ -87,8 +90,16 @@ void() LogResults = {
     for(i = 0; i < AMOUNT_OF_ENTITY_TYPES; i++)
     {
         if(EntityNames[i] == string_null) break;
-        if(EntityQuantities[i] != 0)
-            bprint(EntityNames[i], ": ", ftos(EntityQuantities[i]), "\n");
+        if(i < AMOUNT_OF_MONSTER_TYPES)
+        {
+            if(EntityQuantities[i] != 0)
+                bprint(EntityNames[i], ": ", ftos(DeadEntityQuantities[i]), "/", ftos(EntityQuantities[i]), " killed\n");
+        }
+        else
+        {
+            if(EntityQuantities[i] != 0)
+                bprint(EntityNames[i], ": ", ftos(EntityQuantities[i]), "\n");
+        }
     }
     bprint("----- End list of converted objects -----\n");
 };
@@ -114,6 +125,28 @@ void(string key) RegisterEntity =
     }
     else
     {
+        if(i < AMOUNT_OF_MONSTER_TYPES)
+            DeadEntityQuantities[i] = 0;
         EntityQuantities[i] = EntityQuantities[i] + 1;
+    }
+};
+
+void(string key) RegisterDeadEntity = 
+{
+    float i;
+    i = GetPositionOfEntry(key);
+    if(i == -1)
+    {
+        dprint(key);
+        dprint(" is not present in EntityNames dictionary.\n");
+    }
+    else if (i > AMOUNT_OF_MONSTER_TYPES)
+    {
+        dprint(key);
+        dprint(" is not a monster.\n");
+    }
+    else
+    {
+        DeadEntityQuantities[i] = DeadEntityQuantities[i] + 1;
     }
 };
