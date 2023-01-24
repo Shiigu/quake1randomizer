@@ -113,6 +113,11 @@ void() finale_1 =
 	
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
+	
+	if(fixedSeed <= 0 && !deathmatch && !coop)
+	{
+		LogResults();
+	}
 
 	intermission_exittime = time + 10000000;	// never allow exit
 	intermission_running = 1;

@@ -259,6 +259,11 @@ void() IntermissionThink =
 void() execute_changelevel =
 {
 	local entity	pos;
+	
+	if(fixedSeed <= 0 && !deathmatch && !coop)
+	{
+		LogResults();
+	}
 
 	intermission_running = 1;
 	
@@ -1138,8 +1143,8 @@ void() PlayerPostThink =
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 	if (self.deadflag)
-		return;
-		
+		return;		
+
 // do weapon stuff
 
 	W_WeaponFrame ();
@@ -1224,6 +1229,12 @@ void(entity targ, entity attacker) ClientObituary =
 
 	if (targ.classname == "player")
 	{
+		if(fixedSeed <= 0 && !deathmatch && !coop)
+		{
+			LogResults();
+			bprint("\n=== List of randomized objects has been printed to console ===\n\n");
+		}
+
 		if (attacker.classname == "teledeath")
 		{
 			bprint (targ.netname);
