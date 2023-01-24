@@ -90,7 +90,7 @@ void() ConvertEntities = {
     dprint("----- Starting ConvertEntities -----\n");
 	while (temp != world && i < MAX_PER_CALL) // As long as it can find any entity that can be converted
 	{
-        temp.Converted = "0";
+        temp.Converted = "-1";
         if(temp.classname != "worldspawn")
         {
             if(temp.flags & FL_MONSTER)
@@ -99,22 +99,23 @@ void() ConvertEntities = {
                 dprint(temp.classname);
                 dprint(". ");
                 if(temp.classname == "monster_oldone" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
-                {
-                    temp.Converted = "1"; // Do NOT convert Chthon, Shub-Niggurath or a crucified Zombie
-                    if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
                     {
-                        dprint("This Zombie is cruficied. ");
+                        if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
+                        {
+                            dprint("This Zombie is cruficied. ");
+                        }
+                        dprint("Didn't flag for Convert.\n");
                     }
-                    dprint("Didn't flag for Convert.\n");
-                }
-                else 
-                {
-                    temp.think = SUB_Null;
-                    temp.oldsize = temp.size;
-                    temp.think = ConvertToMonster;
-                    temp.nextthink = time;
-                    dprint("Flagged as a monster.\n");
-                }
+                    else 
+                    {
+                        temp.Converted = "0";
+                        temp.think = SUB_Null;
+                        temp.oldsize = temp.size;
+                        temp.oldmins = temp.mins;
+                        temp.think = ConvertToMonster;
+                        temp.nextthink = time;
+                        dprint("Flagged as a monster.\n");
+                    }
             }
             else if(temp.flags & FL_ITEM)
             {
@@ -123,14 +124,15 @@ void() ConvertEntities = {
                 dprint(". ");
                 if(temp.classname == "item_key1" || temp.classname == "item_key2" || temp.classname == "item_sigil")
                 {
-                    temp.Converted = "1"; // Do NOT convert Keys or Runes
                     dprint("Didn't flag for Convert.\n");
                 }
                 else if(temp.classname == "item_armor1" || temp.classname == "item_armor2"
                 || (temp.classname == "item_health" && !(temp.spawnflags & H_MEGA)))
                 {
+                    temp.Converted = "0";
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
+                    temp.oldmins = temp.mins;
                     if (!UnbiasedMode)
                     {
                         temp.think = ConvertToPickupBiased;
@@ -144,8 +146,11 @@ void() ConvertEntities = {
                 }
                 else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon")
                 {
+                    temp.Converted = "0";
+                    temp.Unstuckable = 1;
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
+                    temp.oldmins = temp.mins;
                     if (!UnbiasedMode)
                     {
                         temp.think = ConvertToAmmoBiased;
@@ -160,9 +165,12 @@ void() ConvertEntities = {
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage")
-                {
+                {                    
+                    temp.Converted = "0";
+                    temp.Unstuckable = 1;
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
+                    temp.oldmins = temp.mins;
                     if (!UnbiasedMode)
                     {
                         temp.think = ConvertToPowerupBiased;
@@ -178,8 +186,11 @@ void() ConvertEntities = {
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
                 || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning")
                 {
+                    temp.Converted = "0";
+                    temp.Unstuckable = 1;
                     temp.think = SUB_Null;
                     temp.oldsize = temp.size;
+                    temp.oldmins = temp.mins;
                     if (!UnbiasedMode)
                     {
                         temp.think = ConvertToWeaponBiased;
@@ -192,13 +203,9 @@ void() ConvertEntities = {
                     dprint("Flagged as a weapon.\n");
                 }
             }
-            else 
-            {
-                temp.Converted = "1"; // Do NOT convert Keys or Runes
-            }
         }
 		temp = find(temp, Converted, "");
-        i++;
+        i = i + 1;
 	}
     if(temp == world || i < MAX_PER_CALL)
     {
@@ -263,7 +270,7 @@ void() ConvertToMonsterOnWaterUnbiased = {
     self.nextthink = time;
 };
 
-// To convert a monster present in ground. Prevents spawning Rotfish in ground.
+// To convert a monster present in ground. Prevents spawning Rotfish in ground (because they can't move there).
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnGroundBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
@@ -290,8 +297,8 @@ void() ConvertToMonsterOnGroundBiased = {
     self.nextthink = time;
 };
 
-// To convert a monster present in water.
-// Monsters have an arbitrarily "fair" chance to appear. Dogs and Knights are not allowed to spawn in water (because they are melee-only, and thus useless there).
+// To convert a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
+// Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnWaterBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
@@ -335,24 +342,34 @@ void() ConvertToPickupUnbiased = {
 void() ConvertToPickupBiased = {
     local float rngType, rngQuality;
     local float ProbabilityForSameType = 90;
+    local float nearbyArmor;
     rngType = Random(1, 100);
     rngQuality = Random(1, 2);
     self.QualityType = rngQuality;
+    nearbyArmor = IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv");
     if(self.classname == "item_health")
     {
-        if(rngType >= 1 && rngType <= ProbabilityForSameType)
+        if(nearbyArmor || (rngType >= 1 && rngType <= ProbabilityForSameType))
         { 
             self.think = ConvertToHealth;
         }
         else
         {
+            if(rngQuality == 1)
+		        self.nextClassname = "item_armor1";
+            else
+                self.nextClassname = "item_armor2";
             self.think = ConvertToArmor;
         }
     }
     else if(self.classname == "item_armor1" || self.classname == "item_armor2")
     {
-        if(rngType >= 1 && rngType <= ProbabilityForSameType)
+        if(!nearbyArmor && rngType >= 1 && rngType <= ProbabilityForSameType)
         { 
+            if(rngQuality == 1)
+		        self.nextClassname = "item_armor1";
+            else
+                self.nextClassname = "item_armor2";
             self.think = ConvertToArmor;
         }
         else
@@ -459,16 +476,16 @@ void() ConvertToGuaranteedPowerup = {
 };
 
 // Converts a powerup of one type to another randomly.
-// If there's water nearby: 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
-// If there's no water nearby: 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a Weapon
+// If there's Slime or Lava nearby: 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
+// If there's no Slime or Lava nearby: 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a Weapon
 // It spawns a weapon instead if it's trying to spawn in invalid conditions (Red Armor near another suit of armor, Powerup of the same type nearby)
-void() ConvertToPowerupBiased = {    
+void() ConvertToPowerupBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
     local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
-    local string Classnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", string_null, string_null, "item_artifact_envirosuit" };
+    local string Classnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", string_null, "item_artifact_envirosuit" };
     local float Probabilities[] = { 18, 18, 18, 18, 18, 10 };
     amountOfChoices = Probabilities.length;
-    if(!IsNearAWaterSurface(self))
+    if(!IsNearAHarmfulLiquidSurface(self, 512))
     {
         // Adjust possibilities to allow weapons in case there's no nearby water body
         Converters[amountOfChoices - 1] = ConvertToWeaponBiased;
@@ -488,15 +505,31 @@ void() ConvertToPowerupBiased = {
         maxrng = maxrng + Probabilities[i];
         if(rng >= minrng && rng <= maxrng)
         {
-            if(i != 4)
+            if(i != 4 && Classnames[i] != string_null)  // Not ConvertToArmor
             {
-                if(IsNearOneOf(self, Classnames[i], string_null, string_null))
-                    break;
+                if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
+                {                    
+                    DONE = 1;
+                    if(i == 3)                          // ConvertToHealth
+                    {
+                        self.healamount = 100;
+                        self.QualityType = 3;
+                    }
+                    self.nextClassname = Classnames[i];
+                    self.think = Converters[i];
+                }
             }
-            DONE = 1;
-            if(i == 3 || i == 4)
-                self.QualityType = 3;
-            self.think = Converters[i];
+            else if(i == 4)                             // ConvertToArmor
+            {
+                if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
+                {                    
+                    DONE = 1;
+                    self.QualityType = 3;
+                    self.nextClassname = Classnames[i];
+                    self.think = Converters[i];
+                }
+            }
+            break;
         }
         i++;
     }
@@ -578,9 +611,11 @@ void() CreateWeaponPermutation = {
 
 // Converts a weapon of one type to another randomly.
 // Chances are completely even, even in Biased mode. However, in Biased mode, a weapon may not appear more than once if any of the other weapons hasn't appeared yet.
-// If all weapons have spawned, it will instead spawn a powerup. Then it will allow weapons again.
+// If all weapons have spawned, it will create a new weapon bag. It has a 50% chance of spawning a powerup or a new weapon.
 // Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup instead.
+// In any moment, there's a 5% chance of a Powerup spawning instead of a weapon.
 void() ConvertToWeaponBiased = {
+    local float rng;
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
         SpawnedWeapons & IT_SUPER_NAILGUN && 
@@ -620,6 +655,7 @@ void() ConvertToWeaponBiased = {
         {
             if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
             {
+                self.nextClassname = Classnames[i];
                 if(!HideInBackpacks)
                     self.think = ConvertersPermutation[i];
                 else

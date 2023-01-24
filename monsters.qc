@@ -73,7 +73,7 @@ void() walkmonster_start_go =
 {
 	local string	stemp;
 	local entity	etemp;
-	local vector old;
+	local vector old, neworigin;
 	local float IS_IN_TELEPORTER;
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 
@@ -83,7 +83,25 @@ void() walkmonster_start_go =
 
 		if(!IS_IN_TELEPORTER)
 		{
+			if(self.mins != self.oldmins)
+			{
+				// The coordinates of a monster will be corrected in case the bounding boxes are differently-sized.
+				neworigin = self.origin;
+				neworigin_x = neworigin_x - self.mins_x + self.oldmins_x;
+				neworigin_y = neworigin_y - self.mins_y + self.oldmins_y;
+				neworigin_z = neworigin_z - self.mins_z + self.oldmins_z;
+				setorigin(self, neworigin);
+				droptofloor();
+			}
 			droptofloor();
+		}
+		else
+		{		
+			dprint(self.classname);
+			dprint(" (");
+			dprint(vtos(self.origin));
+			dprint(")");
+			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 		}
 		
 		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
@@ -159,7 +177,7 @@ void() walkmonster_start =
 
 void() flymonster_start_go =
 {
-	local vector old;
+	local vector old, neworigin;
 	local entity	etemp;
 	local float IS_IN_TELEPORTER;
 	self.takedamage = DAMAGE_AIM;
@@ -176,6 +194,27 @@ void() flymonster_start_go =
 	if(self.Converted == "1")
 	{
 		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
+
+		if(!IS_IN_TELEPORTER)
+		{
+			if(self.mins != self.oldmins)
+			{
+				// The coordinates of a monster will be corrected in case the bounding boxes are differently-sized.
+				neworigin = self.origin;
+				neworigin_x = neworigin_x - self.mins_x + self.oldmins_x;
+				neworigin_y = neworigin_y - self.mins_y + self.oldmins_y;
+				neworigin_z = neworigin_z - self.mins_z + self.oldmins_z;
+				setorigin(self, neworigin);
+			}
+		}
+		else
+		{		
+			dprint(self.classname);
+			dprint(" (");
+			dprint(vtos(self.origin));
+			dprint(")");
+			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
+		}
 
 		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
 		{

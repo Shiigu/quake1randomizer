@@ -349,7 +349,7 @@ checked each frame.  This means multi player games will have slightly
 slower noticing monsters.
 ============
 */
-float() FindTarget =
+float(float playAlertSound) FindTarget =
 {
 	local entity	client;
 	local float		r;
@@ -375,7 +375,7 @@ float() FindTarget =
 
 	if (client == self.enemy)
 		return FALSE;
-
+		
 	if (client.flags & FL_NOTARGET)
 		return FALSE;
 	if (client.items & IT_INVISIBILITY)
@@ -412,8 +412,9 @@ float() FindTarget =
 			return FALSE;
 		}
 	}
-	
-	FoundTarget ();
+
+	if(playAlertSound)
+		FoundTarget ();
 
 	return TRUE;
 };
@@ -483,7 +484,7 @@ void(float dist) ai_walk =
 		return;
 	}
 	// check for noticing a player
-	if (FindTarget ())
+	if (FindTarget (TRUE))
 		return;
 
 	movetogoal (dist);
@@ -499,7 +500,7 @@ The monster is staying in one place for a while, with slight angle turns
 */
 void() ai_stand =
 {
-	if (FindTarget ())
+	if (FindTarget (TRUE))
 		return;
 	
 	if (time > self.pausetime)
@@ -521,7 +522,7 @@ don't move, but turn towards ideal_yaw
 */
 void() ai_turn =
 {
-	if (FindTarget ())
+	if (FindTarget (TRUE))
 		return;
 	
 	ChangeYaw ();
@@ -711,7 +712,7 @@ void(float dist) ai_run =
 // look for other coop players
 	if (coop && self.search_time < time)
 	{
-		if (FindTarget ())
+		if (FindTarget (TRUE))
 			return;
 	}
 

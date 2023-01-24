@@ -46,14 +46,20 @@ void() PlaceItem =
 	self.movetype = MOVETYPE_TOSS;	
 	self.velocity = '0 0 0';
 
-	if((self.flags & FL_ITEM) && self.oldsize_z < self.size_z)
+	if((self.flags & FL_ITEM) && self.mins != self.oldmins)
 	{
-		// If an item was converted into a taller one (e.g. Ammo to weapon, or between powerups)...
-		// ... move it a bit higher to not instantly flag it as stuck. Turning into a smaller item is fair game though.
+		dprint (self.classname);
+		dprint (" in ");
+		dprint (vtos(self.origin));
+		dprint (" will be relocated to ");
+		// The Z coordinate of an item will be corrected in case the bounding boxes are differently-sized. (X and Y coordinates are fine)
 		neworigin = self.origin;
-		neworigin_z = neworigin_z + fabs(self.size_z - self.oldsize_z);
-		self.origin = neworigin;
+		neworigin_z = neworigin_z + fabs(self.size_z);
+		setorigin(self, neworigin);
 		droptofloor();
+		dprint (vtos(self.origin));
+		dprint (" to correct its bounding box.");
+		dprint ("\n");
 	}
 
 	self.origin_z = self.origin_z + 1;
@@ -137,7 +143,6 @@ one point per second.
 
 float	H_ROTTEN = 1;
 float	H_MEGA = 2;
-.float	healamount, healtype;
 void() health_touch;
 void() item_megahealth_rot;
 

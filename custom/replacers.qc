@@ -835,11 +835,6 @@ void() ConvertToHealth =
 // If there's nearby armor, it will turn into a Health Pack of the same quality instead.
 void() ConvertToArmor =
 {
-	if(IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
-	{
-		ConvertToHealth();
-		return;
-	}
 	dprint("Converted ");
 	dprint(self.classname);
 	dprint(" to ");
@@ -1309,6 +1304,8 @@ void() ConvertToWeaponBackpack =
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
+	self.origin_z = self.origin_z + 24;
+	droptofloor();
 	StartItem ();
 };
 
@@ -1407,6 +1404,8 @@ void() ConvertToAmmoBackpack =
 	self.touch = BackpackTouch_Replaced;
 	dprint("\n");
 	self.Converted = "1";
+	self.origin_z = self.origin_z + 24;
+	droptofloor();
 	StartItem ();
 };
 

@@ -4,10 +4,12 @@ float(float lower, float upper) Random;
 void(entity e, float flying) UnstuckMonster;
 void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
-float(entity head) IsNearAWaterSurface;
+float(entity head, float distance) IsNearAHarmfulLiquidSurface;
 float(entity head, string classname1, string classname2, string classname3) IsNearOneOf;
+float(float playAlertSound) FindTarget;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
+.vector oldmins;
 
 void() SUB_Null = {};
 
@@ -339,16 +341,16 @@ void(entity e, float flying) UnstuckMonster =
 	local vector min;
 	local vector max;
 	local vector diff;
-	local float canMove;
+	local float canMove, seesTarget, alreadySeesTarget;
 
 	oldself = self;
 	self = e;
 
-	MAX_TRIES = 300;
+	MAX_TRIES = 1500;
 	CURRENT_TRY = 0;
-	diff_x = 0;
-	diff_y = 0;
-	diff_z = 0;
+	diff_x = self.size_x;
+	diff_y = self.size_y;
+	diff_z = self.size_z;
 	old_x = self.origin_x;
 	old_y = self.origin_y;
 	old_z = self.origin_z;
@@ -357,18 +359,16 @@ void(entity e, float flying) UnstuckMonster =
 	dprint(" (");
 	dprint(vtos(self.origin));
 	dprint(").");
+	alreadySeesTarget = FindTarget(FALSE);
 	do
 	{
 		fixvector_x = old_x;
 		fixvector_y = old_y;
 		fixvector_z = old_z;
-		// Give three tries with a single coordinate change in case it works
-		if(CURRENT_TRY == 0 || CURRENT_TRY > 2)
-			diff_x = diff_x + 3;
-		if(CURRENT_TRY == 1 || CURRENT_TRY > 2)
-			diff_y = diff_y + 3;
-		if(CURRENT_TRY >= 2)
-			diff_z = diff_z + 3;
+		// Give six tries with a single coordinate change in case it works
+		diff_x = fmin(diff_x + 3, 1200);
+		diff_y = fmin(diff_y + 3, 1200);
+		diff_z = fmin(diff_z + 3, 1200);
 		min_x = old_x - diff_x;
 		min_y = old_y - diff_y;
 		min_z = old_z - diff_z;
@@ -383,14 +383,19 @@ void(entity e, float flying) UnstuckMonster =
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
 		canMove = walkmove(0,0);
-		if(canMove)
-		{ 
+		if(canMove && !alreadySeesTarget)
+			seesTarget = !FindTarget(FALSE);							// Don't move the monster to where they can already see the player (unless they already could do so)
+		if(canMove && (alreadySeesTarget || !seesTarget))
+		{
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s).\n");
+			dprint(" attempt(s) and relocated to (");
+			dprint(vtos(self.origin));
+			dprint(").\n");
 		}
 	}
 	while(!canMove && CURRENT_TRY < MAX_TRIES);
+	self.velocity_z = -500;
 	self = oldself;
 };
 
@@ -409,11 +414,11 @@ void(entity e) UnstuckObject =
 	oldself = self;
 	self = e;
 
-	MAX_TRIES = 300;
+	MAX_TRIES = 1500;
 	CURRENT_TRY = 0;
-	diff_x = 0;
-	diff_y = 0;
-	diff_z = 0;
+	diff_x = self.size_x;
+	diff_y = self.size_y;
+	diff_z = self.size_z;
 	old_x = self.origin_x;
 	old_y = self.origin_y;
 	old_z = self.origin_z;
@@ -427,13 +432,10 @@ void(entity e) UnstuckObject =
 		fixvector_x = old_x;
 		fixvector_y = old_y;
 		fixvector_z = old_z;
-		// Give three tries with a single coordinate change in case it works
-		if(CURRENT_TRY == 0 || CURRENT_TRY > 2)
-			diff_x = diff_x + 3;
-		if(CURRENT_TRY == 1 || CURRENT_TRY > 2)
-			diff_y = diff_y + 3;
-		if(CURRENT_TRY >= 2)
-			diff_z = diff_z + 3;
+		// Give six tries with a single coordinate change in case it works		
+		diff_x = fmin(diff_x + 3, 1200);
+		diff_y = fmin(diff_y + 3, 1200);
+		diff_z = fmin(diff_z + 3, 1200);
 		min_x = old_x - diff_x;
 		min_y = old_y - diff_y;
 		min_z = old_z - diff_z;
@@ -450,10 +452,13 @@ void(entity e) UnstuckObject =
 		{
 			dprint(" Worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s).\n");
+			dprint(" attempt(s) and relocated to (");
+			dprint(vtos(self.origin));
+			dprint(").\n");
 		}
 	}
 	while(!dropped && CURRENT_TRY < MAX_TRIES);
+	self.velocity_z = -500;
 	self = oldself;
 };
 
@@ -480,11 +485,6 @@ float(entity head) IsTouchingTeleporter =
 		{
 			if(e.classname == "trigger_teleport" && e.targetname)
 			{
-				dprint(head.classname);
-				dprint(" (");
-				dprint(vtos(head.origin));
-				dprint(")");
-				dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 				return TRUE;
 			}
 			e = e.chain;
@@ -495,33 +495,60 @@ float(entity head) IsTouchingTeleporter =
 // Checks if there are already-converted nearby objects of the specified classes (up to 3).
 float(entity head, string classname1, string classname2, string classname3) IsNearOneOf =
 {
-        local entity e;
-		local vector center = head.origin;
-		local float radius, side, distance;
+	local entity e;
+	local vector center = head.origin;
+	local float radius, side, distance;
 
-		distance = 512;
+	distance = 512;
 
-		// Search for all entities in the radius distance that will be considered "close"
-		e = findradius(head.origin, distance);
-		while(e)
+	// Search for all entities in the radius distance that will be considered "close"
+	e = findradius(head.origin, distance);
+	while(e)
+	{
+		if(e.nextClassname != "")
 		{
-			if(e.Converted == "1")
+			dprint("Checking proximity between ");
+			dprint(head.classname);
+			dprint(" and ");
+			dprint(e.nextClassname);
+			dprint(", looking for ");
+			dprint(classname1);
+			if(classname2 != string_null)
 			{
-				if(((classname1 != string_null && e.classname == classname1) || (classname2 != string_null && e.classname == classname2) || (classname3 != string_null && e.classname == classname3)))
+				dprint(", ");
+				dprint(classname2);
+			}
+			if(classname3 != string_null)
+			{
+				dprint(", or ");
+				dprint(classname3);
+			}
+			dprint(".\n");
+			if(classname1 == "item_health") // If looking for Megahealths, ignore health packs that aren't of such type.
+			{
+				if(e.nextClassname == "item_health" && e.healamount == 100)
 				{
 					return TRUE;
 				}
 			}
-			e = e.chain;
+			else
+			{
+				if(((classname1 != string_null && e.nextClassname == classname1) || (classname2 != string_null && e.nextClassname == classname2) || (classname3 != string_null && e.nextClassname == classname3)))
+				{
+					return TRUE;
+				}
+			}
 		}
-		return FALSE;
+		e = e.chain;
+	}
+	return FALSE;
 };
 
-// Tries, in six increments, whether there's some liquid surface between the start and the destination
-float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
+// Tries, in six increments, whether there's some Slime or Lava surface (or a comparatively faraway water surface) between the start and the destination
+float(vector center, float plusX, float plusY, float plusZ) GoesThroughAHarmfulLiquid =
 {
-	local float MAX_TRIES = 6;
-	local float CURRENT_TRIES, contents;
+	local float MAX_TRIES = 10;
+	local float CURRENT_TRIES, contents, checkWaterToo;
 	local vector increment, target;
 	if(plusX != 0)
 		increment_x = plusX / MAX_TRIES;
@@ -532,11 +559,15 @@ float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
 	target = center;
 	while(CURRENT_TRIES < MAX_TRIES)
 	{
+		if(!checkWaterToo)
+			checkWaterToo = CURRENT_TRIES >= (MAX_TRIES / 2);
 		contents = pointcontents(target);
-		if(contents == CONTENT_WATER || contents == CONTENT_SLIME || contents == CONTENT_LAVA)
+		if(contents == CONTENT_SLIME || contents == CONTENT_LAVA)
 			return TRUE;
-		else
+		if(checkWaterToo)
 		{
+			if(contents == CONTENT_WATER)
+				return TRUE;
 			traceline(center, target, TRUE, world);
 			if(trace_inwater)
 				return TRUE;
@@ -551,53 +582,53 @@ float(vector center, float plusX, float plusY, float plusZ) GoesThroughALiquid =
 
 // Checks if there are liquid surfaces around 256 units away from the object
 // (It does NOT check if there are liquid surfaces above the object, as that is likely to be separated by a wall)
-float(entity head) IsNearAWaterSurface =
+float(entity head, float distance) IsNearAHarmfulLiquidSurface =
 {
 		local vector center = head.origin;
-		local float IsNearLiquid, PositiveDistance, NegativeDistance;
+		local float IsNearHarmfulLiquid, PositiveDistance, NegativeDistance;
 
-		PositiveDistance = 512;
+		PositiveDistance = distance;
 		NegativeDistance = PositiveDistance * -1;
 
-		IsNearLiquid = 0;
+		IsNearHarmfulLiquid = 0;
 
 		// Plane in the center
 
-		IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, 0, 0);		// RIGHT?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, 0, 0);		// LEFT?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, PositiveDistance, 0);		// UP?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, NegativeDistance, 0);		// DOWN?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, PositiveDistance, 0);		// UPPER RIGHT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, NegativeDistance, 0); 	// LOWER RIGHT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, PositiveDistance, 0);	// UPPER LEFT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, NegativeDistance, 0);	// LOWER LEFT CORNER?
+		IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, 0, 0);										// RIGHT?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, 0, 0);									// LEFT?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, 0, PositiveDistance, 0);									// UP?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, 0, NegativeDistance, 0);									// DOWN?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, PositiveDistance, 0);						// UPPER RIGHT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, NegativeDistance, 0); 					// LOWER RIGHT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, PositiveDistance, 0);						// UPPER LEFT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, NegativeDistance, 0);						// LOWER LEFT CORNER?
 
 		// LOWER HALF OF THE OBJECT
 
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, 0, NegativeDistance);		// RIGHT?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, 0, NegativeDistance);		// LEFT?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, PositiveDistance, NegativeDistance);		// UP?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, 0, NegativeDistance, NegativeDistance);		// DOWN?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, PositiveDistance, NegativeDistance);		// UPPER RIGHT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, PositiveDistance, NegativeDistance, NegativeDistance); 	// LOWER RIGHT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, PositiveDistance, NegativeDistance);		// UPPER LEFT CORNER?
-		if(IsNearLiquid == 0)
-			IsNearLiquid = GoesThroughALiquid(center, NegativeDistance, NegativeDistance, NegativeDistance);	// LOWER LEFT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, 0, NegativeDistance);						// RIGHT?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, 0, NegativeDistance);						// LEFT?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, 0, PositiveDistance, NegativeDistance);						// UP?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, 0, NegativeDistance, NegativeDistance);						// DOWN?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, PositiveDistance, NegativeDistance);		// UPPER RIGHT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, PositiveDistance, NegativeDistance, NegativeDistance); 		// LOWER RIGHT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, PositiveDistance, NegativeDistance);		// UPPER LEFT CORNER?
+		if(IsNearHarmfulLiquid == 0)
+			IsNearHarmfulLiquid = GoesThroughAHarmfulLiquid(center, NegativeDistance, NegativeDistance, NegativeDistance);		// LOWER LEFT CORNER?
 
-		// We don't pay attention to the upper half because having water above the object might mean it's in a different floor altogether
-		return IsNearLiquid;
+		// We don't pay attention to the upper half because having liquid above the object might mean it's in a different floor altogether
+		return IsNearHarmfulLiquid;
 };

@@ -1,7 +1,7 @@
 float sqrt(float x);
 float pow(float x, float y);
-float max(float a, float b);
-float min(float a, float b);
+float fmax(float a, float b);
+float fmin(float a, float b);
 float mod(float a, float b);
 float rand();
 
@@ -55,7 +55,7 @@ float pow(float x, float y) =
 * 
 */
 
-float max(float a, float b) = {
+float fmax(float a, float b) = {
     if(a >= b)
         return a;
     return b;
@@ -70,7 +70,7 @@ float max(float a, float b) = {
 * 
 */
 
-float min(float a, float b) = {
+float fmin(float a, float b) = {
     if(a <= b)
         return a;
     return b;
