@@ -135,6 +135,8 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 > The odds for which weapon to be spawned are defined below.
 
+> If weapon randomization is disabled, the weapon will be replaced by a Quad Damage, or a random Powerup in case proximity checks prevent it.
+
 #### Weapon replacement chances on Biased Mode
 
 Every weapon has an even chance to be spawned.
@@ -146,6 +148,10 @@ It works as follows:
 4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
 > * The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces, due to the fact it will instantly kill a non-invulnerable player if used in there.
+
+> At every point in the weapon "bag", there's a 5% chance to spawn a Powerup instead of the next weapon. If Powerup randomization is disabled, the next weapon will always be generated.
+
+> When the weapon "bag" is complete, there's a 50% chance to spawn a Powerup (if Powerup randomization is enabled) instead of immediately create a new weapon "bag".
 
 ### Unbiased Mode
 
@@ -167,4 +173,4 @@ The mod works as intended, but there are still a bunch of things in the mod that
 - Give more 'fair' odds for the Biased mode.
 - Create forks of this mod in which it can fully work for Scourge of Armagon and Dissolution of Eternity.
 - Have the mod use its own, custom cvar instead of `savedgamecfg`.
-- Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 300 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
+- Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 1500 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
