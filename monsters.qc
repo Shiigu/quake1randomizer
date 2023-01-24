@@ -77,8 +77,9 @@ void() walkmonster_start_go =
 	local float IS_IN_TELEPORTER;
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 
-	if(self.Converted == "1")
+	if(self.Converted == "1" && self.Unstuckable)
 	{
+
 		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
 		if(!IS_IN_TELEPORTER)

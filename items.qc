@@ -46,7 +46,7 @@ void() PlaceItem =
 	self.movetype = MOVETYPE_TOSS;	
 	self.velocity = '0 0 0';
 
-	if((self.flags & FL_ITEM) && self.mins != self.oldmins)
+	if(self.Unstuckable && self.mins != self.oldmins)
 	{
 		dprint (self.classname);
 		dprint (" in ");
@@ -67,28 +67,29 @@ void() PlaceItem =
 	if(self.Converted != "1" || self.classname == "item_key1" || self.classname == "item_key2" || self.classname == "item_sigil")
 		return;
 	
-	IS_IN_TELEPORTER = IsTouchingTeleporter(self);
-
-	if (!droptofloor() && !IS_IN_TELEPORTER)
+	if(self.Unstuckable)
 	{
-		old_x = self.origin_x;
-		old_y = self.origin_y;
-		old_z = self.origin_z;
-		UnstuckObject(self);
-	}
-	
-	if (!droptofloor() && !IS_IN_TELEPORTER)
-	{
-		self.origin_x = old_x;
-		self.origin_y = old_y;
-		self.origin_z = old_z;
-		dprint ("\nUnstuck failed. Bonus item ");
-		dprint (self.classname);
-		dprint (" removed from level at ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
-		remove(self);
-		return;
+		if (!droptofloor())
+		{
+			old_x = self.origin_x;
+			old_y = self.origin_y;
+			old_z = self.origin_z;
+			UnstuckObject(self);
+		}
+		
+		if (!droptofloor())
+		{
+			self.origin_x = old_x;
+			self.origin_y = old_y;
+			self.origin_z = old_z;
+			dprint ("\nUnstuck failed. Bonus item ");
+			dprint (self.classname);
+			dprint (" removed from level at ");
+			dprint (vtos(self.origin));
+			dprint ("\n");
+			remove(self);
+			return;
+		}
 	}
 };
 

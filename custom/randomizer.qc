@@ -14,6 +14,7 @@ void() ConvertToPowerupUnbiased;
 void() ConvertToWeaponBiased;
 void() ConvertToWeaponUnbiased;
 void() CreateWeaponPermutation;
+void() CreateWeaponPermutation;
 
 /* Entities will be converted to one of the same type:
     - "Monster" for Monsters
@@ -28,7 +29,11 @@ float IndexPermutation[6];
 void() Randomize = {
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
-    HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;
+    HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;    
+    RandomizeMonsters = (RandomMode & DO_NOT_RANDOMIZE_MONSTERS) == 0;
+    RandomizeWeaponsAndAmmo = (RandomMode & DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO) == 0;
+    RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
+    RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
 	fixedSeed = floor(cvar("gamecfg"));
 	if(fixedSeed > 0)
 	{
@@ -55,6 +60,18 @@ void() Randomize = {
     dprint(ftos(seed));
     if(seedIsFixed)
         dprint(" (FIXED)");
+    dprint(".\n");    
+    dprint("RandomizeMonsters is ");
+    dprint(ftos(RandomizeMonsters));
+    dprint(".\n");    
+    dprint("RandomizeWeaponsAndAmmo is ");
+    dprint(ftos(RandomizeWeaponsAndAmmo));
+    dprint(".\n");    
+    dprint("RandomizeHealthAndArmor is ");
+    dprint(ftos(RandomizeHealthAndArmor));
+    dprint(".\n");    
+    dprint("RandomizePowerups is ");
+    dprint(ftos(RandomizePowerups));
     dprint(".\n");
     if (UnbiasedMode)
     {
@@ -91,6 +108,7 @@ void() ConvertEntities = {
 	while (temp != world && i < MAX_PER_CALL) // As long as it can find any entity that can be converted
 	{
         temp.Converted = "-1";
+        temp.Unstuckable = 0;
         if(temp.classname != "worldspawn")
         {
             if(temp.flags & FL_MONSTER)
@@ -98,7 +116,9 @@ void() ConvertEntities = {
                 dprint("Found ");
                 dprint(temp.classname);
                 dprint(". ");
-                if(temp.classname == "monster_oldone" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
+                if(RandomizeMonsters)
+                {
+                    if(temp.classname == "monster_oldone" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
                     {
                         if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
                         {
@@ -109,6 +129,7 @@ void() ConvertEntities = {
                     else 
                     {
                         temp.Converted = "0";
+                        temp.Unstuckable = 1;
                         temp.think = SUB_Null;
                         temp.oldsize = temp.size;
                         temp.oldmins = temp.mins;
@@ -116,6 +137,13 @@ void() ConvertEntities = {
                         temp.nextthink = time;
                         dprint("Flagged as a monster.\n");
                     }
+                }
+                else
+                {
+                    temp.Converted = "1";
+                    temp.nextClassname = self.classname;
+                    dprint("Ignored due to randomizer settings.\n");
+                }
             }
             else if(temp.flags & FL_ITEM)
             {
@@ -129,78 +157,115 @@ void() ConvertEntities = {
                 else if(temp.classname == "item_armor1" || temp.classname == "item_armor2"
                 || (temp.classname == "item_health" && !(temp.spawnflags & H_MEGA)))
                 {
-                    temp.Converted = "0";
-                    temp.think = SUB_Null;
-                    temp.oldsize = temp.size;
-                    temp.oldmins = temp.mins;
-                    if (!UnbiasedMode)
+                    if(RandomizeHealthAndArmor)
                     {
-                        temp.think = ConvertToPickupBiased;
+                        temp.Converted = "0";
+                        temp.Unstuckable = 1;
+                        temp.think = SUB_Null;
+                        temp.oldsize = temp.size;
+                        temp.oldmins = temp.mins;
+                        if (!UnbiasedMode)
+                        {
+                            temp.think = ConvertToPickupBiased;
+                        }
+                        else
+                        {
+                            temp.think = ConvertToPickupUnbiased;
+                        }
+                        temp.nextthink = time;
+                        dprint("Flagged as a pickup.\n");
                     }
                     else
                     {
-                        temp.think = ConvertToPickupUnbiased;
+                        temp.Converted = "1";
+                        temp.nextClassname = self.classname;
+                        dprint("Ignored due to randomizer settings.\n");
                     }
-                    temp.nextthink = time;
-                    dprint("Flagged as a pickup.\n");
                 }
                 else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon")
                 {
-                    temp.Converted = "0";
-                    temp.Unstuckable = 1;
-                    temp.think = SUB_Null;
-                    temp.oldsize = temp.size;
-                    temp.oldmins = temp.mins;
-                    if (!UnbiasedMode)
+                    if(RandomizeWeaponsAndAmmo)
                     {
-                        temp.think = ConvertToAmmoBiased;
+                        temp.Converted = "0";
+                        temp.Unstuckable = 1;
+                        temp.think = SUB_Null;
+                        temp.oldsize = temp.size;
+                        temp.oldmins = temp.mins;
+                        if (!UnbiasedMode)
+                        {
+                            temp.think = ConvertToAmmoBiased;
+                        }
+                        else
+                        {
+                            temp.think = ConvertToAmmoUnbiased;
+                        }
+                        temp.nextthink = time;
+                        dprint("Flagged as ammo.\n");
                     }
                     else
                     {
-                        temp.think = ConvertToAmmoUnbiased;
+                        temp.Converted = "1";
+                        temp.nextClassname = self.classname;
+                        dprint("Ignored due to randomizer settings.\n");
                     }
-                    temp.nextthink = time;
-                    dprint("Flagged as ammo.\n");
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage")
-                {                    
-                    temp.Converted = "0";
-                    temp.Unstuckable = 1;
-                    temp.think = SUB_Null;
-                    temp.oldsize = temp.size;
-                    temp.oldmins = temp.mins;
-                    if (!UnbiasedMode)
+                {
+                    if(RandomizePowerups)
                     {
-                        temp.think = ConvertToPowerupBiased;
+                        temp.Converted = "0";
+                        temp.Unstuckable = 1;
+                        temp.think = SUB_Null;
+                        temp.oldsize = temp.size;
+                        temp.oldmins = temp.mins;
+                        if (!UnbiasedMode)
+                        {
+                            temp.think = ConvertToPowerupBiased;
+                        }
+                        else
+                        {
+                            temp.think = ConvertToPowerupUnbiased;
+                        }
+                        temp.nextthink = time;
+                        dprint("Flagged as a powerup.\n");
                     }
                     else
                     {
-                        temp.think = ConvertToPowerupUnbiased;
+                        temp.Converted = "1";
+                        temp.nextClassname = self.classname;
+                        dprint("Ignored due to randomizer settings.\n");
                     }
-                    temp.nextthink = time;
-                    dprint("Flagged as a powerup.\n");
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
                 || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning")
                 {
-                    temp.Converted = "0";
-                    temp.Unstuckable = 1;
-                    temp.think = SUB_Null;
-                    temp.oldsize = temp.size;
-                    temp.oldmins = temp.mins;
-                    if (!UnbiasedMode)
+                    if(RandomizeWeaponsAndAmmo)
                     {
-                        temp.think = ConvertToWeaponBiased;
-                    }
+                        temp.Converted = "0";
+                        temp.Unstuckable = 1;
+                        temp.think = SUB_Null;
+                        temp.oldsize = temp.size;
+                        temp.oldmins = temp.mins;
+                        if (!UnbiasedMode)
+                        {
+                            temp.think = ConvertToWeaponBiased;
+                        }
+                        else
+                        {
+                            temp.think = ConvertToWeaponUnbiased;
+                        }
+                        temp.nextthink = time;
+                        dprint("Flagged as a weapon.\n");
+                    }                    
                     else
                     {
-                        temp.think = ConvertToWeaponUnbiased;
+                        temp.Converted = "1";
+                        temp.nextClassname = self.classname;
+                        dprint("Ignored due to randomizer settings.\n");
                     }
-                    temp.nextthink = time;
-                    dprint("Flagged as a weapon.\n");
                 }
             }
         }
@@ -403,7 +468,7 @@ void() ConvertToAmmoUnbiased = {
 };
 
 // Converts ammo of one type to another randomly.
-// 32% chance of being Shells, 31% chance of being Nails, 16% chance of being Rockets, 16% chance of being Cells, 5% chance of being any weapon (!)
+// 32% chance of being Shells, 31% chance of being Nails, 16% chance of being Rockets, 16% chance of being Cells, 5% chance of being any weapon (if enabled)
 // For ammo, 65% chance of being a small pack, 35% chance of being a big pack
 void() ConvertToAmmoBiased = {
     local float AmmoTypeRng, AmmoSizeRng, AmmoPackSize, minrng, maxrng, DONE, i, amountOfChoices;
@@ -463,18 +528,6 @@ void() ConvertToPowerupUnbiased = {
     self.nextthink = time;
 };
 
-// Used to FORCE a weapon to convert into any powerup, no strings attached.
-// It can't become a Biosuit or a Red Armor. Even chances for everything. Will give no regard to whether there are idential powerups nearby.
-void() ConvertToGuaranteedPowerup = {
-    local float rng;
-    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth };
-    rng = Random(1, 4);
-    if(rng == 4)
-        self.QualityType = 3;
-    self.think = Converters[rng - 1];
-    self.nextthink = time;
-};
-
 // Converts a powerup of one type to another randomly.
 // If there's Slime or Lava nearby: 18% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 10% chance of being a Biosuit
 // If there's no Slime or Lava nearby: 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a Weapon
@@ -487,9 +540,17 @@ void() ConvertToPowerupBiased = {
     amountOfChoices = Probabilities.length;
     if(!IsNearAHarmfulLiquidSurface(self, 512))
     {
-        // Adjust possibilities to allow weapons in case there's no nearby water body
-        Converters[amountOfChoices - 1] = ConvertToWeaponBiased;
-        Classnames[amountOfChoices - 1] = string_null;
+        // Adjust possibilities to allow weapons (or Quad Damage in case weapon randomization is disabled) in case there's no nearby water body
+        if(RandomizeWeaponsAndAmmo)
+        {
+            Converters[amountOfChoices - 1] = ConvertToWeaponBiased;
+            Classnames[amountOfChoices - 1] = string_null;
+        }
+        else        
+        {
+            Converters[amountOfChoices - 1] = ConvertToQuadDamage;
+            Classnames[amountOfChoices - 1] = "item_artifact_super_damage";
+        }
         for(i = 0; i < 5; i++)
             Probabilities[i] = 19;
         Probabilities[amountOfChoices - 1] = 5;
@@ -535,7 +596,14 @@ void() ConvertToPowerupBiased = {
     }
     if(!DONE)
     {
-        self.think = ConvertToWeaponBiased;
+        if(RandomizeWeaponsAndAmmo)
+        {
+            self.think = ConvertToWeaponBiased;
+        }
+        else
+        {
+            self.think = ConvertToPowerupUnbiased;        // Disregard proximity if weapons are disabled.
+        }
         self.nextthink = time;
         return;
     }
@@ -611,9 +679,9 @@ void() CreateWeaponPermutation = {
 
 // Converts a weapon of one type to another randomly.
 // Chances are completely even, even in Biased mode. However, in Biased mode, a weapon may not appear more than once if any of the other weapons hasn't appeared yet.
-// If all weapons have spawned, it will create a new weapon bag. It has a 50% chance of spawning a powerup or a new weapon.
-// Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup instead.
-// In any moment, there's a 5% chance of a Powerup spawning instead of a weapon.
+// If all weapons have spawned, it will create a new weapon bag. It has a 50% chance of spawning a powerup (if enabled) or a new weapon.
+// Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup (if enabled) instead.
+// In any moment, there's a 5% chance of a Powerup spawning (if enabled) instead of a weapon.
 void() ConvertToWeaponBiased = {
     local float rng;
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
@@ -623,10 +691,23 @@ void() ConvertToWeaponBiased = {
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
         SpawnedWeapons & IT_LIGHTNING)
     {
-        self.think = ConvertToGuaranteedPowerup;
+        rng = Random(1, 100);
+        if(RandomizePowerups && rng <= 50)
+            self.think = ConvertToPowerupBiased;
+        else
+        {
+            SpawnedWeapons = 0;
+            CreateWeaponPermutation();
+            self.think = ConvertToWeaponBiased;
+        }
         self.nextthink = time;
-        SpawnedWeapons = 0;
-        CreateWeaponPermutation();
+        return;
+    }
+    rng = Random(1, 100);
+    if(RandomizePowerups && rng >= 95)
+    {    
+        self.think = ConvertToPowerupBiased;
+        self.nextthink = time;
         return;
     }
     local float i, currentSurface, isValidSurface;
@@ -670,8 +751,17 @@ void() ConvertToWeaponBiased = {
     }
     if(i == 6) 
     {
-        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup.
-        self.think = ConvertToGuaranteedPowerup;
+        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it restarts the bag).
+        if(RandomizePowerups)
+        {
+            self.think = ConvertToPowerupBiased;
+        }
+        else
+        {            
+            SpawnedWeapons = 0;
+            CreateWeaponPermutation();
+            self.think = ConvertToWeaponBiased;
+        }
         self.nextthink = time;
         return;
     }

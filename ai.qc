@@ -375,7 +375,6 @@ float(float playAlertSound) FindTarget =
 
 	if (client == self.enemy)
 		return FALSE;
-		
 	if (client.flags & FL_NOTARGET)
 		return FALSE;
 	if (client.items & IT_INVISIBILITY)

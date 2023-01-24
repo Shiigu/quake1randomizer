@@ -693,11 +693,26 @@ float(entity targ, entity inflictor) CanDamage;
 
 // custom/randomizer.qc
 
-float RandomMode;          			// Contains all the flags for Random Mode. Same value as savedgamecfg cvar.
-float RANDOM_UNBIASED_MODE = 1; 	// If present, it enters unbiased mode where the randomizer will NOT play fair.
-float RANDOM_BACKPACK_MODE = 2;   	// If present, it hides all weapons and ammo in backpacks.
+float RandomMode;          						// Contains all the flags for Random Mode. Same value as savedgamecfg cvar.
+float RANDOM_UNBIASED_MODE = 1; 				// If present, it enters unbiased mode where the randomizer will NOT play fair.
+float RANDOM_BACKPACK_MODE = 2;   				// If present, it hides all weapons and ammo in backpacks.
 
-float UnbiasedMode;    				// If TRUE, randomizer won't play fair.
-float HideInBackpacks; 				// If TRUE, all Weapons and Ammo are "hidden" as backpacks.
-float SpawnedWeapons;  				// For Biased mode. Includes which weapons have been added.
-					   				// The player's current weapons are included in the list to favor spawning unobtained weapons.
+// The reason these flags check for a negation is to be able to distinguish when the value is set to not happen and when the value does not exist at all.
+float DO_NOT_RANDOMIZE_MONSTERS = 4;
+float DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO = 8;
+float DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR = 16;
+float DO_NOT_RANDOMIZE_POWERUPS = 32;
+
+float UnbiasedMode;    							// If TRUE, randomizer won't play fair.
+float HideInBackpacks; 							// If TRUE, all Weapons and Ammo are "hidden" as backpacks.
+float RandomizeMonsters;
+float RandomizeWeaponsAndAmmo;
+float RandomizeHealthAndArmor;					// (Does not include Megahealth and Red Armor)
+float RandomizePowerups;
+
+float SpawnedWeapons;  							// For Biased mode. Includes which weapons have been added.
+
+.string nextClassname;							// Contains the class in which the object will be transformed.
+												// Only used for objects that have proximity checks.
+.string EntityDisplayName;						// Currently only used for monsters. Used to log killed/total amount in the map.
+.float Unstuckable;								// When TRUE, the entity passes unstuck checks.

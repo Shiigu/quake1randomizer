@@ -1,11 +1,12 @@
 float InRandomMenu; // 1 if in the menus, 0 otherwise. Used to take priority on impulses.
 float CurrentMenu;  // Contains the current menu the player is
-    float MAIN_MENU = 1;        // Main Menu
-    float UNBIASED_MENU = 2;    // Menu to enable or disable Unbiased Mode
-    float BACKPACKS_MENU = 3;   // Menu to enable or disable Backpack Mode
-    float RANDOMIZED_LIST_MENU = 4;       // Randomized List Menu
-    float SEED_MENU = 5;       // Seed Menu
-    float FINAL_MENU = 6;       // All Menus whose only option is to return to the main menu
+    float MAIN_MENU = 1;            // Main Menu
+    float UNBIASED_MENU = 2;        // Menu to enable or disable Unbiased Mode
+    float BACKPACKS_MENU = 3;       // Menu to enable or disable Backpack Mode
+    float SPECIFY_RANDOM_MENU = 4;  // Menu to enable or disable certain randomizations
+    float RANDOMIZED_LIST_MENU = 5; // Randomized List Menu
+    float SEED_MENU = 6;            // Seed Menu
+    float FINAL_MENU = 7;           // All Menus whose only option is to return to the main menu
 
 entity InputCapturer; // Will take hold of the number keys until the player closes the menu or its think time expires
 entity Client;     // Stores the client entity.
@@ -17,6 +18,7 @@ void() MainMenu;
 void() UnbiasedMenu;
 void() BackpacksMenu;
 void() RandomizedListMenu;
+void() SpecifyRandomMenu;
 void() SeedMenu;
 void() AboutMenu;
 void() ExitRandomMenu;
@@ -27,6 +29,10 @@ void() EnterRandomMenu = {
     cvar_set("savedgamecfg", ftos(RandomMode)); // Just in case it was never present in the config file
     UnbiasedMode = RandomMode & RANDOM_UNBIASED_MODE;
     HideInBackpacks = RandomMode & RANDOM_BACKPACK_MODE;
+    RandomizeMonsters = (RandomMode & DO_NOT_RANDOMIZE_MONSTERS) == 0;
+    RandomizeWeaponsAndAmmo = (RandomMode & DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO) == 0;
+    RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
+    RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
     Client = self;
     InRandomMenu = 1;
     CaptureTime = 5;
@@ -38,14 +44,30 @@ void() EnterRandomMenu = {
 };
 
 void() MainMenu = {
-    if(!UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Enable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
-    else if(UnbiasedMode && !HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Unbiased\nBackpack Mode is Disabled\n\n", "[1] Set Randomizer to Biased\n[2] Enable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
-    else if(!UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Unbiased\n[2] Disable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
-    else if(UnbiasedMode && HideInBackpacks)
-        centerprint (Client, "=== Quake Randomizer Mod ===\n\n", "Current Randomizer Mode is Biased\nBackpack Mode is Enabled\n\n", "[1] Set Randomizer to Biased\n[2] Disable Backpack Mode\n[3] List of randomized objects\n[4] Seed settings\n[5] About\n[6] Exit Menu");
+    local string modTitle, randomMode, backpackMode, option1, option2, fixedOptions;
+    modTitle = "=== Quake Randomizer Mod ===\n\n";
+    if(UnbiasedMode)
+    {
+        randomMode = "Current Randomizer Mode is Unbiased\n";
+        option1 = "[1] Set Randomizer to Biased\n";
+    }
+    else
+    {
+        randomMode = "Current Randomizer Mode is Biased\n";
+        option1 = "[1] Set Randomizer to Unbiased\n";
+    }
+    if(HideInBackpacks)
+    {
+        backpackMode = "Backpack Mode is Enabled\n\n";
+        option2 = "[2] Disable Backpack Mode\n";
+    }
+    else
+    {
+        backpackMode = "Backpack Mode is Disabled\n\n";
+        option2 = "[2] Enable Backpack Mode\n";
+    }
+    fixedOptions = "[3] List of randomized objects\n[4] Specify randomization\n[5] Seed settings\n[6] About\n[7] Exit Menu";
+    centerprint (Client, modTitle, randomMode, backpackMode, option1, option2, fixedOptions);
     CurrentMenu = MAIN_MENU;
     InputCapturer.nextthink = time + CaptureTime;
 };
@@ -73,6 +95,31 @@ void() RandomizedListMenu = {
     CurrentMenu = RANDOMIZED_LIST_MENU;
 };
 
+void() SpecifyRandomMenu = {
+    local string menuHeader, option1, option2, option3, option4, fixedOptions;
+    menuHeader = "=== Specify Randomization ===\n\nCurrent randomizer settings:\n\n";
+    if(RandomizeMonsters)
+        option1 = "[1] Randomize Monsters\n";
+    else
+        option1 = "[1] Don't Randomize Monsters\n";
+    if(RandomizeWeaponsAndAmmo)
+        option2 = "[2] Randomize Weapons and Ammo\n";
+    else
+        option2 = "[2] Don't Randomize Weapons and Ammo\n";
+    if(RandomizeHealthAndArmor)
+        option3 = "[3] Randomize Health and Armor\n";
+    else
+        option3 = "[3] Don't Randomize Health and Armor\n";
+    if(RandomizePowerups)
+        option4 = "[4] Randomize Powerups\n";
+    else
+        option4 = "[4] Don't Randomize Powerups\n";
+    fixedOptions = "\n(This won't take effect until\n a level is loaded)\n\n[5] Return to Main Menu";
+    centerprint (Client, menuHeader, option1, option2, option3, option4, fixedOptions);
+    InputCapturer.nextthink = time + CaptureTime;
+    CurrentMenu = SPECIFY_RANDOM_MENU;
+};
+
 void() SeedMenu = {
     if(seedIsFixed)
         centerprint (Client, "Current seed is\n", ftos(seed), "\n\nThe seed is currently fixed.\nThe same map will ALWAYS give\nthe same entities.\n\n", "Do you wish to make\nthe seed dynamic again?\n\n", "[1] Yes\n[2] No");
@@ -87,6 +134,12 @@ void() AboutMenu = {
 };
 
 void() CheckMenuImpulses = {
+	if (self.impulse == 24)
+	{
+        EnterRandomMenu ();
+        return;
+    }
+    local string warning;
     if(CurrentMenu == MAIN_MENU)
     {
         if(self.impulse == 1)
@@ -96,10 +149,12 @@ void() CheckMenuImpulses = {
         if(self.impulse == 3)
             RandomizedListMenu();
         if(self.impulse == 4)
-            SeedMenu();
+            SpecifyRandomMenu();
         if(self.impulse == 5)
-            AboutMenu();
+            SeedMenu();
         if(self.impulse == 6)
+            AboutMenu();
+        if(self.impulse == 7)
             ExitRandomMenu();
         return;
     }
@@ -109,18 +164,19 @@ void() CheckMenuImpulses = {
         {
             if(UnbiasedMode)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Biased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+                warning = "Biased Mode ENABLED\n\n";
                 RandomMode = RandomMode - (RandomMode & RANDOM_UNBIASED_MODE);
                 UnbiasedMode = 0;
                 CurrentMenu = FINAL_MENU;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Unbiased Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+                warning = "Unbiased Mode ENABLED\n\n";
                 RandomMode = RandomMode | RANDOM_UNBIASED_MODE;
                 UnbiasedMode = 1;
                 CurrentMenu = FINAL_MENU;
             }
+            centerprint (Client, "=== WARNING ===\n\n", warning, "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -133,18 +189,19 @@ void() CheckMenuImpulses = {
         {
             if(HideInBackpacks)
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode DISABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+                warning = "Backpack Mode DISABLED\n\n";
                 RandomMode = RandomMode - (RandomMode & RANDOM_BACKPACK_MODE);
                 HideInBackpacks = 0;
                 CurrentMenu = FINAL_MENU;
             }
             else 
             {
-                centerprint (Client, "=== WARNING ===\n\n", "Backpack Mode ENABLED\n\n", "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+                warning = "Backpack Mode ENABLED\n\n";
                 RandomMode = RandomMode | RANDOM_BACKPACK_MODE;
                 HideInBackpacks = 1;
                 CurrentMenu = FINAL_MENU;
             }
+            centerprint (Client, "=== WARNING ===\n\n", warning, "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -161,6 +218,69 @@ void() CheckMenuImpulses = {
         }
         if(self.impulse == 2)
             MainMenu();
+        return;
+    }
+    if(CurrentMenu == SPECIFY_RANDOM_MENU)
+    {
+        if(self.impulse == 1)
+        {
+            if(RandomizeMonsters)
+            {
+                RandomMode = RandomMode | DO_NOT_RANDOMIZE_MONSTERS;
+                RandomizeMonsters = 0;
+            }
+            else
+            {
+                RandomMode = RandomMode - (RandomMode & DO_NOT_RANDOMIZE_MONSTERS);
+                RandomizeMonsters = 1;
+            }
+        }
+        if(self.impulse == 2)
+        {
+            if(RandomizeWeaponsAndAmmo)
+            {
+                RandomMode = RandomMode | DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO;
+                RandomizeWeaponsAndAmmo = 0;
+            }
+            else
+            {
+                RandomMode = RandomMode - (RandomMode & DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO);
+                RandomizeWeaponsAndAmmo = 1;
+            }
+        }
+        if(self.impulse == 3)
+        {
+            if(RandomizeHealthAndArmor)
+            {
+                RandomMode = RandomMode | DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR;
+                RandomizeHealthAndArmor = 0;
+            }
+            else
+            {
+                RandomMode = RandomMode - (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR);
+                RandomizeHealthAndArmor = 1;
+            }
+        }
+        if(self.impulse == 4)
+        {
+            if(RandomizePowerups)
+            {
+                RandomMode = RandomMode | DO_NOT_RANDOMIZE_POWERUPS;
+                RandomizePowerups = 0;
+            }
+            else
+            {
+                RandomMode = RandomMode - (RandomMode & DO_NOT_RANDOMIZE_POWERUPS);
+                RandomizePowerups = 1;
+            }
+        }
+        if(self.impulse == 5)
+        {
+            MainMenu();
+            return;
+        }
+        cvar_set("savedgamecfg", ftos(RandomMode));
+        SpecifyRandomMenu();
         return;
     }
     if(CurrentMenu == SEED_MENU)
