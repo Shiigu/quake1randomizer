@@ -116,7 +116,10 @@ void() finale_1 =
 	
 	if(fixedSeed <= 0 && !deathmatch && !coop)
 	{
-		LogResults();
+		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
+		{
+			LogResults();
+		}
 	}
 
 	intermission_exittime = time + 10000000;	// never allow exit

@@ -262,7 +262,10 @@ void() execute_changelevel =
 	
 	if(fixedSeed <= 0 && !deathmatch && !coop)
 	{
-		LogResults();
+		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
+		{
+			LogResults();
+		}
 	}
 
 	intermission_running = 1;
@@ -1231,8 +1234,11 @@ void(entity targ, entity attacker) ClientObituary =
 	{
 		if(fixedSeed <= 0 && !deathmatch && !coop)
 		{
-			LogResults();
-			bprint("\n=== List of randomized objects has been printed to console ===\n\n");
+			if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
+			{
+				LogResults();
+				bprint("\n=== List of randomized objects has been printed to console ===\n\n");
+			}
 		}
 
 		if (attacker.classname == "teledeath")

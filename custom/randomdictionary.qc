@@ -85,6 +85,11 @@ void(string key) RegisterDeadEntity;
 void() LogResults;
 
 void() LogResults = {
+	if(!RandomizeMonsters && !RandomizeWeaponsAndAmmo && !RandomizeHealthAndArmor && !RandomizePowerups)
+    {
+        bprint("There are no converted entities to show!\n");
+        return;
+    }
     float i;
     bprint("------- List of converted objects -------\n");
     for(i = 0; i < AMOUNT_OF_ENTITY_TYPES; i++)
