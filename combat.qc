@@ -76,6 +76,7 @@ void(entity targ, entity attacker) Killed =
 	if (self.flags & FL_MONSTER)
 	{
 		killed_monsters = killed_monsters + 1;
+		DeathToll = DeathToll + 1;
 		RegisterDeadEntity(self.EntityDisplayName);
 		self.th_stand = SUB_Null;
 		self.th_walk = SUB_Null;

@@ -122,7 +122,14 @@ void() finale_1 =
 		}
 	}
 
-	intermission_exittime = time + 10000000;	// never allow exit
+	if(LevelCount == 0)
+	{
+		intermission_exittime = time + 10000000;	// never allow exit if not on Endless Castle Mode
+	}
+	else
+	{
+		intermission_exittime = time + 1;
+	}
 	intermission_running = 1;
 
 	// find the intermission spot
@@ -134,8 +141,15 @@ void() finale_1 =
 		error ("no teleporttrain");
 	remove (pl);
 
-	WriteByte (MSG_ALL, SVC_FINALE);
-	WriteString (MSG_ALL, "");
+	if(LevelCount == 0)
+	{
+		WriteByte (MSG_ALL, SVC_FINALE);
+		WriteString (MSG_ALL, "");
+	}
+	else
+	{
+		WriteByte (MSG_ALL, SVC_INTERMISSION);
+	}
 
 	pl = find (world, classname, "player");
 	while (pl != world)
@@ -227,10 +241,12 @@ void() finale_4 =
 		}
 		z = z + 96;
 	}
-	// start the end text
-	WriteByte (MSG_ALL, SVC_FINALE);
-	WriteString (MSG_ALL, "Congratulations and well done! You have\nbeaten the hideous Shub-Niggurath, and\nher hundreds of ugly changelings and\nmonsters. You have proven that your\nskill and your cunning are greater than\nall the powers of Quake. You are the\nmaster now. Id Software salutes you.");
-
+	if(LevelCount == 0)
+	{
+		// start the end text
+		WriteByte (MSG_ALL, SVC_FINALE);
+		WriteString (MSG_ALL, "Congratulations and well done! You have\nbeaten the hideous Shub-Niggurath, and\nher hundreds of ugly changelings and\nmonsters. You have proven that your\nskill and your cunning are greater than\nall the powers of Quake. You are the\nmaster now. Id Software salutes you.");
+	}
 // put a player model down
 	n = spawn();
 	setmodel (n, "progs/player.mdl");

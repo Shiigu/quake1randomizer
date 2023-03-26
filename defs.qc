@@ -716,3 +716,12 @@ float SpawnedWeapons;  							// For Biased mode. Includes which weapons have be
 												// Only used for objects that have proximity checks.
 .string EntityDisplayName;						// Currently only used for monsters. Used to log killed/total amount in the map.
 .float Unstuckable;								// When TRUE, the entity passes unstuck checks.
+
+// Menu values used by other portions of the mod
+
+float InRandomMenu; 		// 1 if in the menus, 0 otherwise. Used to take priority on impulses.
+float InSkillSelect; 		// 1 if in Endless Castle difficulty menu.
+float CurrentMenu;  		// Contains the current menu the player is
+float Centertime; 			// Old scr_centertime value to reset it once the player leaves the menu
+void() EnterRandomMenu;
+void() CheckMenuImpulses;

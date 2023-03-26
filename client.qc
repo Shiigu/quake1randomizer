@@ -60,6 +60,12 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 	parm10 = SpawnedWeapons;
+	parm11 = LevelCount;
+	parm12 = DeathToll;
+	parm13 = Episode1Levels;
+	parm14 = Episode2Levels;
+	parm15 = Episode3Levels;
+	parm16 = Episode4Levels;
 };
 
 void() SetNewParms =
@@ -74,6 +80,12 @@ void() SetNewParms =
 	parm8 = 1;
 	parm9 = 0;
 	parm10 = 0;
+	parm11 = 0;
+	parm12 = 0;
+	parm13 = 0;
+	parm14 = 0;
+	parm15 = 0;
+	parm16 = 0;
 };
 
 void() DecodeLevelParms =
@@ -95,6 +107,12 @@ void() DecodeLevelParms =
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
 	SpawnedWeapons = parm10;
+	LevelCount = parm11;
+	DeathToll = parm12;
+	Episode1Levels = parm13;
+	Episode2Levels = parm14;
+	Episode3Levels = parm15;
+	Episode4Levels = parm16;
 };
 
 /*
@@ -152,8 +170,8 @@ void() GotoNextMap =
 
 void() ExitIntermission =
 {
-// skip any text in deathmatch
-	if (deathmatch)
+// skip any text in deathmatch or Endless Castle Mode
+	if (deathmatch || LevelCount > 0)
 	{
 		GotoNextMap ();
 		return;
@@ -320,11 +338,13 @@ void() changelevel_touch =
 		bprint (" exited the level\n");
 	}
 	
+	if(LevelCount >= 0)						// If Endless Castle
+		LevelCount = LevelCount + 1;
 	nextmap = self.map;
 
 	SUB_UseTargets ();
 
-	if ( (self.spawnflags & 1) && (deathmatch == 0) )
+	if ((self.spawnflags & 1) && (deathmatch == 0))
 	{	// NO_INTERMISSION
 		GotoNextMap();
 		return;
@@ -383,7 +403,12 @@ void() respawn =
 		PutClientInServer ();
 	}
 	else
-	{	// restart the entire server
+	{
+		if(Centertime != 0)
+		{
+			cvar_set("scr_centertime", ftos(Centertime));
+			Centertime = 0;
+		}
 		localcmd ("restart\n");
 	}
 };
@@ -515,6 +540,13 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 
 	DecodeLevelParms ();
+
+	if(LevelCount == -1)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+	}
+
 	if(SpawnedWeapons == 0)
 	{
 		SpawnedWeapons = (self.items & IT_SUPER_SHOTGUN) | 
@@ -524,8 +556,25 @@ void() PutClientInServer =
         (self.items & IT_ROCKET_LAUNCHER) | 
         (self.items & IT_LIGHTNING);
 	}
-	Randomize();
-	
+
+	Randomize();	
+
+	if(LevelCount > 0)
+	{
+		if(world.model == "maps/end.bsp")
+			nextmap = PickNextLevel();
+		else
+		{
+			local entity temp;
+			temp = find(world, classname, "trigger_changelevel");
+			while (temp != world)
+			{
+				temp.map = PickNextLevel();
+				temp = find(temp, classname, "trigger_changelevel");
+			}
+		}
+	}
+
 	W_SetCurrentAmmo ();
 
 	self.attack_finished = time;
@@ -721,6 +770,15 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
+	if(LevelCount == -1 && InRandomMenu)
+	{
+		if(!InSkillSelect)
+			EndedEndlessCastleMenu();
+		if (self.impulse)
+			ImpulseCommands ();
+		return;
+	}
+
 	local entity	old_self;
 	local float		forward;
 
@@ -1239,6 +1297,14 @@ void(entity targ, entity attacker) ClientObituary =
 				LogResults();
 				bprint("\n=== List of randomized objects has been printed to console ===\n\n");
 			}
+		}
+
+		if(LevelCount > 0)
+		{
+			Centertime = cvar("scr_centertime");
+			cvar_set("scr_centertime", "100000"); // Make display time look almost permanent
+			EndedEndlessCastleMenu();
+			LevelCount = -1;
 		}
 
 		if (attacker.classname == "teledeath")

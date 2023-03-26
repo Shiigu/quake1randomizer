@@ -176,7 +176,7 @@ void() worldspawn =
 	InitBodyQue ();
 
 // custom map attributes
-	if (self.model == "maps/e1m8.bsp" || self.model == "maps/ne1m8.bsp")
+	if (self.model == "maps/e1m8.bsp")
 		cvar_set ("sv_gravity", "100");
 	else
 		cvar_set ("sv_gravity", "800");

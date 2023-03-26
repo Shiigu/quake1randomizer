@@ -35,7 +35,7 @@ void() Randomize = {
     RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
     RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
 	fixedSeed = floor(cvar("gamecfg"));
-	if(fixedSeed > 0)
+	if(fixedSeed > 0 && LevelCount > 0)
 	{
         seed = fixedSeed;
         seedIsFixed = 1;

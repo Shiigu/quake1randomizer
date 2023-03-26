@@ -1,5 +1,5 @@
 float sqrt(float x);
-float pow(float x, float y);
+float fpow(float x, float y);
 float fmax(float a, float b);
 float fmin(float a, float b);
 float mod(float a, float b);
@@ -33,7 +33,7 @@ float sqrt(float x) =
 * 
 */
 
-float pow(float x, float y) =
+float fpow(float x, float y) =
 {
     if(x == 0 && y != 0) return 0;
     if(x != 0 && y == 0) return 1;
@@ -44,6 +44,7 @@ float pow(float x, float y) =
     {
         pow = pow * x;
     }
+    return pow;
 };
 
 /*
