@@ -338,8 +338,7 @@ void() changelevel_touch =
 		bprint (" exited the level\n");
 	}
 	
-	if(LevelCount >= 0)						// If Endless Castle
-		LevelCount = LevelCount + 1;
+	LevelCount = LevelCount + 1;
 	nextmap = self.map;
 
 	SUB_UseTargets ();

@@ -725,3 +725,9 @@ float CurrentMenu;  		// Contains the current menu the player is
 float Centertime; 			// Old scr_centertime value to reset it once the player leaves the menu
 void() EnterRandomMenu;
 void() CheckMenuImpulses;
+
+// EndlessCastleState
+
+float EndlessCastleState;
+float ENDLESS_CASTLE_RUNNING = 1;
+float ENDLESS_CASTLE_ENDED = 2;

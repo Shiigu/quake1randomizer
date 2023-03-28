@@ -26,7 +26,117 @@ void() CreateWeaponPermutation;
 entity Placeholder;
 float IndexPermutation[6];
 
+// PROBABILITY SKILL THRESHOLDS
+
+float ThresholdForNormal = 6;
+float ThresholdForHard = 11;
+float ThresholdForNightmare = 21;
+float ThresholdForSuperNightmare = 36;
+float ThresholdForUnfair = 61;
+
+float StartingLevelForEasy = 1;
+float StartingLevelForNormal = 8;
+float StartingLevelForHard = 16;
+float StartingLevelForNightmare = 26;
+
+// END PROBABILITY SKILL THRESHOLDS
+
+// PROBABILITY "TABLES"
+
+float ProbabilitiesMonsterToMonsterGround[12];
+float ProbabilitiesMonsterToMonsterGroundEasy[12]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12 };
+float ProbabilitiesMonsterToMonsterGroundNormal[12]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13 };
+float ProbabilitiesMonsterToMonsterGroundHard[12]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13 };
+float ProbabilitiesMonsterToMonsterGroundNightmare[12]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11 };
+float ProbabilitiesMonsterToMonsterGroundSuperNightmare[12]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13 };
+float ProbabilitiesMonsterToMonsterGroundUnfair[12]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 10, 0 };
+void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
+                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
+
+float ProbabilitiesMonsterToMonsterWater[11];
+float ProbabilitiesMonsterToMonsterWaterEasy[11]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25 };
+float ProbabilitiesMonsterToMonsterWaterNormal[11]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17 };
+float ProbabilitiesMonsterToMonsterWaterHard[11]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15 };
+float ProbabilitiesMonsterToMonsterWaterNightmare[11]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11 };
+float ProbabilitiesMonsterToMonsterWaterSuperNightmare[11]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8 };
+float ProbabilitiesMonsterToMonsterWaterUnfair[11]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0 };
+void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
+                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
+
+float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
+float ProbabilityToRemovePickupEasy                 = 0;
+float ProbabilityToRemovePickupNormal               = 0;
+float ProbabilityToRemovePickupHard                 = 0;
+float ProbabilityToRemovePickupNightmare            = 0;
+float ProbabilityToRemovePickupSuperNightmare       = 5;
+float ProbabilityToRemovePickupUnfair               = 10;
+
+float ProbabilityForLowQualityPickup;                          // "Low quality pickup" being 15 health or Green Armor
+float ProbabilityForLowQualityPickupEasy            = 30;
+float ProbabilityForLowQualityPickupNormal          = 50;            
+float ProbabilityForLowQualityPickupHard            = 65;
+float ProbabilityForLowQualityPickupNightmare       = 75;
+float ProbabilityForLowQualityPickupSuperNightmare  = 85;
+float ProbabilityForLowQualityPickupUnfair          = 100;
+
+float ProbabilitiesAmmoTypes[4];
+float ProbabilitiesAmmoTypesEasy[4]             = { 25, 25, 20, 20 };
+float ProbabilitiesAmmoTypesNormal[4]           = { 32, 31, 16, 16 };
+float ProbabilitiesAmmoTypesHard[4]             = { 38, 38, 13, 8 };
+float ProbabilitiesAmmoTypesNightmare[4]        = { 45, 31, 15, 7 };
+float ProbabilitiesAmmoTypesSuperNightmare[4]   = { 60, 25, 12, 3 };
+float ProbabilitiesAmmoTypesUnfair[4]           = { 80, 10, 5, 5 };
+void() AmmoTypeConverters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
+string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
+
+float ProbabilityForSmallAmmoPack;
+float ProbabilityForSmallAmmoPackEasy               = 50;
+float ProbabilityForSmallAmmoPackNormal             = 65;
+float ProbabilityForSmallAmmoPackHard               = 70;
+float ProbabilityForSmallAmmoPackNightmare          = 75;
+float ProbabilityForSmallAmmoPackSuperNightmare     = 80;
+float ProbabilityForSmallAmmoPackUnfair             = 100;
+
+float ProbabilitiesForPowerupsNearWater[6];
+float ProbabilitiesForPowerupsNearWaterEasy[6]              = { 20, 20, 20, 15, 20, 5 };
+float ProbabilitiesForPowerupsNearWaterNormal[6]            = { 18, 18, 18, 18, 18, 10 };
+float ProbabilitiesForPowerupsNearWaterHard[6]              = { 17, 17, 17, 17, 17, 15 };
+float ProbabilitiesForPowerupsNearWaterNightmare[6]         = { 15, 15, 15, 20, 15, 20 };
+float ProbabilitiesForPowerupsNearWaterSuperNightmare[6]    = { 12, 12, 12, 24, 12, 28 };
+float ProbabilitiesForPowerupsNearWaterUnfair[6]            = { 5, 5, 5, 30, 10, 45 };
+void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
+string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit" };
+
+float ProbabilitiesForPowerupsNotNearWater[6];
+float ProbabilitiesForPowerupsNotNearWaterEasy[6]           = { 20, 20, 20, 15, 20, 5 };
+float ProbabilitiesForPowerupsNotNearWaterNormal[6]         = { 19, 19, 19, 19, 19, 5 };
+float ProbabilitiesForPowerupsNotNearWaterHard[6]           = { 18, 18, 18, 18, 18, 10 };
+float ProbabilitiesForPowerupsNotNearWaterNightmare[6]      = { 15, 15, 15, 20, 15, 20 };
+float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[6] = { 12, 12, 12, 24, 12, 28 };
+float ProbabilitiesForPowerupsNotNearWaterUnfair[6]         = { 5, 5, 5, 45, 10, 30 };
+void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased };
+string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "" };
+
+float ProbabilityForWeaponIntoPowerup;
+float ProbabilityForWeaponIntoPowerupEasy           = 3;
+float ProbabilityForWeaponIntoPowerupNormal         = 5;
+float ProbabilityForWeaponIntoPowerupHard           = 8;
+float ProbabilityForWeaponIntoPowerupNightmare      = 10;
+float ProbabilityForWeaponIntoPowerupSuperNightmare = 15;
+float ProbabilityForWeaponIntoPowerupUnfair         = 20;
+
+float ProbabilityForWeaponIntoAmmo;
+float ProbabilityForWeaponIntoAmmoEasy              = 0;
+float ProbabilityForWeaponIntoAmmoNormal            = 0;
+float ProbabilityForWeaponIntoAmmoHard              = 1;
+float ProbabilityForWeaponIntoAmmoNightmare         = 5;
+float ProbabilityForWeaponIntoAmmoSuperNightmare    = 10;
+float ProbabilityForWeaponIntoAmmoUnfair            = 15;
+
+// END PROBABILITY "TABLES"
+
 void() Randomize = {
+    local float LevelAfterSkill, Skill, amountOfChoices, i;
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
     HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;    
@@ -48,6 +158,156 @@ void() Randomize = {
             seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
     }
     next = 0;
+
+    if (LevelCount == 0) 
+        LevelAfterSkill = ThresholdForNormal;                                   // Outside of Endless Castle, it will always play with Normal Odds
+    else
+    {
+        Skill = cvar("skill");
+        if (Skill == 0) LevelAfterSkill = LevelCount + StartingLevelForEasy;
+        else if (Skill == 1) LevelAfterSkill = LevelCount + StartingLevelForNormal;
+        else if (Skill == 2) LevelAfterSkill = LevelCount + StartingLevelForHard;
+        else if (Skill == 3) LevelAfterSkill = LevelCount + StartingLevelForNightmare;
+        LevelAfterSkill = LevelAfterSkill - 1;
+    }
+
+    dprint("Current Randomizer difficulty level is ");
+    if (LevelAfterSkill < ThresholdForNormal) {
+        dprint("Easy (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundEasy[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterEasy[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesEasy[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterEasy[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterEasy[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupEasy;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupEasy;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackEasy;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupEasy;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoEasy;
+    } else if (LevelAfterSkill < ThresholdForHard) {
+        dprint("Normal (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundNormal[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterNormal[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesNormal[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterNormal[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterNormal[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupNormal;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNormal;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNormal;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNormal;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNormal;
+    } else if (LevelAfterSkill < ThresholdForNightmare) {
+        dprint("Hard (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundHard[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterHard[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesHard[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterHard[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterHard[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupHard;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupHard;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackHard;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupHard;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoHard;
+    } else if (LevelAfterSkill < ThresholdForSuperNightmare) {
+        dprint("Nightmare (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundNightmare[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterNightmare[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesNightmare[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterNightmare[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterNightmare[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupNightmare;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNightmare;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNightmare;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNightmare;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNightmare;
+    } else if (LevelAfterSkill < ThresholdForUnfair) {
+        dprint("Super Nightmare (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundSuperNightmare[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterSuperNightmare[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesSuperNightmare[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterSuperNightmare[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterSuperNightmare[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupSuperNightmare;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupSuperNightmare;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackSuperNightmare;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupSuperNightmare;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoSuperNightmare;
+    } else {
+        dprint("Unfair (");
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundUnfair[i];
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterUnfair[i];
+        amountOfChoices = ProbabilitiesAmmoTypes.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesUnfair[i];
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterUnfair[i];
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        for(i = 0; i < amountOfChoices; i++)
+            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterUnfair[i];
+        ProbabilityToRemovePickup = ProbabilityToRemovePickupUnfair;
+        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupUnfair;
+        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackUnfair;
+        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupUnfair;
+        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoUnfair;
+    }
+    dprint(ftos(LevelAfterSkill));
+    dprint(").\n");
+
     CreateWeaponPermutation();
     dprint("----- RANDOMIZER MOD -----\n");
     dprint("RandomMode is ");
@@ -317,10 +577,8 @@ void() ConvertToMonster = {
 // Every monster has an equal chance to be appear.
 void() ConvertToMonsterOnGroundUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
-                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
     rng = Random(1, 12);
-    self.think = Converters[rng - 1];
+    self.think = MonsterGroundToGroundConverters[rng - 1];
     self.nextthink = time;
 };
 
@@ -339,10 +597,7 @@ void() ConvertToMonsterOnWaterUnbiased = {
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnGroundBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
-    local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
-                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
-    local float Probabilities[] = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13 };
-    amountOfChoices = Probabilities.length;
+    amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
     rng = Random(1, 100);
     minrng = 0;
     maxrng = 0;
@@ -350,12 +605,15 @@ void() ConvertToMonsterOnGroundBiased = {
     i = 0;
     while(!DONE && minrng < 100 && i < amountOfChoices)
     {
-        minrng = maxrng + 1;
-        maxrng = maxrng + Probabilities[i];
-        if(rng >= minrng && rng <= maxrng)
+        if(ProbabilitiesMonsterToMonsterGround[i] > 0)
         {
-            DONE = 1;
-            self.think = Converters[i];
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesMonsterToMonsterGround[i];
+            if(rng >= minrng && rng <= maxrng)
+            {
+                DONE = 1;
+                self.think = MonsterGroundToGroundConverters[i];
+            }
         }
         i++;
     }
@@ -366,10 +624,7 @@ void() ConvertToMonsterOnGroundBiased = {
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnWaterBiased = {
     local float rng, minrng, maxrng, DONE, i, amountOfChoices;
-    local void() Converters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
-                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
-    local float Probabilities[] = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 16 };
-    amountOfChoices = Probabilities.length;
+    amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
     rng = Random(1, 100);
     minrng = 0;
     maxrng = 0;
@@ -377,12 +632,15 @@ void() ConvertToMonsterOnWaterBiased = {
     i = 0;
     while(!DONE && minrng < 100 && i < amountOfChoices)
     {
-        minrng = maxrng + 1;
-        maxrng = maxrng + Probabilities[i];
-        if(rng >= minrng && rng <= maxrng)
+        if(ProbabilitiesMonsterToMonsterWater[i] > 0)
         {
-            DONE = 1;
-            self.think = Converters[i];
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesMonsterToMonsterWater[i];
+            if(rng >= minrng && rng <= maxrng)
+            {
+                DONE = 1;
+                self.think = MonsterWaterToWaterConverters[i];
+            }
         }
         i++;
     }
@@ -405,12 +663,21 @@ void() ConvertToPickupUnbiased = {
 // 90% chance of being a pickup of the type it already is (Health or Armor, but quality can change), 10% of becoming of the other type.
 // If there are nearby sources of armor, it will spawn a health pack instead
 void() ConvertToPickupBiased = {
+    if(ProbabilityToRemovePickup > 0)
+    {
+        local float rngRemove = Random(1, 100);
+        if(rngRemove <= ProbabilityToRemovePickup)
+            remove(self);
+    }
     local float rngType, rngQuality;
     local float ProbabilityForSameType = 90;
     local float nearbyArmor;
     rngType = Random(1, 100);
-    rngQuality = Random(1, 2);
-    self.QualityType = rngQuality;
+    rngQuality = Random(1, 100);
+    if(rngQuality <= ProbabilityForLowQualityPickup)
+        self.QualityType = 1;
+    else
+        self.QualityType = 2;
     nearbyArmor = IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv");
     if(self.classname == "item_health")
     {
@@ -420,7 +687,7 @@ void() ConvertToPickupBiased = {
         }
         else
         {
-            if(rngQuality == 1)
+            if(rngQuality <= ProbabilityForLowQualityPickup)
 		        self.nextClassname = "item_armor1";
             else
                 self.nextClassname = "item_armor2";
@@ -431,7 +698,7 @@ void() ConvertToPickupBiased = {
     {
         if(!nearbyArmor && rngType >= 1 && rngType <= ProbabilityForSameType)
         { 
-            if(rngQuality == 1)
+            if(rngQuality <= ProbabilityForLowQualityPickup)
 		        self.nextClassname = "item_armor1";
             else
                 self.nextClassname = "item_armor2";
@@ -449,15 +716,13 @@ void() ConvertToPickupBiased = {
 // Even chance for all ammo types and sizes
 void() ConvertToAmmoUnbiased = {
     local float AmmoTypeRng, AmmoSizeRng;
-    local void() Converters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
-    local string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
     self.QualityType = AmmoSizeRng;
     self.netname = AmmoNetNames[AmmoTypeRng - 1];
     if(!HideInBackpacks)
     {    
-        self.think = Converters[AmmoTypeRng - 1];
+        self.think = AmmoTypeConverters[AmmoTypeRng - 1];
     }
     else
     {
@@ -471,18 +736,20 @@ void() ConvertToAmmoUnbiased = {
 // 32% chance of being Shells, 31% chance of being Nails, 16% chance of being Rockets, 16% chance of being Cells, 5% chance of being any weapon (if enabled)
 // For ammo, 65% chance of being a small pack, 35% chance of being a big pack
 void() ConvertToAmmoBiased = {
+    if(ProbabilityToRemovePickup > 0)
+    {
+        local float rngRemove = Random(1, 100);
+        if(rngRemove <= ProbabilityToRemovePickup)
+            remove(self);
+    }
     local float AmmoTypeRng, AmmoSizeRng, AmmoPackSize, minrng, maxrng, DONE, i, amountOfChoices;
-    local void() Converters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
-    local string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
-    local float ProbabilityForSmallPack = 65;
-    local float AmmoTypeProbabilities[] = { 32, 31, 16, 16 };
     AmmoTypeRng = Random(1, 100);
     AmmoSizeRng = Random(1, 100);
-    if(AmmoSizeRng <= ProbabilityForSmallPack)
+    if(AmmoSizeRng <= ProbabilityForSmallAmmoPack)
         AmmoPackSize = 1;
     else
         AmmoPackSize = 2;
-    amountOfChoices = AmmoTypeProbabilities.length;
+    amountOfChoices = ProbabilitiesAmmoTypes.length;
     minrng = 0;
     maxrng = 0;
     DONE = 0;
@@ -491,14 +758,14 @@ void() ConvertToAmmoBiased = {
     while(!DONE && minrng < 100 && i < amountOfChoices)
     {
         minrng = maxrng + 1;
-        maxrng = maxrng + AmmoTypeProbabilities[i];
+        maxrng = maxrng + ProbabilitiesAmmoTypes[i];
         if(AmmoTypeRng >= minrng && AmmoTypeRng <= maxrng)
         {
             DONE = 1;
             self.QualityType = AmmoPackSize;
             self.netname = AmmoNetNames[i];
             if(!HideInBackpacks)
-                self.think = Converters[i];
+                self.think = AmmoTypeConverters[i];
             else
             {
                 self.PickupType = i + 1;
@@ -533,66 +800,107 @@ void() ConvertToPowerupUnbiased = {
 // If there's no Slime or Lava nearby: 19% chance of being either a Megahealth, Red Armor, Pentagram of Protection, Quad Damage or Ring of Shadows, 5% chance of being a Weapon
 // It spawns a weapon instead if it's trying to spawn in invalid conditions (Red Armor near another suit of armor, Powerup of the same type nearby)
 void() ConvertToPowerupBiased = {
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices;
-    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
-    local string Classnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", string_null, "item_artifact_envirosuit" };
-    local float Probabilities[] = { 18, 18, 18, 18, 18, 10 };
-    amountOfChoices = Probabilities.length;
-    if(!IsNearAHarmfulLiquidSurface(self, 512))
+    if(ProbabilityToRemovePickup > 0)
     {
-        // Adjust possibilities to allow weapons (or Quad Damage in case weapon randomization is disabled) in case there's no nearby water body
-        if(RandomizeWeaponsAndAmmo)
-        {
-            Converters[amountOfChoices - 1] = ConvertToWeaponBiased;
-            Classnames[amountOfChoices - 1] = string_null;
-        }
-        else        
-        {
-            Converters[amountOfChoices - 1] = ConvertToQuadDamage;
-            Classnames[amountOfChoices - 1] = "item_artifact_super_damage";
-        }
-        for(i = 0; i < 5; i++)
-            Probabilities[i] = 19;
-        Probabilities[amountOfChoices - 1] = 5;
+        local float rngRemove = Random(1, 100);
+        if(rngRemove <= ProbabilityToRemovePickup)
+            remove(self);
     }
+    local float rng, minrng, maxrng, DONE, i, amountOfChoices, nearALiquid;
+    nearALiquid = IsNearAHarmfulLiquidSurface(self, 512);
     rng = Random(1, 100);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
     i = 0;
-    while(!DONE && minrng < 100 && i < amountOfChoices)
+    if(nearALiquid)
     {
-        minrng = maxrng + 1;
-        maxrng = maxrng + Probabilities[i];
-        if(rng >= minrng && rng <= maxrng)
+        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
+        while(!DONE && minrng < 100 && i < amountOfChoices)
         {
-            if(i != 4 && Classnames[i] != string_null)  // Not ConvertToArmor
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesForPowerupsNearWater[i];
+            if(rng >= minrng && rng <= maxrng)
             {
-                if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
-                {                    
-                    DONE = 1;
-                    if(i == 3)                          // ConvertToHealth
-                    {
-                        self.healamount = 100;
-                        self.QualityType = 3;
+                if(i != 4 && PowerupsNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                {
+                    if(!IsNearOneOf(self, PowerupsNearWaterClassnames[i], "", ""))
+                    {                    
+                        DONE = 1;
+                        if(i == 3)                          // ConvertToHealth
+                        {
+                            self.healamount = 100;
+                            self.QualityType = 3;
+                        }
+                        self.nextClassname = PowerupsNearWaterClassnames[i];
+                        self.think = PowerupsNearWaterConverters[i];
                     }
-                    self.nextClassname = Classnames[i];
-                    self.think = Converters[i];
                 }
-            }
-            else if(i == 4)                             // ConvertToArmor
-            {
-                if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
-                {                    
-                    DONE = 1;
-                    self.QualityType = 3;
-                    self.nextClassname = Classnames[i];
-                    self.think = Converters[i];
+                else if(i == 4)                             // ConvertToArmor
+                {
+                    if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
+                    {                    
+                        DONE = 1;
+                        self.QualityType = 3;
+                        self.nextClassname = PowerupsNearWaterClassnames[i];
+                        self.think = PowerupsNearWaterConverters[i];
+                    }
                 }
+                break;
             }
-            break;
+            i++;
         }
-        i++;
+    }
+    else
+    {
+        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
+        while(!DONE && minrng < 100 && i < amountOfChoices)
+        {
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesForPowerupsNotNearWater[i];
+            if(rng >= minrng && rng <= maxrng)
+            {
+                if(i != 4 && i != 5 && PowerupsNotNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                {
+                    if(!IsNearOneOf(self, PowerupsNotNearWaterClassnames[i], "", ""))
+                    {                    
+                        DONE = 1;
+                        if(i == 3)                          // ConvertToHealth
+                        {
+                            self.healamount = 100;
+                            self.QualityType = 3;
+                        }
+                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                        self.think = PowerupsNotNearWaterConverters[i];
+                    }
+                }
+                else if(i == 4)                             // ConvertToArmor
+                {
+                    if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
+                    {                    
+                        DONE = 1;
+                        self.QualityType = 3;
+                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                        self.think = PowerupsNotNearWaterConverters[i];
+                    }
+                }
+                else if(i == 5)
+                {
+                    if(RandomizeWeaponsAndAmmo)
+                    {
+                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                        self.think = PowerupsNotNearWaterConverters[i];
+                    }
+                    else
+                    {
+                        self.nextClassname = "item_artifact_super_damage";
+                        self.think = ConvertToQuadDamage;
+                    }
+                }
+                break;
+            }
+            i++;
+        }
     }
     if(!DONE)
     {
@@ -683,6 +991,12 @@ void() CreateWeaponPermutation = {
 // Thunderbolts can't be spawned in liquid surfaces (if it's the only weapon left to spawn, it will spawn a powerup (if enabled) instead.
 // In any moment, there's a 5% chance of a Powerup spawning (if enabled) instead of a weapon.
 void() ConvertToWeaponBiased = {
+    if(ProbabilityToRemovePickup > 0)
+    {
+        local float rngRemove = Random(1, 100);
+        if(rngRemove <= ProbabilityToRemovePickup)
+            remove(self);
+    }
     local float rng;
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
@@ -704,12 +1018,31 @@ void() ConvertToWeaponBiased = {
         return;
     }
     rng = Random(1, 100);
-    if(RandomizePowerups && rng >= 95)
+    if(RandomizePowerups)
     {    
-        self.think = ConvertToPowerupBiased;
-        self.nextthink = time;
-        return;
+        if(rng >= (100 - ProbabilityForWeaponIntoPowerup))
+        {
+            self.think = ConvertToPowerupBiased;
+            self.nextthink = time;
+            return;
+        }
+        else if (rng >= (100 - ProbabilityForWeaponIntoPowerup - ProbabilityForWeaponIntoAmmo))
+        {    
+            self.think = ConvertToAmmoBiased;
+            self.nextthink = time;
+            return;
+        }
     }
+    else
+    {
+        if (rng >= (100 - ProbabilityForWeaponIntoAmmo))
+        {    
+            self.think = ConvertToAmmoBiased;
+            self.nextthink = time;
+            return;
+        }
+    }
+    
     local float i, currentSurface, isValidSurface;
     local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
@@ -751,7 +1084,7 @@ void() ConvertToWeaponBiased = {
     }
     if(i == 6) 
     {
-        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it restarts the bag).
+        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
         if(RandomizePowerups)
         {
             self.think = ConvertToPowerupBiased;
@@ -760,7 +1093,7 @@ void() ConvertToWeaponBiased = {
         {            
             SpawnedWeapons = 0;
             CreateWeaponPermutation();
-            self.think = ConvertToWeaponBiased;
+            self.think = ConvertToAmmoBiased;
         }
         self.nextthink = time;
         return;

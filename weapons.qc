@@ -953,7 +953,6 @@ void() W_ChangeWeapon =
 	
 	it = self.items;
 	am = 0;
-	
 	if (self.impulse == 1)
 	{
 		fl = IT_AXE;

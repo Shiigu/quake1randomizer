@@ -8,7 +8,7 @@ This mod is installed like any other. Extract the zip file as a folder where you
 
 ## How to configure
 
-To set up the game modes, press the 'M' key, and a menu will show up. Follow the instructions in there.
+To set up the game modes, press the 'M' key, and the Randomization Menu will show up. Follow the instructions in there.
 
 > In case you accidentally overwrote the 'M' keybind, the command to bring up the menu is `impulse 24`.
 
@@ -20,13 +20,47 @@ To set up the game modes, press the 'M' key, and a menu will show up. Follow the
 
 For conversion, all items are split into five categories. Save for some exceptions in Biased Mode, all convertible entities can only be replaced with one of the same type:
 
-- Monsters: Includes all monsters with the exception of Chthon, Shub-Niggurath and cruficied Zombies.
-- Pickup: Includes Health Packs (15 and 25 Health) and Armor Suits (Green and Yellow).
-- Ammo: Includes all Ammo Crates.
-- Powerup: Includes all Powerups, as well as 100 Health Packs and Red Armor Suits.
-- Weapon: Includes all Weapons.
+- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath and cruficied Zombies.
+- **Pickup**: Includes Health Packs (15 and 25 Health) and Armor Suits (Green and Yellow).
+- **Ammo**: Includes all Ammo Crates.
+- **Powerup**: Includes all Powerups, as well as 100 Health Packs and Red Armor Suits.
+- **Weapon**: Includes all Weapons.
 
 ## Modes
+
+### Normal Mode
+
+This is the default playthrough mode. You go through all of vanilla Quake's levels (plus any compatible maps through the `map` command), albeit with randomization affecting all existing objects.
+
+All the odds used in this mode are the same as the Endless Castle in Normal Odds difficulty.
+
+### Endless Castle Mode
+
+Added in v1.8, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of vanilla Quake levels. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
+
+Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
+- Since there are four levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 31 possible levels, you will only see 28 per sequence.
+- Every level may only appear again 28 levels after the previous one.
+
+Furthermore, as you venture through the Endless Castle, with every passing level, the Randomization itself starts playing less and less fair (on Biased Mode, on Unbiased Mode it always stays the same):
+- **Easy Odds** start at the lowest levels of the Endless Castle, until Level 5.
+- **Normal Odds** start at Level 6, until Level 10.
+- **Hard Odds** start at Level 11, until Level 20.
+- **Nightmare Odds** start at Level 21, until Level 35.
+- **Super Nightmare Odds*** start at Level 36, until Level 60.
+- **Unfair Odds** start at Level 61, and will never end.
+
+Within the Endless Castle menu itself, there are four possible difficulty modes:
+- **Easy**: Sets up the levels to their Easy difficulty setting. *The Endless Castle starts at Level 1.*
+- **Normal**: Sets up the levels to their Normal difficulty setting. *The Endless Castle starts at Level 8.*
+- **Hard**: Sets up the levels to their Hard difficulty setting. *The Endless Castle starts at Level 16.*
+- **Nightmare**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 26.*
+
+> This "Endless Castle starts at Level X" bit of information is not informed to the player in-game. This is intentional, so please keep track at how the randomization starts to change as you get further and further into the Endless Castle, lest you may get a nasty surprise...
+
+**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters (outside of reloading the savegame; this option might be removed in the future).
+
+Using the `map` command will instantly end Endless Castle mode.
 
 ### Biased Mode
 
@@ -36,38 +70,38 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 - For Monsters in the ground or air:
 
-|Name|Odds|
-|----|----|
-|Fiend|7%|
-|Rottweiler|7%|
-|Enforcer|9%|
-|Hell Knight|10%|
-|Knight|12%|
-|Zombie|9%|
-|Vore|3%|
-|Shambler|2%|
-|Grunt|13%|
-|Spawn|3%|
-|Scrag|12%|
-|Ogre|13%|
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Fiend|5%|7%|8%|10%|11%|12%|
+|Rottweiler|11%|7%|6%|4%|2%|0%|
+|Enforcer|11%|9%|9%|7%|6%|0%|
+|Hell Knight|9%|10%|11%|13%|14%|12%|
+|Knight|11%|12%|8%|8%|7%|0%|
+|Zombie|10%|9%|10%|11%|9%|11%|
+|Vore|2%|3%|4%|5%|7%|20%|
+|Shambler|1%|2%|3%|4%|6%|20%|
+|Grunt|16%|13%|11%|8%|6%|0%|
+|Spawn|1%|3%|4%|6%|6%|15%|
+|Scrag|11%|12%|13%|13%|13%|10%|
+|Ogre|12%|13%|13%|11%|13%|0%|
 
 > Rotfish aren't allowed to spawn outside of water surfaces because they can't move there.
 
 - For Monsters in the water:
 
-|Name|Odds|
-|----|----|
-|Fiend|6%|
-|Enforcer|12%|
-|Hell Knight|12%|
-|Zombie|11%|
-|Vore|3%|
-|Shambler|2%|
-|Grunt|13%|
-|Spawn|3%|
-|Scrag|12%|
-|Ogre|9%|
-|Rotfish|15%|
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Fiend|8%|6%|4%|2%|1%|0%|
+|Enforcer|8%|12%|14%|15%|15%|0%|
+|Hell Knight|8%|12%|14%|14%|15%|5%|
+|Zombie|16%|11%|8%|6%|3%|10%|
+|Vore|2%|3%|4%|5%|7%|25%|
+|Shambler|1%|2%|3%|4%|6%|25%|
+|Grunt|9%|13%|11%|15%|10%|0%|
+|Spawn|5%|3%|4%|4%|7%|0%|
+|Scrag|10%|12%|14%|15%|17%|35%|
+|Ogre|8%|9%|9%|9%|11%|0%|
+|Rotfish|25%|17%|15%|11%|8%|0%|
 
 > Rottweilers and Knights aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
 
@@ -80,56 +114,81 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Armor Suit|Health Pack|10%|
 |Armor Suit|Armor Suit|90%|
 
-> Either quality of Health Pack (15 or 25) or Armor Suit (Green or Yellow) is equally likely to be picked.
+Whichever quality of Pickup that is spawned depends on the Odds difficulty level:
 
-> An Armor Suit cannot spawn if there's another Armor Suit (regardless of color) up to 512 units away from it. If there is, it spawns a Health Crate of the same quality level instead.
+|Quality|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|High|70%|50%|35%|25%|15%|0%|
+|Low|30%|50%|65%|75%|85%|100%|
+
+Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Odds to Remove|0%|0%|0%|0%|5%|10%|
+
+> "High Quality" Pickups denote a 25 Health Pack or Yellow Armor. "Low Quality" Pickups denote a 15 Health Pack or Green Armor.
+
+> An Armor Suit are not meant to spawn if there's another Armor Suit (regardless of color) up to 512 units away from it. If there is, it spawns a Health Crate of the same quality level instead.
 
 #### Ammo replacement chances on Biased Mode
 
 - Ammo type:
 
-|Name|Odds|
-|----|----|
-|Shells|32%|
-|Nails|31%|
-|Rockets|16%|
-|Cells|16%|
-|A weapon|5%|
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Shells|25%|32%|38%|45%|60%|80%|
+|Nails|25%|31%|38%|31%|25%|10%|
+|Rockets|20%|16%|13%|15%|12%|5%|
+|Cells|20%|16%|8%|7%|16%|5%|
+|A weapon|10%|5%|3%|2%|0%|0%|
 
 > The odds for which weapon to be spawned are defined below.
 
 - Ammo crate size (in case a weapon is not spawned):
 
-|Name|Odds|
-|----|----|
-|Small|65%|
-|Big|35%|
+|Size|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Small|50%|65%|70%|75%|80%|100%|
+|Big|50%|35%|30%|25%|20%|0%|
+
+Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Odds to Remove|0%|0%|0%|0%|5%|10%|
 
 #### Powerup replacement chances on Biased Mode
 
 - If there's a liquid body within 512 units of distance
 
-|Name|Odds|
-|----|----|
-|Pentagram of Protection|18%|
-|Quad Damage|18%|
-|Ring of Shadows|18%|
-|100 Health Pack|18%|
-|Red Armor Suit|18%|
-|Biosuit|10%|
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Pentagram of Protection|20%|18%|17%|15%|12%|5%|
+|Quad Damage|20%|18%|17%|15%|12%|5%|
+|Ring of Shadows|20%|18%|17%|15%|12%|5%|
+|100 Health Pack|15%|18%|17%|20%|24%|30%|
+|Red Armor Suit|20%|17%|15%|12%|18%|10%|
+|Biosuit|5%|10%|15%|20%|28%|45%|
 
 - If there's no liquid body within 512 units of distance
 
-|Name|Odds|
-|----|----|
-|Pentagram of Protection|19%|
-|Quad Damage|19%|
-|Ring of Shadows|19%|
-|100 Health Pack|19%|
-|Red Armor Suit|19%|
-|A weapon|5%|
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Pentagram of Protection|20%|19%|18%|15%|12%|5%|
+|Quad Damage|20%|19%|18%|15%|12%|5%|
+|Ring of Shadows|20%|19%|18%|15%|12%|5%|
+|100 Health Pack|15%|19%|18%|20%|24%|45%|
+|Red Armor Suit|20%|19%|18%|15%|12%|10%|
+|A weapon|5%|5%|10%|20%|28%|30%|
 
-> A Red Armor suit cannot spawn if there's another suit of armor (regardless of color) up to 512 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
+Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Odds to Remove|0%|0%|0%|0%|5%|10%|
+
+> A Red Armor suit is not meant to spawn if there's another suit of armor (regardless of color) up to 512 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
 
 > Preferably, Powerups of the same type will avoid spawning within 512 units of distance from each other. It should only happen when no other powerup or weapon is available for spawning instead.
 
@@ -143,15 +202,29 @@ Every weapon has an even chance to be spawned.
 
 It works as follows:
 1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt). If the map has been loaded via `changelevel` (such as by reaching a map exit), the weapons that were spawned in the previous map will be skipped (prioritizing weapons that the player could not have obtained yet); otherwise, the ones to be skipped will be the weapons the player already owns.
-2. It moves across the "bag" until it finds a weapon that hasn't been spawned or skipped yet and can be spawned in the target location*. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
+2. It moves across the "bag" until it finds a weapon that hasn't been spawned or skipped yet and can be spawned in the target location. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
 3. If it reaches the end of the bag without picking a weapon that can be spawned in the target location*, it spawns a powerup (except for a Biosuit or Red Armor suit) instead.
 4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
-> * The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces, due to the fact it will instantly kill a non-invulnerable player if used in there.
+> The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces, due to the fact it will instantly kill a non-invulnerable player if used in there.
 
-> At every point in the weapon "bag", there's a 5% chance to spawn a Powerup instead of the next weapon. If Powerup randomization is disabled, the next weapon will always be generated.
+At every point in the weapon "bag", the following odds are calculated:
 
-> When the weapon "bag" is complete, there's a 50% chance to spawn a Powerup (if Powerup randomization is enabled) instead of immediately create a new weapon "bag".
+|Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|A weapon|97%|95%|92%|89%|75%|65%|
+|A powerup|3%|5%|8%|10%|15%|20%|
+|An Ammo Pack|0%|0%|1%|5%|10%|15%|
+
+> The odds for a Powerup only apply if the ability to randomize Powerups is enabled
+
+Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Odds to Remove|0%|0%|0%|0%|5%|10%|
+
+> When the weapon "bag" is complete, there's a 50% chance to spawn a Powerup (if Powerup randomization is enabled) or an Ammo Pack (if Powerup randomization is disabled) instead of immediately create a new weapon "bag".
 
 ### Unbiased Mode
 

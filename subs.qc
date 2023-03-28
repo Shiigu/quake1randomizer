@@ -513,12 +513,12 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 			dprint(e.nextClassname);
 			dprint(", looking for ");
 			dprint(classname1);
-			if(classname2 != string_null)
+			if(classname2 != string_null && classname2 != "")
 			{
 				dprint(", ");
 				dprint(classname2);
 			}
-			if(classname3 != string_null)
+			if(classname3 != string_null && classname3 != "")
 			{
 				dprint(", or ");
 				dprint(classname3);
@@ -533,7 +533,9 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 			}
 			else
 			{
-				if(((classname1 != string_null && e.nextClassname == classname1) || (classname2 != string_null && e.nextClassname == classname2) || (classname3 != string_null && e.nextClassname == classname3)))
+				if(((classname1 != string_null && classname1 != "" && e.nextClassname == classname1) 
+				|| (classname2 != string_null && classname2 != "" && e.nextClassname == classname2) 
+				|| (classname3 != string_null && classname3 != "" && e.nextClassname == classname3)))
 				{
 					return TRUE;
 				}
