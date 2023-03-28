@@ -47,7 +47,7 @@ Furthermore, as you venture through the Endless Castle, with every passing level
 - **Normal Odds** start at Level 6, until Level 10.
 - **Hard Odds** start at Level 11, until Level 20.
 - **Nightmare Odds** start at Level 21, until Level 35.
-- **Super Nightmare Odds*** start at Level 36, until Level 60.
+- **Super Nightmare Odds** start at Level 36, until Level 60.
 - **Unfair Odds** start at Level 61, and will never end.
 
 Within the Endless Castle menu itself, there are four possible difficulty modes:
