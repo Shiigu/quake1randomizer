@@ -36,7 +36,7 @@ All the odds used in this mode are the same as the Endless Castle in Normal Odds
 
 ### Endless Castle Mode
 
-Added in v1.8, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of vanilla Quake levels. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
+Added in v1.7, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of vanilla Quake levels. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
 
 Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
 - Since there are four levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 31 possible levels, you will only see 28 per sequence.
