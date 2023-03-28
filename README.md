@@ -152,7 +152,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Pickup will be remov
 |Small|50%|65%|70%|75%|80%|100%|
 |Big|50%|35%|30%|25%|20%|0%|
 
-Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
@@ -182,7 +182,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Pickup will be remov
 |Red Armor Suit|20%|19%|18%|15%|12%|10%|
 |A weapon|5%|5%|10%|20%|28%|30%|
 
-Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+Exclusive to Endless Castle Mode, there's a chance that the Powerup will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
@@ -218,7 +218,7 @@ At every point in the weapon "bag", the following odds are calculated:
 
 > The odds for a Powerup only apply if the ability to randomize Powerups is enabled
 
-Exclusive to Endless Castle Mode, there's a chance that the Pickup will be removed from the level altogether. This applies before calculating the aforementioned odds:
+Exclusive to Endless Castle Mode, there's a chance that the Weapon will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
