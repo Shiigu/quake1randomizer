@@ -338,7 +338,9 @@ void() changelevel_touch =
 		bprint (" exited the level\n");
 	}
 	
-	LevelCount = LevelCount + 1;
+	if(LevelCount > 0)
+		LevelCount = LevelCount + 1;
+		
 	nextmap = self.map;
 
 	SUB_UseTargets ();
