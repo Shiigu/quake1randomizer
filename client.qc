@@ -32,88 +32,121 @@ void() info_intermission =
 
 void() SetChangeParms =
 {
-	if (self.health <= 0)
-	{
-		SetNewParms ();
-		return;
-	}
+    if (self.health <= 0)
+    {
+        SetNewParms();
+        return;
+    }
 
-// remove items
-	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+    // remove items
+    self.items = self.items - (self.items & (IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD));
+
+    // cap super health
+    if (self.health > 100)
+        self.health = 100;
+    if (self.health < 50)
+        self.health = 50;
+
+    parm1 = self.items;
+    parm2 = self.health;
+    parm3 = self.armorvalue;
+    parm4 = self.ammo_shells < 25 ? 25 : self.ammo_shells;
+    parm5 = self.ammo_nails;
+    parm6 = self.ammo_rockets;
+    parm7 = self.ammo_cells;
+    parm8 = self.weapon;
+    parm9 = self.armortype * 100;
+
+    // Combine episode levels into a single integer using multiplication
+    int episodeLevels = (EndlessCastleEpisode1Flags & 0x7F) + ((EndlessCastleEpisode2Flags & 0xFF) * 128) + ((EndlessCastleEpisode3Flags & 0xFF) * 32768) + ((EndlessCastleEpisode4Flags & 0xFF) * 8388608);
+    parm10 = episodeLevels;
+
+    // Combine SpawnedWeapons and EndlessCastleMapCount
+    parm11 = (SpawnedWeapons & 0x3F) + (EndlessCastleMapCount * 64);
+
+    parm12 = EndlessCastleElapsedTime;
 	
-// cap super health
-	if (self.health > 100)
-		self.health = 100;
-	if (self.health < 50)
-		self.health = 50;
-	parm1 = self.items;
-	parm2 = self.health;
-	parm3 = self.armorvalue;
-	if (self.ammo_shells < 25)
-		parm4 = 25;
-	else
-		parm4 = self.ammo_shells;
-	parm5 = self.ammo_nails;
-	parm6 = self.ammo_rockets;
-	parm7 = self.ammo_cells;
-	parm8 = self.weapon;
-	parm9 = self.armortype * 100;
-	parm10 = SpawnedWeapons;
-	parm11 = LevelCount;
-	parm12 = DeathToll;
-	parm13 = Episode1Levels;
-	parm14 = Episode2Levels;
-	parm15 = Episode3Levels;
-	parm16 = Episode4Levels;
+	dprint("EndlessCastleDeathToll = ");
+	dprint(ftos(EndlessCastleDeathToll));
+	dprint(".\n");
+	dprint("EndlessCastleTotalMonsters = ");
+	dprint(ftos(EndlessCastleTotalMonsters));
+	dprint(".\n");
+
+	// Combine EndlessCastleDeathToll and EndlessCastleTotalMonsters
+	parm13 = (EndlessCastleDeathToll & 0xFFFF) + (EndlessCastleTotalMonsters * 65536);
+	// Combine EndlessCastleTotalSecrets and EndlessCastleFoundSecrets
+	parm14 = (EndlessCastleTotalSecrets & 0xFFFF) + (EndlessCastleFoundSecrets * 65536);
+
+    parm15 = EndlessCastleSeed;
+    parm16 = EndlessCastleDifficultyLevel; // Use this parameter for difficulty level
 };
 
 void() SetNewParms =
 {
-	parm1 = IT_SHOTGUN | IT_AXE;
-	parm2 = 100;
-	parm3 = 0;
-	parm4 = 25;
-	parm5 = 0;
-	parm6 = 0;
-	parm7 = 0;
-	parm8 = 1;
-	parm9 = 0;
-	parm10 = 0;
-	parm11 = 0;
-	parm12 = 0;
-	parm13 = 0;
-	parm14 = 0;
-	parm15 = 0;
-	parm16 = 0;
+    parm1 = IT_SHOTGUN | IT_AXE;
+    parm2 = 100;
+    parm3 = 0;
+    parm4 = 25;
+    parm5 = 0;
+    parm6 = 0;
+    parm7 = 0;
+    parm8 = 1;
+    parm9 = 0;
+    parm10 = 0;
+    parm11 = 0;
+    parm12 = 0;
+    parm13 = 0;
+    parm14 = 0;
+    parm15 = 0;
+    parm16 = 0;
+    //cvar_set("temp1", "-1");
 };
 
 void() DecodeLevelParms =
 {
-//	if (serverflags)
-	if (!deathmatch)	
-	{
-		if (world.model == "maps/start.bsp")
-			SetNewParms ();		// take away all stuff on starting new episode
-	}
-	
-	self.items = parm1;
-	self.health = parm2;
-	self.armorvalue = parm3;
-	self.ammo_shells = parm4;
-	self.ammo_nails = parm5;
-	self.ammo_rockets = parm6;
-	self.ammo_cells = parm7;
-	self.weapon = parm8;
-	self.armortype = parm9 * 0.01;
-	SpawnedWeapons = parm10;
-	LevelCount = parm11;
-	DeathToll = parm12;
-	Episode1Levels = parm13;
-	Episode2Levels = parm14;
-	Episode3Levels = parm15;
-	Episode4Levels = parm16;
+    if (!deathmatch)
+    {
+        if (world.model == "maps/start.bsp")
+            SetNewParms(); // take away all stuff on starting new episode
+    }
+
+    self.items = parm1;
+    self.health = parm2;
+    self.armorvalue = parm3;
+    self.ammo_shells = parm4;
+    self.ammo_nails = parm5;
+    self.ammo_rockets = parm6;
+    self.ammo_cells = parm7;
+    self.weapon = parm8;
+    self.armortype = parm9 * 0.01;
+
+    // Decode episode levels from a single integer using division and modulus
+    EndlessCastleEpisode1Flags = mod(parm10, 128);
+    EndlessCastleEpisode2Flags = mod(floor(parm10 / 128), 256);
+    EndlessCastleEpisode3Flags = mod(floor(parm10 / 32768), 256);
+    EndlessCastleEpisode4Flags = mod(floor(parm10 / 8388608), 256);
+
+    // Decode SpawnedWeapons and EndlessCastleMapCount
+    SpawnedWeapons = mod(parm11, 64);
+    EndlessCastleMapCount = floor(parm11 / 64);
+
+    EndlessCastleElapsedTime = parm12;
+
+	// Decode EndlessCastleDeathToll and EndlessCastleTotalMonsters
+    EndlessCastleDeathToll = mod(parm13, 65536);
+    EndlessCastleTotalMonsters = floor(parm13 / 65536);
+
+    // Decode EndlessCastleTotalSecrets and EndlessCastleFoundSecrets
+    EndlessCastleTotalSecrets = mod(parm14, 65536);
+    EndlessCastleFoundSecrets = floor(parm14 / 65536);
+
+    EndlessCastleSeed = parm15;
+    EndlessCastleDifficultyLevel = parm16;
 };
+
+
+
 
 /*
 ============
@@ -171,7 +204,7 @@ void() GotoNextMap =
 void() ExitIntermission =
 {
 // skip any text in deathmatch or Endless Castle Mode
-	if (deathmatch || LevelCount > 0)
+	if (deathmatch || EndlessCastleMapCount > 0)
 	{
 		GotoNextMap ();
 		return;
@@ -338,8 +371,13 @@ void() changelevel_touch =
 		bprint (" exited the level\n");
 	}
 	
-	if(LevelCount > 0)
-		LevelCount = LevelCount + 1;
+	if(EndlessCastleMapCount > 0)
+	{
+		EndlessCastleElapsedTime = EndlessCastleElapsedTime + GetElapsedTime();
+		EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + total_monsters;
+		EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + total_secrets;
+		EndlessCastleMapCount = EndlessCastleMapCount + 1;
+	}	
 		
 	nextmap = self.map;
 
@@ -521,6 +559,7 @@ void() Randomize;
 
 void() PutClientInServer =
 {
+	startTime = time;
 	local	entity spot;
 	spot = SelectSpawnPoint ();
 	self.classname = "player";
@@ -542,7 +581,7 @@ void() PutClientInServer =
 
 	DecodeLevelParms ();
 
-	if(LevelCount == -1)
+	if(EndlessCastleMapCount == -1)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -558,9 +597,15 @@ void() PutClientInServer =
         (self.items & IT_LIGHTNING);
 	}
 
-	Randomize();	
+	Randomize();
 
-	if(LevelCount > 0)
+	local float currentCenterTime;	
+    currentCenterTime = cvar("scr_centertime");
+
+	if(currentCenterTime == 100000)
+		cvar_set("scr_centertime", "2");
+
+	if(EndlessCastleMapCount > 0)
 	{
 		if(world.model == "maps/end.bsp")
 			nextmap = PickNextLevel();
@@ -771,7 +816,7 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	if(LevelCount == -1 && InRandomMenu)
+	if(EndlessCastleMapCount == -1 && InRandomMenu)
 	{
 		if(!InSkillSelect)
 			EndedEndlessCastleMenu();
@@ -1003,6 +1048,12 @@ void() PlayerPreThink =
 
 	CheckRules ();
 	WaterMove ();
+
+	if(PrintedEndlessCastleSplash == 0 && EndlessCastleMapCount > 0)
+	{
+		centerprint (self, "=== Endless Castle ===\n\n", "Welcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
+		PrintedEndlessCastleSplash = 1;
+	}	
 
 	if (self.waterlevel == 2)
 		CheckWaterJump ();
@@ -1300,12 +1351,17 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 
-		if(LevelCount > 0)
+		if(EndlessCastleMapCount > 0)
 		{
+			EndlessCastleElapsedTime = EndlessCastleElapsedTime + GetElapsedTime();
+			EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + total_monsters;
+			EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + total_secrets;
 			Centertime = cvar("scr_centertime");
 			cvar_set("scr_centertime", "100000"); // Make display time look almost permanent
+			PrintEndlessCastleStats();
 			EndedEndlessCastleMenu();
-			LevelCount = -1;
+			EndlessCastleSeed = 0;
+			EndlessCastleMapCount = -1;
 		}
 
 		if (attacker.classname == "teledeath")

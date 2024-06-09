@@ -328,7 +328,6 @@ void (void() thinkst) SUB_CheckRefire =
 float(float lower, float upper) Random =
 {
 	return floor((rand() * (upper - lower + 1)) + lower);
-	//return floor (lower + rand() * (upper - lower + 1));
 };
 
 void(entity e, float flying) UnstuckMonster = 

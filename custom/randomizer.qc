@@ -38,6 +38,8 @@ float StartingLevelForEasy = 1;
 float StartingLevelForNormal = 8;
 float StartingLevelForHard = 16;
 float StartingLevelForNightmare = 26;
+float StartingLevelForSuperNightmare = 41;
+float StartingLevelForUnfair = 66;
 
 // END PROBABILITY SKILL THRESHOLDS
 
@@ -136,7 +138,7 @@ float ProbabilityForWeaponIntoAmmoUnfair            = 15;
 // END PROBABILITY "TABLES"
 
 void() Randomize = {
-    local float LevelAfterSkill, Skill, amountOfChoices, i;
+    local float amountOfChoices, i;
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
     HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;    
@@ -145,34 +147,55 @@ void() Randomize = {
     RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
     RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
 	fixedSeed = floor(cvar("gamecfg"));
-	if(fixedSeed > 0 && LevelCount == 0)
+
+	if(EndlessCastleMapCount == 0)
 	{
-        seed = fixedSeed;
-        seedIsFixed = 1;
+        if(fixedSeed > 0)
+        {
+            seed = fixedSeed;
+            seedIsFixed = 1;
+        }
+        else
+        {
+            if(time == 0)
+                seed = floor((10000000000 * time) % 40000000);
+            else
+                seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+        }
     }
 	else
     {
-        if(time == 0)
-		    seed = floor((10000000000 * time) % 40000000);
+        if(EndlessCastleSeed > 0)
+        {
+            seed = EndlessCastleSeed;
+        }
         else
-            seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+        {
+            if(time == 0)
+                seed = floor((10000000000 * time) % 40000000);
+            else
+                seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+            EndlessCastleSeed = seed;
+        }
     }
+
     next = 0;
 
-    if (LevelCount == 0) 
-        LevelAfterSkill = ThresholdForNormal;                                   // Outside of Endless Castle, it will always play with Normal Odds
+    if (EndlessCastleMapCount == 0) 
+        EndlessCastleMapDifficulty = ThresholdForNormal;                                   // Outside of Endless Castle, it will always play with Normal Odds
     else
     {
-        Skill = cvar("skill");
-        if (Skill == 0) LevelAfterSkill = LevelCount + StartingLevelForEasy;
-        else if (Skill == 1) LevelAfterSkill = LevelCount + StartingLevelForNormal;
-        else if (Skill == 2) LevelAfterSkill = LevelCount + StartingLevelForHard;
-        else if (Skill == 3) LevelAfterSkill = LevelCount + StartingLevelForNightmare;
-        LevelAfterSkill = LevelAfterSkill - 1;
+        if (EndlessCastleDifficultyLevel == 1) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForEasy;
+        else if (EndlessCastleDifficultyLevel == 2) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForNormal;
+        else if (EndlessCastleDifficultyLevel == 3) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForHard;
+        else if (EndlessCastleDifficultyLevel == 4) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForNightmare;
+        else if (EndlessCastleDifficultyLevel == 5) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForSuperNightmare;
+        else if (EndlessCastleDifficultyLevel == 6) EndlessCastleMapDifficulty = EndlessCastleMapCount + StartingLevelForUnfair;
+        EndlessCastleMapDifficulty = EndlessCastleMapDifficulty - 1;
     }
 
     dprint("Current Randomizer difficulty level is ");
-    if (LevelAfterSkill < ThresholdForNormal) {
+    if (EndlessCastleMapDifficulty < ThresholdForNormal) {
         dprint("Easy (");
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
         for(i = 0; i < amountOfChoices; i++)
@@ -194,7 +217,7 @@ void() Randomize = {
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackEasy;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupEasy;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoEasy;
-    } else if (LevelAfterSkill < ThresholdForHard) {
+    } else if (EndlessCastleMapDifficulty < ThresholdForHard) {
         dprint("Normal (");
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
         for(i = 0; i < amountOfChoices; i++)
@@ -216,7 +239,7 @@ void() Randomize = {
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNormal;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNormal;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNormal;
-    } else if (LevelAfterSkill < ThresholdForNightmare) {
+    } else if (EndlessCastleMapDifficulty < ThresholdForNightmare) {
         dprint("Hard (");
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
         for(i = 0; i < amountOfChoices; i++)
@@ -238,7 +261,7 @@ void() Randomize = {
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackHard;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupHard;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoHard;
-    } else if (LevelAfterSkill < ThresholdForSuperNightmare) {
+    } else if (EndlessCastleMapDifficulty < ThresholdForSuperNightmare) {
         dprint("Nightmare (");
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
         for(i = 0; i < amountOfChoices; i++)
@@ -260,7 +283,7 @@ void() Randomize = {
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNightmare;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNightmare;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNightmare;
-    } else if (LevelAfterSkill < ThresholdForUnfair) {
+    } else if (EndlessCastleMapDifficulty < ThresholdForUnfair) {
         dprint("Super Nightmare (");
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
         for(i = 0; i < amountOfChoices; i++)
@@ -305,7 +328,7 @@ void() Randomize = {
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupUnfair;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoUnfair;
     }
-    dprint(ftos(LevelAfterSkill));
+    dprint(ftos(EndlessCastleMapDifficulty));
     dprint(").\n");
 
     CreateWeaponPermutation();
@@ -364,6 +387,8 @@ void() ConvertEntities = {
     }
 	temp = find(world, Converted, "");
     i = 0;
+    if(EndlessCastleMapCount > 0 && temp != world)       // This is to avoid the Endless Castle Stats to double the amount of monsters
+        total_monsters = 0;
     dprint("----- Starting ConvertEntities -----\n");
 	while (temp != world && i < MAX_PER_CALL) // As long as it can find any entity that can be converted
 	{

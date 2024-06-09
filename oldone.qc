@@ -122,7 +122,7 @@ void() finale_1 =
 		}
 	}
 
-	if(LevelCount == 0)
+	if(EndlessCastleMapCount == 0)
 	{
 		intermission_exittime = time + 10000000;	// never allow exit if not on Endless Castle Mode
 	}
@@ -141,7 +141,7 @@ void() finale_1 =
 		error ("no teleporttrain");
 	remove (pl);
 
-	if(LevelCount == 0)
+	if(EndlessCastleMapCount == 0)
 	{
 		WriteByte (MSG_ALL, SVC_FINALE);
 		WriteString (MSG_ALL, "");
@@ -241,7 +241,7 @@ void() finale_4 =
 		}
 		z = z + 96;
 	}
-	if(LevelCount == 0)
+	if(EndlessCastleMapCount == 0)
 	{
 		// start the end text
 		WriteByte (MSG_ALL, SVC_FINALE);

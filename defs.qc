@@ -654,7 +654,7 @@ void(string s) changelevel = #70;
 
 void(string var, string val) cvar_set = #72;	// sets cvar.value
 
-void(entity client, string s) centerprint = #73;	// sprint, but in middle
+void(entity client, string s, string s2, string s3, string s4, string s5, string s6, string s7) centerprint = #73;	// sprint, but in middle
 
 void(vector pos, string samp, float vol, float atten) ambientsound = #74;
 
@@ -726,8 +726,22 @@ float Centertime; 			// Old scr_centertime value to reset it once the player lea
 void() EnterRandomMenu;
 void() CheckMenuImpulses;
 
-// EndlessCastleState
+// Endless Castle State
+
+float EndlessCastleDifficultyLevel;
+float EndlessCastleMapDifficulty;
+float EndlessCastleMapCount;
+float EndlessCastleElapsedTime;
+float EndlessCastleDeathToll;
+float EndlessCastleTotalMonsters;
+float EndlessCastleFoundSecrets;
+float EndlessCastleTotalSecrets;
+float EndlessCastleSeed;
 
 float EndlessCastleState;
 float ENDLESS_CASTLE_RUNNING = 1;
 float ENDLESS_CASTLE_ENDED = 2;
+
+float startTime; // Variable to store the start time of the level
+
+float PrintedEndlessCastleSplash;

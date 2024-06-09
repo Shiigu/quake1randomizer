@@ -38,6 +38,7 @@ void() multi_trigger =
 	{
 		if (self.enemy.classname != "player")
 			return;
+		EndlessCastleFoundSecrets = EndlessCastleFoundSecrets + 1;
 		found_secrets = found_secrets + 1;
 		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
 	}
@@ -195,6 +196,7 @@ set "message" to text string
 */
 void() trigger_secret =
 {
+	EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + 1;
 	total_secrets = total_secrets + 1;
 	self.wait = -1;
 	if (!self.message)
