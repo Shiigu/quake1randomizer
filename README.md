@@ -1,6 +1,6 @@
 # quake1randomizer
 
-This mod (compatible with both the classic and remastered releases of Quake 1) has a very simple task: replace ALL the monsters and objects in a level with another of the same type. That first Grunt you encounter in E1M1? Now it could be an Enforcer, a Knight... or maybe a Shambler!
+This mod (compatible with both the classic and remastered releases of Quake 1) has a very simple task: replace ALL the monsters and objects in a level with another of the same type. That first Grunt you encounter in `E1M1`? Now it could be an Enforcer, a Knight... or maybe a Shambler!
 
 ## How to start playing
 
@@ -40,7 +40,9 @@ Added in v1.7, this mode, which can only be enabled through the Randomization Me
 
 Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
 - Since there are four levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 31 possible levels, you will only see 28 per sequence.
-- Every level may only appear again 28 levels after the previous one.
+- Every level may only appear again 28 levels after the previous time it showed up.
+- As a unique rule, Shub-Niggurath's lair (better known as `END`) cannot be rolled as one of the first four levels of any Endless Castle run, given the fact it's almost impossible to get out of it without a full set of weapons.
+- If, for some reason, the level picker fails to work, it will default to `E4M3`.
 
 Furthermore, as you venture through the Endless Castle, with every passing level, the Randomization itself starts playing less and less fair (on Biased Mode, on Unbiased Mode it always stays the same):
 - **Easy Odds** start at the lowest levels of the Endless Castle, until Level 5.
@@ -50,15 +52,15 @@ Furthermore, as you venture through the Endless Castle, with every passing level
 - **Super Nightmare Odds** start at Level 36, until Level 60.
 - **Unfair Odds** start at Level 61, and will never end.
 
-Within the Endless Castle menu itself, there are four possible difficulty modes:
+Within the Endless Castle menu itself, there are six possible difficulty modes:
 - **Easy**: Sets up the levels to their Easy difficulty setting. *The Endless Castle starts at Level 1.*
 - **Normal**: Sets up the levels to their Normal difficulty setting. *The Endless Castle starts at Level 8.*
 - **Hard**: Sets up the levels to their Hard difficulty setting. *The Endless Castle starts at Level 16.*
 - **Nightmare**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 26.*
+- **Super Nightmare**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 46.*
+- **Unfair**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 66.*
 
-> This "Endless Castle starts at Level X" bit of information is not informed to the player in-game. This is intentional, so please keep track at how the randomization starts to change as you get further and further into the Endless Castle, lest you may get a nasty surprise...
-
-**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters (outside of reloading the savegame; this option might be removed in the future).
+**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters (outside of reloading the savegame; this option might be removed in the future if it's possible).
 
 Using the `map` command will instantly end Endless Castle mode.
 
