@@ -588,9 +588,9 @@ string(string s) precache_sound		= #19;
 string(string s) precache_model		= #20;
 void(entity client, string s)stuffcmd = #21;
 entity(vector org, float rad) findradius = #22;
-void(string s) bprint				= #23;
-void(entity client, string s) sprint = #24;
-void(string s) dprint				= #25;
+void(string s, optional string s2, optional string s3, optional string s4, optional string s5, optional string s6, optional string s7, optional string s8) bprint	= #23;
+void(entity client, string s, optional string s2, optional string s3, optional string s4, optional string s5, optional string s6, optional string s7) sprint = #24;
+void(string s, optional string s2, optional string s3, optional string s4, optional string s5, optional string s6, optional string s7, optional string s8) dprint	= #25;
 string(float f) ftos				= #26;
 string(vector v) vtos				= #27;
 void() coredump						= #28;		// prints all edicts
@@ -654,7 +654,7 @@ void(string s) changelevel = #70;
 
 void(string var, string val) cvar_set = #72;	// sets cvar.value
 
-void(entity client, string s, string s2, string s3, string s4, string s5, string s6, string s7) centerprint = #73;	// sprint, but in middle
+void(entity client, string s, optional string s2, optional string s3, optional string s4, optional string s5, optional string s6, optional string s7) centerprint = #73;	// sprint, but in middle
 
 void(vector pos, string samp, float vol, float atten) ambientsound = #74;
 
@@ -732,7 +732,7 @@ float EndlessCastleDifficultyLevel;
 float EndlessCastleMapDifficulty;
 float EndlessCastleMapCount;
 float EndlessCastleElapsedTime;
-float EndlessCastleDeathToll;
+float EndlessCastleDeadMonsters;
 float EndlessCastleTotalMonsters;
 float EndlessCastleFoundSecrets;
 float EndlessCastleTotalSecrets;
@@ -745,3 +745,5 @@ float ENDLESS_CASTLE_ENDED = 2;
 float startTime; // Variable to store the start time of the level
 
 float PrintedEndlessCastleSplash;
+
+nosave float sessionframecount;

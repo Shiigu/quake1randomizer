@@ -342,6 +342,13 @@ void() StartFrame =
 	teamplay = cvar("teamplay");
 	skill = cvar("skill");
 	framecount = framecount + 1;
+	sessionframecount = sessionframecount + 1;
+	if(framecount != sessionframecount && EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces in the Endless Castle prevent loading a savegame.\n");
+		localcmd("map start\n");
+		return;
+	}
 };
 
 /*

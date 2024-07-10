@@ -6,6 +6,10 @@ void() player_pain;
 void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
+void(float item_bits, float health_bits,
+    float armor_bits, float armor_type,
+    float shell_bits, float nail_bits,
+    float rocket_bits, float cell_bits) EncodeParms;
 
 float	modelindex_eyes, modelindex_player, fixedSeed;
 
@@ -31,118 +35,140 @@ void() info_intermission =
 
 
 void() SetChangeParms =
-{
-    if (self.health <= 0)
+{    
+    float item_bits, health_bits, armor_bits, armor_type;
+    float shell_bits, nail_bits, rocket_bits, cell_bits;
+ 
+    if (self.health <= 0) 
     {
-        SetNewParms();
+        SetNewParms ();
         return;
     }
-
-    // remove items
-    self.items = self.items - (self.items & (IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD));
-
-    // cap super health
+// keep only bits 2 through 7
+    self.items = self.items & 126;
+    item_bits = self.items * 0.5;
+// cap super health
     if (self.health > 100)
         self.health = 100;
     if (self.health < 50)
         self.health = 50;
+    health_bits = floor(self.health - 50);
+    armor_bits = floor(self.armorvalue) & 255;
+    armor_type = (self.armortype > 0) + (self.armortype > 0.3)
+                 + (self.armortype > 0.6);
+ 
+    if (self.ammo_shells < 25)
+        shell_bits = 25;
+    else
+        shell_bits = floor(self.ammo_shells) & 127;
+    nail_bits = floor(self.ammo_nails) & 255;
+    rocket_bits = floor(self.ammo_rockets) & 127;
+    cell_bits = floor(self.ammo_cells) & 127;
+ 
+    EncodeParms(item_bits, health_bits, armor_bits, armor_type,
+                shell_bits, nail_bits, rocket_bits, cell_bits);
 
-    parm1 = self.items;
-    parm2 = self.health;
-    parm3 = self.armorvalue;
-    parm4 = self.ammo_shells < 25 ? 25 : self.ammo_shells;
-    parm5 = self.ammo_nails;
-    parm6 = self.ammo_rockets;
-    parm7 = self.ammo_cells;
-    parm8 = self.weapon;
-    parm9 = self.armortype * 100;
-
-    // Combine episode levels into a single integer using multiplication
-    int episodeLevels = (EndlessCastleEpisode1Flags & 0x7F) + ((EndlessCastleEpisode2Flags & 0xFF) * 128) + ((EndlessCastleEpisode3Flags & 0xFF) * 32768) + ((EndlessCastleEpisode4Flags & 0xFF) * 8388608);
-    parm10 = episodeLevels;
-
-    // Combine SpawnedWeapons and EndlessCastleMapCount
-    parm11 = (SpawnedWeapons & 0x3F) + (EndlessCastleMapCount * 64);
-
-    parm12 = EndlessCastleElapsedTime;
-	
-	dprint("EndlessCastleDeathToll = ");
-	dprint(ftos(EndlessCastleDeathToll));
-	dprint(".\n");
-	dprint("EndlessCastleTotalMonsters = ");
-	dprint(ftos(EndlessCastleTotalMonsters));
-	dprint(".\n");
-
-	// Combine EndlessCastleDeathToll and EndlessCastleTotalMonsters
-	parm13 = (EndlessCastleDeathToll & 0xFFFF) + (EndlessCastleTotalMonsters * 65536);
-	// Combine EndlessCastleTotalSecrets and EndlessCastleFoundSecrets
-	parm14 = (EndlessCastleTotalSecrets & 0xFFFF) + (EndlessCastleFoundSecrets * 65536);
-
-    parm15 = EndlessCastleSeed;
-    parm16 = EndlessCastleDifficultyLevel; // Use this parameter for difficulty level
+	parm4 = SpawnedWeapons;
+	parm5 = EndlessCastleEpisode1Flags;
+	parm6 = EndlessCastleEpisode2Flags;
+	parm7 = EndlessCastleEpisode3Flags;
+	parm8 = EndlessCastleEpisode4Flags;
+	parm9 = EndlessCastleMapCount;
+	parm10 = EndlessCastleDifficultyLevel;
+	parm11 = EndlessCastleSeed;
+	parm12 = EndlessCastleElapsedTime;
+	parm13 = EndlessCastleTotalMonsters;
+	parm14 = EndlessCastleDeadMonsters;
+	parm15 = EndlessCastleTotalSecrets;
+	parm16 = EndlessCastleFoundSecrets;
 };
+
+// Thanks to Tome of Preach of providing a refactor for parms that leaves parm4 to parm16 empty.
+// https://tomeofpreach.wordpress.com/2014/12/28/sending-values-between-levels/
+void(float item_bits, float health_bits,
+    float armor_bits, float armor_type,
+    float shell_bits, float nail_bits,
+    float rocket_bits, float cell_bits) EncodeParms =
+{
+    parm1 = armor_bits + 256 * shell_bits + 256 * 128 * nail_bits;
+    parm2 = health_bits + 64 * armor_type + 256 * rocket_bits
+            + 256 * 128 * cell_bits;
+    parm3 = item_bits;
+}
 
 void() SetNewParms =
 {
-    parm1 = IT_SHOTGUN | IT_AXE;
-    parm2 = 100;
-    parm3 = 0;
-    parm4 = 25;
-    parm5 = 0;
-    parm6 = 0;
-    parm7 = 0;
-    parm8 = 1;
-    parm9 = 0;
-    parm10 = 0;
-    parm11 = 0;
-    parm12 = 0;
-    parm13 = 0;
-    parm14 = 0;
-    parm15 = 0;
-    parm16 = 0;
-    //cvar_set("temp1", "-1");
+    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0);
 };
 
 void() DecodeLevelParms =
 {
-    if (!deathmatch)
+    float bits;
+    if (serverflags)
     {
         if (world.model == "maps/start.bsp")
-            SetNewParms(); // take away all stuff on starting new episode
+            SetNewParms ();     // take away all stuff on starting new episode
     }
+ 
+    bits = parm1 & 255;
+    self.armorvalue = bits;
+    parm1 = (parm1 - bits) / 256;
+ 
+    bits = parm1 & 127;
+    self.ammo_shells = bits;
+    parm1 = (parm1 - bits) / 128;
+ 
+    bits = parm1 & 255;
+    self.ammo_nails = bits;
+ 
+    bits = parm2 & 63;
+    self.health = bits + 50;
+    parm2 = (parm2 - bits) / 64;
+ 
+    bits = parm2 & 3;
+    if(bits == 1)
+    {
+        self.armortype = 0.3;
+        self.items = IT_ARMOR1;
+    }
+    else if (bits == 2)
+    {
+        self.armortype = 0.6;
+        self.items = IT_ARMOR2;
+    }
+    else if (bits == 3)
+    {
+        self.armortype = 0.8;
+        self.items = IT_ARMOR3;
+    }
+    parm2 = (parm2 - bits) / 4;
+ 
+    bits = parm2 & 127;
+    self.ammo_rockets = bits;
+    parm2 = (parm2 - bits) / 128;
+ 
+    bits = parm2 & 127;
+    self.ammo_cells = bits;
+ 
+    bits = parm3 & 127;
+    self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
+ 
+    self.weapon = W_BestWeapon ();
+    W_SetCurrentAmmo ();
 
-    self.items = parm1;
-    self.health = parm2;
-    self.armorvalue = parm3;
-    self.ammo_shells = parm4;
-    self.ammo_nails = parm5;
-    self.ammo_rockets = parm6;
-    self.ammo_cells = parm7;
-    self.weapon = parm8;
-    self.armortype = parm9 * 0.01;
-
-    // Decode episode levels from a single integer using division and modulus
-    EndlessCastleEpisode1Flags = mod(parm10, 128);
-    EndlessCastleEpisode2Flags = mod(floor(parm10 / 128), 256);
-    EndlessCastleEpisode3Flags = mod(floor(parm10 / 32768), 256);
-    EndlessCastleEpisode4Flags = mod(floor(parm10 / 8388608), 256);
-
-    // Decode SpawnedWeapons and EndlessCastleMapCount
-    SpawnedWeapons = mod(parm11, 64);
-    EndlessCastleMapCount = floor(parm11 / 64);
-
-    EndlessCastleElapsedTime = parm12;
-
-	// Decode EndlessCastleDeathToll and EndlessCastleTotalMonsters
-    EndlessCastleDeathToll = mod(parm13, 65536);
-    EndlessCastleTotalMonsters = floor(parm13 / 65536);
-
-    // Decode EndlessCastleTotalSecrets and EndlessCastleFoundSecrets
-    EndlessCastleTotalSecrets = mod(parm14, 65536);
-    EndlessCastleFoundSecrets = floor(parm14 / 65536);
-
-    EndlessCastleSeed = parm15;
-    EndlessCastleDifficultyLevel = parm16;
+	SpawnedWeapons = parm4;
+	EndlessCastleEpisode1Flags = parm5;
+	EndlessCastleEpisode2Flags = parm6;
+	EndlessCastleEpisode3Flags = parm7;
+	EndlessCastleEpisode4Flags = parm8;
+	EndlessCastleMapCount = parm9;
+	EndlessCastleDifficultyLevel = parm10;
+	EndlessCastleSeed = parm11;
+	EndlessCastleElapsedTime = parm12;
+	EndlessCastleTotalMonsters = parm13;
+	EndlessCastleDeadMonsters = parm14;
+	EndlessCastleTotalSecrets = parm15;
+	EndlessCastleFoundSecrets = parm16;
 };
 
 
@@ -315,7 +341,7 @@ void() execute_changelevel =
 	{
 		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 		{
-			LogResults();
+			LogRandomizerResults();
 		}
 	}
 
@@ -818,8 +844,6 @@ void() PlayerDeathThink =
 {
 	if(EndlessCastleMapCount == -1 && InRandomMenu)
 	{
-		if(!InSkillSelect)
-			EndedEndlessCastleMenu();
 		if (self.impulse)
 			ImpulseCommands ();
 		return;
@@ -1051,9 +1075,9 @@ void() PlayerPreThink =
 
 	if(PrintedEndlessCastleSplash == 0 && EndlessCastleMapCount > 0)
 	{
-		centerprint (self, "=== Endless Castle ===\n\n", "Welcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
+		centerprint (self, "\(\=\= Endless Castle \=\=\)\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
 		PrintedEndlessCastleSplash = 1;
-	}	
+	}
 
 	if (self.waterlevel == 2)
 		CheckWaterJump ();
@@ -1346,8 +1370,8 @@ void(entity targ, entity attacker) ClientObituary =
 		{
 			if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 			{
-				LogResults();
-				bprint("\n=== List of randomized objects has been printed to console ===\n\n");
+				LogRandomizerResults();
+				bprint("\n\(\=\= List of randomized objects has been printed to console \=\=\)\n\n");
 			}
 		}
 
@@ -1358,8 +1382,8 @@ void(entity targ, entity attacker) ClientObituary =
 			EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + total_secrets;
 			Centertime = cvar("scr_centertime");
 			cvar_set("scr_centertime", "100000"); // Make display time look almost permanent
-			PrintEndlessCastleStats();
 			EndedEndlessCastleMenu();
+			PrintEndlessCastleStats();
 			EndlessCastleSeed = 0;
 			EndlessCastleMapCount = -1;
 		}

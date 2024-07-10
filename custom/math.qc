@@ -4,9 +4,9 @@ float fmax(float a, float b);
 float fmin(float a, float b);
 float mod(float a, float b);
 float rand();
-float GetHours();
-float GetMinutes();
-float GetSeconds();
+float GetHours(float timeSpan);
+float GetMinutes(float timeSpan);
+float GetSeconds(float timeSpan);
 
 /*
 * sqrt
@@ -111,14 +111,14 @@ float rand() = {
     return (next / m);
 };
 
-float() GetHours = {
-    return floor(EndlessCastleElapsedTime / 3600);
+float(float timeSpan) GetHours = {
+    return floor(timeSpan / 3600);
 };
 
-float() GetMinutes = {
-    return floor(mod(floor(EndlessCastleElapsedTime / 60), 60));
+float(float timeSpan) GetMinutes = {
+    return floor(mod(floor(timeSpan / 60), 60));
 };
 
-float() GetSeconds = {
-    return floor(mod(floor(EndlessCastleElapsedTime), 60));
+float(float timeSpan) GetSeconds = {
+    return floor(mod(floor(timeSpan), 60));
 };

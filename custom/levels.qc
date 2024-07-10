@@ -16,7 +16,7 @@ float() GetElapsedTime;
 
 string() PickNextLevel = {
     if(EndlessCastleMapCount == 0) return "";
-    local float rngEpisode, rngLevel, PASSED, levelFlag, bitFlag, ATTEMPTS, MAX_ATTEMPTS, i, addComma;
+    local float rngEpisode, rngLevel, bitFlag, ATTEMPTS, MAX_ATTEMPTS, i, addComma;
 	ATTEMPTS = 0;
 	MAX_ATTEMPTS = 30;
 	if(EndlessCastleEpisode1Flags == 255 && EndlessCastleEpisode2Flags == 127 && EndlessCastleEpisode3Flags == 255 && EndlessCastleEpisode4Flags == 255)

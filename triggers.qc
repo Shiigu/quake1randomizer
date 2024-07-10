@@ -196,7 +196,6 @@ set "message" to text string
 */
 void() trigger_secret =
 {
-	EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + 1;
 	total_secrets = total_secrets + 1;
 	self.wait = -1;
 	if (!self.message)

@@ -118,7 +118,7 @@ void() finale_1 =
 	{
 		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 		{
-			LogResults();
+			LogRandomizerResults();
 		}
 	}
 

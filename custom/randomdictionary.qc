@@ -82,9 +82,9 @@ float DeadEntityQuantities[AMOUNT_OF_MONSTER_TYPES];
 
 void(string key) RegisterEntity;
 void(string key) RegisterDeadEntity;
-void() LogResults;
+void() LogRandomizerResults;
 
-void() LogResults = {
+void() LogRandomizerResults = {
 	if(!RandomizeMonsters && !RandomizeWeaponsAndAmmo && !RandomizeHealthAndArmor && !RandomizePowerups)
     {
         bprint("There are no converted entities to show!\n");
