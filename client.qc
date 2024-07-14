@@ -38,6 +38,7 @@ void() SetChangeParms =
 {    
     float item_bits, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
+	float spawnedweapons_bits, weapon_bit;
  
     if (self.health <= 0) 
     {
@@ -68,7 +69,14 @@ void() SetChangeParms =
     EncodeParms(item_bits, health_bits, armor_bits, armor_type,
                 shell_bits, nail_bits, rocket_bits, cell_bits);
 
-	parm4 = SpawnedWeapons;
+	spawnedweapons_bits = floor(SpawnedWeapons / 2);
+
+    // Left shift self.weapon by 6
+    weapon_bit = self.weapon * 64;
+
+    // Combine the two values
+    parm4 = spawnedweapons_bits + weapon_bit;
+
 	parm5 = EndlessCastleEpisode1Flags;
 	parm6 = EndlessCastleEpisode2Flags;
 	parm7 = EndlessCastleEpisode3Flags;
@@ -153,10 +161,13 @@ void() DecodeLevelParms =
     bits = parm3 & 127;
     self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
  
-    self.weapon = W_BestWeapon ();
+
+	// Assign the extracted values back
+    SpawnedWeapons = (parm4 & 63) * 2;
+    // Extract the current weapon by right shifting parm4 by 6
+    self.weapon = floor(parm4 / 64);
     W_SetCurrentAmmo ();
 
-	SpawnedWeapons = parm4;
 	EndlessCastleEpisode1Flags = parm5;
 	EndlessCastleEpisode2Flags = parm6;
 	EndlessCastleEpisode3Flags = parm7;
