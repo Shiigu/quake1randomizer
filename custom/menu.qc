@@ -512,10 +512,7 @@ void() SetEndlessCastleParms = {
 	self.ammo_cells = 0;
 	self.weapon = 1;
 	self.armortype = 0;
-    if (EndlessCastleDifficultyLevel == 1) localcmd("skill 0\n");
-    else if (EndlessCastleDifficultyLevel == 2) localcmd("skill 1\n");
-    else if (EndlessCastleDifficultyLevel == 3) localcmd("skill 2\n");
-    else localcmd("skill 3\n");
+    localcmd("skill 3\n");
 	SpawnedWeapons = 0;
     EndlessCastleMapCount = 1;
     FinalEndlessCastleLevel = 0;
