@@ -703,6 +703,8 @@ float DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO = 8;
 float DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR = 16;
 float DO_NOT_RANDOMIZE_POWERUPS = 32;
 
+float USE_REMASTERED_NIGHTMARE_SETTINGS = 64;
+
 float UnbiasedMode;    							// If TRUE, randomizer won't play fair.
 float HideInBackpacks; 							// If TRUE, all Weapons and Ammo are "hidden" as backpacks.
 float RandomizeMonsters;
@@ -737,6 +739,23 @@ float EndlessCastleTotalMonsters;
 float EndlessCastleFoundSecrets;
 float EndlessCastleTotalSecrets;
 float EndlessCastleSeed;
+
+// PROBABILITY SKILL THRESHOLDS
+
+float ThresholdForNormal = 6;
+float ThresholdForHard = 11;
+float ThresholdForNightmare = 21;
+float ThresholdForSuperNightmare = 36;
+float ThresholdForUnfair = 61;
+
+float StartingLevelForEasy = 1;
+float StartingLevelForNormal = 8;
+float StartingLevelForHard = 16;
+float StartingLevelForNightmare = 26;
+float StartingLevelForSuperNightmare = 41;
+float StartingLevelForUnfair = 66;
+
+// END PROBABILITY SKILL THRESHOLDS
 
 float EndlessCastleState;
 float ENDLESS_CASTLE_RUNNING = 1;

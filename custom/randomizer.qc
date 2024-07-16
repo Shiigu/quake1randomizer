@@ -26,23 +26,6 @@ void() CreateWeaponPermutation;
 entity Placeholder;
 float IndexPermutation[6];
 
-// PROBABILITY SKILL THRESHOLDS
-
-float ThresholdForNormal = 6;
-float ThresholdForHard = 11;
-float ThresholdForNightmare = 21;
-float ThresholdForSuperNightmare = 36;
-float ThresholdForUnfair = 61;
-
-float StartingLevelForEasy = 1;
-float StartingLevelForNormal = 8;
-float StartingLevelForHard = 16;
-float StartingLevelForNightmare = 26;
-float StartingLevelForSuperNightmare = 41;
-float StartingLevelForUnfair = 66;
-
-// END PROBABILITY SKILL THRESHOLDS
-
 // PROBABILITY "TABLES"
 
 float ProbabilitiesMonsterToMonsterGround[12];
@@ -367,6 +350,17 @@ void() Randomize = {
         dprint("Backpack Mode is enabled. All weapons and ammo will be disguised as backpacks");
     }
     dprint(".\n");
+    if(skill == 3)
+    {
+        if (IsRemastered())
+        {
+            dprint("Using Remastered Nightmare Mode.\n");
+        }
+        else
+        {
+            dprint("Using Classic Nightmare Mode.\n");
+        }
+    }
     Placeholder = spawn(); // Temporary entity to call the randomizer functions in order 
 	Placeholder.think = ConvertEntities;
 	Placeholder.nextthink = time;

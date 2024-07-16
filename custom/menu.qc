@@ -3,13 +3,14 @@ float MAIN_MENU = 1;                        // Main Menu
 float UNBIASED_MENU = 2;                    // Menu to enable or disable Unbiased Mode
 float BACKPACKS_MENU = 3;                   // Menu to enable or disable Backpack Mode
 float SPECIFY_RANDOM_MENU = 4;              // Menu to enable or disable certain randomizations
-float RANDOMIZED_LIST_MENU = 5;             // Randomized List Menu
-float SEED_MENU = 6;                        // Seed Menu
-float ENDLESS_CASTLE_MENU = 7;              // Menu to enable or disable Endless Castle Mode
-float SKILL_SELECT_MENU = 8;                // Menu to select Endless Castle difficulty
-float ENDLESS_CASTLE_PROGRESS_MENU = 9;     // Menu to enable or disable Endless Castle Mode
-float FINISHED_ENDLESS_CASTLE_MENU = 10;    // Menu to restart or end Endless Castle Mode
-float FINAL_MENU = 11;                      // All Menus whose only option is to return to the main menu
+float NIGHTMARE_MENU = 5;                   // Menu to enable or disable Remastered Nightmare settings
+float RANDOMIZED_LIST_MENU = 6;             // Randomized List Menu
+float SEED_MENU = 7;                        // Seed Menu
+float ENDLESS_CASTLE_MENU = 8;              // Menu to enable or disable Endless Castle Mode
+float SKILL_SELECT_MENU = 9;                // Menu to select Endless Castle difficulty
+float ENDLESS_CASTLE_PROGRESS_MENU = 10;    // Menu to enable or disable Endless Castle Mode
+float FINISHED_ENDLESS_CASTLE_MENU = 11;    // Menu to restart or end Endless Castle Mode
+float FINAL_MENU = 12;                      // All Menus whose only option is to return to the main menu
 
 entity InputCapturer; // Will take hold of the number keys until the player closes the menu or its think time expires
 entity Client;     // Stores the client entity.
@@ -20,6 +21,7 @@ void() MainMenu;
 void() UnbiasedMenu;
 void() BackpacksMenu;
 void() RandomizedListMenu;
+void() RemasteredOrClassicNightmareMenu;
 void() SpecifyRandomMenu;
 void() SeedMenu;
 void() EndlessCastleMenu;
@@ -74,7 +76,7 @@ void() MainMenu = {
         backpackMode = "Backpack Mode is Disabled\n\n";
         option2 = "[2] Enable Backpack Mode\n";
     }
-    fixedOptions = "[3] Endless Castle Mode\n[4] List of randomized objects\n[5] Specify randomization\n[6] Seed settings\n[7] About\n[8] Exit Menu";
+    fixedOptions = "[3] Endless Castle Mode\n[4] Change Nightmare settings\n[5] List of randomized objects\n[6] Specify randomization\n[7] Seed settings\n[8] About\n[9] Exit Menu";
     centerprint (Client, modTitle, randomMode, backpackMode, option1, option2, fixedOptions);
     CurrentMenu = MAIN_MENU;
     InputCapturer.nextthink = time + CaptureTime;
@@ -159,6 +161,26 @@ void() EndedEndlessCastleMenu = {
     centerprint (Client, "\(\=\= Brave Warrior's Obituary \=\=\)\n\nYour trek through the Endless Castle\nhas ended at level ", ftos(FinalEndlessCastleLevel), "\n\nDifficulty level: ", GetSkillString(),".\n\nYour performance has been\nprinted to the console.\n\n[1] Restart Endless Castle\n[2] Return to Introduction");
     CurrentMenu = FINISHED_ENDLESS_CASTLE_MENU;
 };
+
+void() RemasteredOrClassicNightmareMenu = {
+    if(EndlessCastleMapCount == 0)
+    {
+        if(IsRemastered())
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n(50 Maximum Health and\nMonsters fire normally).\n\n", "Do you want to change\nto Classic Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+        else
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "Do you want to change\nto Remastered Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+        CurrentMenu = NIGHTMARE_MENU;
+        InputCapturer.nextthink = time + CaptureTime;
+    }
+    else
+    {
+        if(IsRemastered())
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n(50 Maximum Health and\nMonsters fire normally).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+        else
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+        CurrentMenu = FINAL_MENU;
+    }
+}
 
 void() RandomizedListMenu = {
     if(EndlessCastleMapCount == 0)
@@ -261,14 +283,16 @@ void() CheckMenuImpulses = {
         if(self.impulse == 3)
             EndlessCastleMenu();
         if(self.impulse == 4)
-            RandomizedListMenu();
+            RemasteredOrClassicNightmareMenu();
         if(self.impulse == 5)
-            SpecifyRandomMenu();
+            RandomizedListMenu();
         if(self.impulse == 6)
-            SeedMenu();
+            SpecifyRandomMenu();
         if(self.impulse == 7)
-            AboutMenu();
+            SeedMenu();
         if(self.impulse == 8)
+            AboutMenu();
+        if(self.impulse == 9)
             ExitRandomMenu();
         return;
     }
@@ -290,7 +314,7 @@ void() CheckMenuImpulses = {
                 UnbiasedMode = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -315,7 +339,32 @@ void() CheckMenuImpulses = {
                 HideInBackpacks = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\n a level is loaded)\n\n[1] Return to Main Menu");
+            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
+            cvar_set("savedgamecfg", ftos(RandomMode));
+        }
+        if(self.impulse == 2)
+            ExitRandomMenu();
+        return;
+    }
+    if(CurrentMenu == NIGHTMARE_MENU)
+    {
+        if(self.impulse == 1)
+        {
+            if(IsRemastered())
+            {
+                warning = "Nightmare Mode is now\nusing Classic settings\n\n(100 Maximum Health and\nMonsters fire very quickly)\n\n";
+                RandomMode = RandomMode - (RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS);
+                HideInBackpacks = 0;
+                CurrentMenu = FINAL_MENU;
+            }
+            else 
+            {
+                warning = "Nightmare Mode is now\nusing Remastered settings\n\n(50 Maximum Health and\nMonsters fire normally)\n\n";
+                RandomMode = RandomMode | USE_REMASTERED_NIGHTMARE_SETTINGS;
+                HideInBackpacks = 1;
+                CurrentMenu = FINAL_MENU;
+            }
+            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -405,14 +454,14 @@ void() CheckMenuImpulses = {
             {
                 if(seedIsFixed)
                 {
-                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\n a level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
+                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                     cvar_set("gamecfg", "0");
                     seedIsFixed = 0;
                     CurrentMenu = FINAL_MENU;
                 }
                 else 
                 {
-                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is now fixed to ", ftos(seed), "\n\n(This won't take effect until\n a level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
+                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is now fixed to ", ftos(seed), "\n\n(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                     cvar_set("gamecfg", ftos(seed));
                     seedIsFixed = 1;
                     CurrentMenu = FINAL_MENU;
@@ -530,13 +579,12 @@ void() SetEndlessCastleParms = {
 };
 
 string() GetSkillString = {
-    if(EndlessCastleDifficultyLevel == 1) return "Easy";
-    if(EndlessCastleDifficultyLevel == 2) return "Normal";
-    if(EndlessCastleDifficultyLevel == 3) return "Hard";
-    if(EndlessCastleDifficultyLevel == 4) return "Nightmare";
-    if(EndlessCastleDifficultyLevel == 5) return "Super Nightmare";
-    if(EndlessCastleDifficultyLevel == 6) return "Unfair";
-    return "NULL";
+    if(EndlessCastleMapDifficulty >= ThresholdForNormal) return "Normal";
+    if(EndlessCastleMapDifficulty >= ThresholdForHard) return "Hard";
+    if(EndlessCastleMapDifficulty >= ThresholdForNightmare) return "Nightmare";
+    if(EndlessCastleMapDifficulty >= ThresholdForSuperNightmare) return "Super Nightmare";
+    if(EndlessCastleMapDifficulty >= ThresholdForUnfair) return "Unfair";
+    return "Easy";
 };
 
 void() PrintEndlessCastleStats = {

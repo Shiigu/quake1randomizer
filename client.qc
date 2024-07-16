@@ -45,14 +45,15 @@ void() SetChangeParms =
         SetNewParms ();
         return;
     }
-// keep only bits 2 through 7
+	// keep only bits 2 through 7
     self.items = self.items & 126;
     item_bits = self.items * 0.5;
-// cap super health
-    if (self.health > 100)
-        self.health = 100;
-    if (self.health < 50)
-        self.health = 50;
+	// cap super health
+	if (self.health > self.max_health)
+	self.health = self.max_health;
+
+	if (self.health < self.max_health / 2)
+	self.health = self.max_health / 2;
     health_bits = floor(self.health - 50);
     armor_bits = floor(self.armorvalue) & 255;
     armor_type = (self.armortype > 0) + (self.armortype > 0.3)
@@ -105,8 +106,14 @@ void(float item_bits, float health_bits,
 }
 
 void() SetNewParms =
-{
-    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0);
+{	
+    RandomMode = cvar("savedgamecfg");
+	float extra_health;
+	if (IsRemastered() && skill == 3)
+		extra_health = 0;
+	else
+		extra_health = 50;
+    EncodeParms(0, extra_health, 0, 0, 25, 0, 0, 0);
 };
 
 void() DecodeLevelParms =
@@ -599,13 +606,20 @@ void() PutClientInServer =
 	startTime = time;
 	local	entity spot;
 	spot = SelectSpawnPoint ();
+    RandomMode = cvar("savedgamecfg");
 	self.classname = "player";
-	self.health = 100;
+	if (IsRemastered() && skill == 3 && !deathmatch)
+		self.health = 50;
+	else
+		self.health = 100;
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_WALK;
 	self.show_hostile = 0;
-	self.max_health = 100;
+	if (IsRemastered() && skill == 3 && !deathmatch)
+		self.max_health = 50;
+	else
+		self.max_health = 100;
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage

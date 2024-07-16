@@ -7,6 +7,7 @@ float(entity head) IsTouchingTeleporter;
 float(entity head, float distance) IsNearAHarmfulLiquidSurface;
 float(entity head, string classname1, string classname2, string classname3) IsNearOneOf;
 float(float playAlertSound) FindTarget;
+float() IsRemastered;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
 .vector oldmins;
@@ -299,7 +300,7 @@ void() SUB_UseTargets =
 
 /*
 
-in nightmare mode, all attack_finished times become 0
+in Classic nightmare mode, all attack_finished times become 0
 some monsters refire twice automatically
 
 */
@@ -307,7 +308,7 @@ some monsters refire twice automatically
 void(float normal) SUB_AttackFinished =
 {
 	self.cnt = 0;		// refire count for nightmare
-	if (skill != 3)
+	if (IsRemastered() || skill != 3)
 		self.attack_finished = time + normal;
 };
 
@@ -633,3 +634,10 @@ float(entity head, float distance) IsNearAHarmfulLiquidSurface =
 		// We don't pay attention to the upper half because having liquid above the object might mean it's in a different floor altogether
 		return IsNearHarmfulLiquid;
 };
+
+float() IsRemastered = {
+	cvar_set("temp1", ftos(RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS));
+	if(RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS)
+		return TRUE;
+	return FALSE;
+}
