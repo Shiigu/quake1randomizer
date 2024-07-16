@@ -32,7 +32,8 @@ void() AboutMenu;
 void() ExitRandomMenu;
 void() PrintEndlessCastleStats;
 
-string() GetSkillString;
+string() GetBaseDifficultyString;
+string() GetCurrentDifficultyString;
 
 void() EnterRandomMenu = {
     RandomMode = cvar("savedgamecfg");
@@ -47,7 +48,7 @@ void() EnterRandomMenu = {
     InRandomMenu = 1;
     CaptureTime = 5;
     Centertime = cvar("scr_centertime");
-    cvar_set("scr_centertime", ftos(CaptureTime)); // Temporarily change the message display time
+    SetCentertime(CaptureTime);             // Temporarily change the message display time
     InputCapturer = spawn();
     InputCapturer.think = ExitRandomMenu;
     MainMenu();
@@ -134,7 +135,7 @@ void() EndlessCastleMenu = {
     }
     else
     {
-        centerprint (Client, "\(\=\= Endless Castle Mode  \=\=\)\n\nYou are currently at Level ", ftos(EndlessCastleMapCount), ".\n\nDifficulty level: ", GetSkillString(), ".\n(Map difficulty level: ", ftos(EndlessCastleMapDifficulty), ")\n\n[1] Print Current Stats\n[2] Return to Main Menu");
+        centerprint (Client, "\(\=\= Endless Castle Mode  \=\=\)\n\nYou are currently at Level ", ftos(EndlessCastleMapCount), ".\n\nDifficulty level: ", GetCurrentDifficultyString(), ".\n(Map difficulty level: ", ftos(EndlessCastleMapDifficulty), ")\n\n[1] Print Current Stats\n[2] Return to Main Menu");
         CurrentMenu = ENDLESS_CASTLE_PROGRESS_MENU;
     }
 };
@@ -158,7 +159,7 @@ void() EndedEndlessCastleMenu = {
     InputCapturer.think = ExitRandomMenu;
     InputCapturer.nextthink = time + CaptureTime;
     Client = self;
-    centerprint (Client, "\(\=\= Brave Warrior's Obituary \=\=\)\n\nYour trek through the Endless Castle\nhas ended at level ", ftos(FinalEndlessCastleLevel), "\n\nDifficulty level: ", GetSkillString(),".\n\nYour performance has been\nprinted to the console.\n\n[1] Restart Endless Castle\n[2] Return to Introduction");
+    centerprint (Client, "\(\=\= Brave Warrior's Obituary \=\=\)\n\nYour trek through the Endless Castle\nhas ended at level ", ftos(FinalEndlessCastleLevel), "\n\nDifficulty level: ", GetBaseDifficultyString(),".\n\nYour performance has been\nprinted to the console.\n\n[1] Restart Endless Castle\n[2] Return to Introduction");
     CurrentMenu = FINISHED_ENDLESS_CASTLE_MENU;
 };
 
@@ -273,7 +274,7 @@ void() CheckMenuImpulses = {
         return;
     }
     local string warning;
-    cvar_set("scr_centertime", ftos(CaptureTime));
+    SetCentertime(CaptureTime);
     if(CurrentMenu == MAIN_MENU)
     {
         if(self.impulse == 1)
@@ -506,7 +507,7 @@ void() CheckMenuImpulses = {
         {
             if(Centertime != 0)
             {
-                cvar_set("scr_centertime", ftos(Centertime));
+                SetCentertime(Centertime);
                 Centertime = 0;
             }
 			EndlessCastleMapCount = 0;
@@ -545,7 +546,7 @@ void() CheckMenuImpulses = {
 
 void() ExitRandomMenu = {
     centerprint (Client, string_null);
-    cvar_set("scr_centertime", ftos(Centertime));
+    SetCentertime(Centertime);
     Centertime = 0;
     InRandomMenu = 0;
     remove(InputCapturer);
@@ -578,12 +579,22 @@ void() SetEndlessCastleParms = {
     ExitRandomMenu();
 };
 
-string() GetSkillString = {
-    if(EndlessCastleMapDifficulty >= ThresholdForNormal) return "Normal";
-    if(EndlessCastleMapDifficulty >= ThresholdForHard) return "Hard";
-    if(EndlessCastleMapDifficulty >= ThresholdForNightmare) return "Nightmare";
-    if(EndlessCastleMapDifficulty >= ThresholdForSuperNightmare) return "Super Nightmare";
+string() GetBaseDifficultyString = {
+    if(EndlessCastleDifficultyLevel == 1) return "Easy";
+    if(EndlessCastleDifficultyLevel == 2) return "Normal";
+    if(EndlessCastleDifficultyLevel == 3) return "Hard";
+    if(EndlessCastleDifficultyLevel == 4) return "Nightmare";
+    if(EndlessCastleDifficultyLevel == 5) return "Super Nightmare";
+    if(EndlessCastleDifficultyLevel == 6) return "Unfair";
+    return "NULL";
+};
+
+string() GetCurrentDifficultyString = {
     if(EndlessCastleMapDifficulty >= ThresholdForUnfair) return "Unfair";
+    if(EndlessCastleMapDifficulty >= ThresholdForSuperNightmare) return "Super Nightmare";
+    if(EndlessCastleMapDifficulty >= ThresholdForNightmare) return "Nightmare";
+    if(EndlessCastleMapDifficulty >= ThresholdForHard) return "Hard";
+    if(EndlessCastleMapDifficulty >= ThresholdForNormal) return "Normal";
     return "Easy";
 };
 
@@ -595,10 +606,12 @@ void() PrintEndlessCastleStats = {
     else
         bprint("-> Current Map Level: ");
     bprint(ftos(EndlessCastleMapCount));
-    bprint(".\n-> Skill: ");
-    bprint(GetSkillString());
+    bprint(".\n-> Base Difficulty: ");
+    bprint(GetBaseDifficultyString());
     bprint(".\n-> Difficulty Level: ");
     bprint(ftos(EndlessCastleMapDifficulty));
+    bprint(".\n-> Current Difficulty: ");
+    bprint(GetCurrentDifficultyString());
     bprint(".\n-> Time Elapsed: ");
 
     local float hours, minutes, seconds, timeToUse, totalMonsters, deadMonsters, totalSecrets, foundSecrets;

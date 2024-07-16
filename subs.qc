@@ -8,6 +8,7 @@ float(entity head, float distance) IsNearAHarmfulLiquidSurface;
 float(entity head, string classname1, string classname2, string classname3) IsNearOneOf;
 float(float playAlertSound) FindTarget;
 float() IsRemastered;
+void(float newCentertime) SetCentertime;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
 .vector oldmins;
@@ -640,4 +641,9 @@ float() IsRemastered = {
 	if(RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS)
 		return TRUE;
 	return FALSE;
+}
+
+void(float newCentertime) SetCentertime = {	
+	cvar_set("scr_centertime", ftos(newCentertime));
+	Centertime = newCentertime;
 }

@@ -489,7 +489,7 @@ void() respawn =
 	{
 		if(Centertime != 0)
 		{
-			cvar_set("scr_centertime", ftos(Centertime));
+			SetCentertime(Centertime);
 			Centertime = 0;
 		}
 		localcmd ("restart\n");
@@ -654,7 +654,7 @@ void() PutClientInServer =
     currentCenterTime = cvar("scr_centertime");
 
 	if(currentCenterTime == 100000)
-		cvar_set("scr_centertime", "2");
+		SetCentertime(2);
 
 	if(EndlessCastleMapCount > 0)
 	{
@@ -1406,7 +1406,7 @@ void(entity targ, entity attacker) ClientObituary =
 			EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + total_monsters;
 			EndlessCastleTotalSecrets = EndlessCastleTotalSecrets + total_secrets;
 			Centertime = cvar("scr_centertime");
-			cvar_set("scr_centertime", "100000"); // Make display time look almost permanent
+			SetCentertime(100000); 					// Make display time look almost permanent
 			EndedEndlessCastleMenu();
 			PrintEndlessCastleStats();
 			EndlessCastleSeed = 0;

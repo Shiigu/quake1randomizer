@@ -765,4 +765,4 @@ float startTime; // Variable to store the start time of the level
 
 float PrintedEndlessCastleSplash;
 
-nosave float sessionframecount;
+nosave float sessionframecount; // Used to detect loaded savegames
