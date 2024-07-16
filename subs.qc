@@ -637,7 +637,6 @@ float(entity head, float distance) IsNearAHarmfulLiquidSurface =
 };
 
 float() IsRemastered = {
-	cvar_set("temp1", ftos(RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS));
 	if(RandomMode & USE_REMASTERED_NIGHTMARE_SETTINGS)
 		return TRUE;
 	return FALSE;
