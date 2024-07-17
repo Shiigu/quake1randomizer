@@ -167,18 +167,18 @@ void() RemasteredOrClassicNightmareMenu = {
     if(EndlessCastleMapCount == 0)
     {
         if(IsRemastered())
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n(50 Maximum Health and\nMonsters fire normally).\n\n", "Do you want to change\nto Classic Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "Do you want to change\nto Classic Nightmare Mode?\n\n", "[1] Yes\n[2] No");
         else
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "Do you want to change\nto Remastered Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "Do you want to change\nto Remastered Nightmare Mode?\n\n", "[1] Yes\n[2] No");
         CurrentMenu = NIGHTMARE_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
         if(IsRemastered())
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n(50 Maximum Health and\nMonsters fire normally).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         else
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 }
@@ -553,15 +553,11 @@ void() ExitRandomMenu = {
 };
 
 void() SetEndlessCastleParms = {
-    self.items = IT_SHOTGUN | IT_AXE;
-	self.health = 100;
-	self.armorvalue = 0;
-	self.ammo_shells = 25;
-	self.ammo_nails = 0;
-	self.ammo_rockets = 0;
-	self.ammo_cells = 0;
-	self.weapon = 1;
-	self.armortype = 0;
+	if(IsRemastered())
+		self.health = 50;
+	else
+		self.health = 100;
+    SetNewParms();
     localcmd("skill 3\n");
 	SpawnedWeapons = 0;
     EndlessCastleMapCount = 1;

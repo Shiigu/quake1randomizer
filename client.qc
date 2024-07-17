@@ -48,6 +48,12 @@ void() SetChangeParms =
 	// keep only bits 2 through 7
     self.items = self.items & 126;
     item_bits = self.items * 0.5;
+
+	if(IsRemastered())
+		self.max_health = 50;
+	else
+		self.max_health = 100;
+
 	// cap super health
 	if (self.health > self.max_health)
 	self.health = self.max_health;
