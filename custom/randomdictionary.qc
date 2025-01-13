@@ -2,8 +2,8 @@
 // QuakeC, being an old language, lacks the ability to handle dictionaries, let alone receive vectors as parameters
 // So, this file and its functions will work as a pseudo dictionary.
 
-float AMOUNT_OF_ENTITY_TYPES = 51;
-float AMOUNT_OF_MONSTER_TYPES = 13;
+float AMOUNT_OF_ENTITY_TYPES = 60;
+float AMOUNT_OF_MONSTER_TYPES = 16;
 
 string ENTITY_DISPLAY_NAME_DEATH_KNIGHT = "Monster -> Death Knight";
 string ENTITY_DISPLAY_NAME_ENFORCER = "Monster -> Enforcer";
@@ -18,6 +18,9 @@ string ENTITY_DISPLAY_NAME_SHAMBLER = "Monster -> Shambler";
 string ENTITY_DISPLAY_NAME_SPAWN = "Monster -> Spawn";
 string ENTITY_DISPLAY_NAME_VORE = "Monster -> Vore";
 string ENTITY_DISPLAY_NAME_ZOMBIE = "Monster -> Zombie";
+string ENTITY_DISPLAY_NAME_CENTROID = "Monster -> Centroid";
+string ENTITY_DISPLAY_NAME_GREMLIN = "Monster -> Gremlin";
+string ENTITY_DISPLAY_NAME_SPIKE_MINE = "Monster -> Spike Mine";
 
 string ENTITY_DISPLAY_NAME_HEALTH_15 = "Pickup -> Health Pack (15)";
 string ENTITY_DISPLAY_NAME_HEALTH_25 = "Pickup -> Health Pack (25)";
@@ -46,6 +49,9 @@ string ENTITY_DISPLAY_NAME_SUPER_NAILGUN = "Weapon -> Super Nailgun";
 string ENTITY_DISPLAY_NAME_GRENADE_LAUNCHER = "Weapon -> Grenade Launcher";
 string ENTITY_DISPLAY_NAME_ROCKET_LAUNCHER = "Weapon -> Rocket Launcher";
 string ENTITY_DISPLAY_NAME_THUNDERBOLT = "Weapon -> Thunderbolt";
+string ENTITY_DISPLAY_NAME_LASER_CANNON = "Weapon -> Laser Cannon";
+string ENTITY_DISPLAY_NAME_PROXIMITY_GUN = "Weapon -> Proximity Gun";
+string ENTITY_DISPLAY_NAME_MJOLNIR = "Weapon -> Mjolnir";
 
 string ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL = "Backpack (Ammo) -> Shells (20)";
 string ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG = "Backpack (Ammo) -> Shells (40)";
@@ -62,21 +68,24 @@ string ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN = "Backpack (Weapon) -> Super 
 string ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER = "Backpack (Weapon) -> Grenade Launcher";
 string ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER = "Backpack (Weapon) -> Rocket Launcher";
 string ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT = "Backpack (Weapon) -> Thunderbolt";
+string ENTITY_DISPLAY_NAME_BACKPACK_LASER_CANNON = "Backpack (Weapon) -> Laser Cannon";
+string ENTITY_DISPLAY_NAME_BACKPACK_PROXIMITY_GUN = "Backpack (Weapon) -> Proximity Gun";
+string ENTITY_DISPLAY_NAME_BACKPACK_MJOLNIR = "Backpack (Weapon) -> Mjolnir";
 
 string EntityNames[] = { ENTITY_DISPLAY_NAME_DEATH_KNIGHT, ENTITY_DISPLAY_NAME_ENFORCER, ENTITY_DISPLAY_NAME_FIEND, ENTITY_DISPLAY_NAME_GRUNT, ENTITY_DISPLAY_NAME_KNIGHT, 
                             ENTITY_DISPLAY_NAME_OGRE, ENTITY_DISPLAY_NAME_ROTFISH, ENTITY_DISPLAY_NAME_ROTTWEILER, ENTITY_DISPLAY_NAME_SCRAG, ENTITY_DISPLAY_NAME_SHAMBLER, 
-                            ENTITY_DISPLAY_NAME_SPAWN, ENTITY_DISPLAY_NAME_VORE, ENTITY_DISPLAY_NAME_ZOMBIE, ENTITY_DISPLAY_NAME_HEALTH_15, ENTITY_DISPLAY_NAME_HEALTH_25, 
+                            ENTITY_DISPLAY_NAME_SPAWN, ENTITY_DISPLAY_NAME_VORE, ENTITY_DISPLAY_NAME_ZOMBIE, ENTITY_DISPLAY_NAME_CENTROID, ENTITY_DISPLAY_NAME_GREMLIN, ENTITY_DISPLAY_NAME_SPIKE_MINE, ENTITY_DISPLAY_NAME_HEALTH_15, ENTITY_DISPLAY_NAME_HEALTH_25, 
                             ENTITY_DISPLAY_NAME_ARMOR_100, ENTITY_DISPLAY_NAME_ARMOR_150, ENTITY_DISPLAY_NAME_SHELLS_SMALL, ENTITY_DISPLAY_NAME_SHELLS_BIG, 
                             ENTITY_DISPLAY_NAME_NAILS_SMALL, ENTITY_DISPLAY_NAME_NAILS_BIG, ENTITY_DISPLAY_NAME_ROCKETS_SMALL, ENTITY_DISPLAY_NAME_ROCKETS_BIG, 
                             ENTITY_DISPLAY_NAME_CELLS_SMALL, ENTITY_DISPLAY_NAME_CELLS_BIG, ENTITY_DISPLAY_NAME_BIOSUIT, ENTITY_DISPLAY_NAME_PENTAGRAM_OF_PROTECTION, 
                             ENTITY_DISPLAY_NAME_QUAD_DAMAGE, ENTITY_DISPLAY_NAME_RING_OF_SHADOWS, ENTITY_DISPLAY_NAME_HEALTH_100, ENTITY_DISPLAY_NAME_ARMOR_200, 
                             ENTITY_DISPLAY_NAME_DOUBLE_BARRELED_SHOTGUN, ENTITY_DISPLAY_NAME_NAILGUN, ENTITY_DISPLAY_NAME_SUPER_NAILGUN, ENTITY_DISPLAY_NAME_GRENADE_LAUNCHER, 
-                            ENTITY_DISPLAY_NAME_ROCKET_LAUNCHER, ENTITY_DISPLAY_NAME_THUNDERBOLT, ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL, 
+                            ENTITY_DISPLAY_NAME_ROCKET_LAUNCHER, ENTITY_DISPLAY_NAME_THUNDERBOLT, ENTITY_DISPLAY_NAME_LASER_CANNON, ENTITY_DISPLAY_NAME_PROXIMITY_GUN, ENTITY_DISPLAY_NAME_MJOLNIR, ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL, 
                             ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG, ENTITY_DISPLAY_NAME_BACKPACK_NAILS_SMALL, ENTITY_DISPLAY_NAME_BACKPACK_NAILS_BIG, 
                             ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_SMALL, ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_BIG, ENTITY_DISPLAY_NAME_BACKPACK_CELLS_SMALL, 
                             ENTITY_DISPLAY_NAME_BACKPACK_CELLS_BIG, ENTITY_DISPLAY_NAME_BACKPACK_DOUBLE_BARRELED_SHOTGUN, ENTITY_DISPLAY_NAME_BACKPACK_NAILGUN, 
                             ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN, ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER, ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER, 
-                            ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT };
+                            ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT, ENTITY_DISPLAY_NAME_BACKPACK_LASER_CANNON, ENTITY_DISPLAY_NAME_BACKPACK_PROXIMITY_GUN, ENTITY_DISPLAY_NAME_BACKPACK_MJOLNIR };
 float EntityQuantities[AMOUNT_OF_ENTITY_TYPES];
 float DeadEntityQuantities[AMOUNT_OF_MONSTER_TYPES];
 
@@ -92,10 +101,10 @@ void() LogRandomizerResults = {
     }
     float i;
     bprint("------- List of converted objects -------\n");
-    for(i = 0; i < AMOUNT_OF_ENTITY_TYPES; i++)
+    for(i = 0; i < EntityNames.length; i++)
     {
         if(EntityNames[i] == string_null) break;
-        if(i < AMOUNT_OF_MONSTER_TYPES)
+        if(i < DeadEntityQuantities.length)
         {
             if(EntityQuantities[i] != 0)
                 bprint(EntityNames[i], ": ", ftos(DeadEntityQuantities[i]), "/", ftos(EntityQuantities[i]), " killed\n");
@@ -111,7 +120,7 @@ void() LogRandomizerResults = {
 
 float(string classname) GetPositionOfEntry = {
     float i;
-    for(i = 0; i < AMOUNT_OF_ENTITY_TYPES; i++)
+    for(i = 0; i < EntityNames.length; i++)
     {
         if (EntityNames[i] == classname)
             return i;
@@ -130,7 +139,7 @@ void(string key) RegisterEntity =
     }
     else
     {
-        if(i < AMOUNT_OF_MONSTER_TYPES)
+        if(i < DeadEntityQuantities.length)
             DeadEntityQuantities[i] = 0;
         EntityQuantities[i] = EntityQuantities[i] + 1;
     }
@@ -145,7 +154,7 @@ void(string key) RegisterDeadEntity =
         dprint(key);
         dprint(" is not present in EntityNames dictionary.\n");
     }
-    else if (i > AMOUNT_OF_MONSTER_TYPES)
+    else if (i > DeadEntityQuantities.length)
     {
         dprint(key);
         dprint(" is not a monster.\n");

@@ -28,25 +28,26 @@ float IndexPermutation[6];
 
 // PROBABILITY "TABLES"
 
-float ProbabilitiesMonsterToMonsterGround[12];
-float ProbabilitiesMonsterToMonsterGroundEasy[12]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12 };
-float ProbabilitiesMonsterToMonsterGroundNormal[12]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13 };
-float ProbabilitiesMonsterToMonsterGroundHard[12]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13 };
-float ProbabilitiesMonsterToMonsterGroundNightmare[12]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11 };
-float ProbabilitiesMonsterToMonsterGroundSuperNightmare[12]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13 };
-float ProbabilitiesMonsterToMonsterGroundUnfair[12]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 10, 0 };
+float ProbabilitiesMonsterToMonsterGround[15];
+float ProbabilitiesMonsterToMonsterGroundEasy[15]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12, 5, 8, 3 };
+float ProbabilitiesMonsterToMonsterGroundNormal[15]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13, 7, 9, 4 };
+float ProbabilitiesMonsterToMonsterGroundHard[15]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13, 8, 11, 5 };
+float ProbabilitiesMonsterToMonsterGroundNightmare[15]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11, 10, 10, 6 };
+float ProbabilitiesMonsterToMonsterGroundSuperNightmare[15]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13, 11, 8, 8 };
+float ProbabilitiesMonsterToMonsterGroundUnfair[15]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 10, 0, 0, 0, 0 };
 void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
-                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
+                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
+                                ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
 
-float ProbabilitiesMonsterToMonsterWater[11];
-float ProbabilitiesMonsterToMonsterWaterEasy[11]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25 };
-float ProbabilitiesMonsterToMonsterWaterNormal[11]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17 };
-float ProbabilitiesMonsterToMonsterWaterHard[11]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15 };
-float ProbabilitiesMonsterToMonsterWaterNightmare[11]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11 };
-float ProbabilitiesMonsterToMonsterWaterSuperNightmare[11]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8 };
-float ProbabilitiesMonsterToMonsterWaterUnfair[11]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0 };
+float ProbabilitiesMonsterToMonsterWater[14];
+float ProbabilitiesMonsterToMonsterWaterEasy[14]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25, 5, 8, 3 };
+float ProbabilitiesMonsterToMonsterWaterNormal[14]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17, 7, 9, 4 };
+float ProbabilitiesMonsterToMonsterWaterHard[14]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15, 8, 11, 5 };
+float ProbabilitiesMonsterToMonsterWaterNightmare[14]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11, 10, 10, 6 };
+float ProbabilitiesMonsterToMonsterWaterSuperNightmare[14]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8, 11, 8, 8 };
+float ProbabilitiesMonsterToMonsterWaterUnfair[14]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0, 0, 0, 0 };
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
-                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
+                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
 
 float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
 float ProbabilityToRemovePickupEasy                 = 0;
@@ -401,6 +402,7 @@ void() ConvertEntities = {
                     {
                         if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
                         {
+                            temp.solid = SOLID_NOT;
                             dprint("This Zombie is cruficied. ");
                         }
                         dprint("Didn't flag for Convert.\n");
@@ -596,7 +598,16 @@ void() ConvertToMonster = {
 // Every monster has an equal chance to be appear.
 void() ConvertToMonsterOnGroundUnbiased = {
     local float rng;
-    rng = Random(1, 12);
+    rng = Random(1, 15);
+    self.touch = SUB_Null;
+    self.th_stand = SUB_Null;
+    self.th_walk = SUB_Null;
+    self.th_run = SUB_Null;
+    self.th_melee = SUB_Null;
+    self.th_missile = SUB_Null;
+    self.th_pain = SUB_Null;
+    self.use = SUB_Null;
+    self.charmed = FALSE;
     self.think = MonsterGroundToGroundConverters[rng - 1];
     self.nextthink = time;
 };
@@ -605,24 +616,37 @@ void() ConvertToMonsterOnGroundUnbiased = {
 // Every monster has an equal chance to be appear.
 void() ConvertToMonsterOnWaterUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, ConvertToZombie,
-                                ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
-    rng = Random(1, 13);
-    self.think = Converters[rng - 1];
+    rng = Random(1, 15);
+    self.touch = SUB_Null;
+    self.th_stand = SUB_Null;
+    self.th_walk = SUB_Null;
+    self.th_run = SUB_Null;
+    self.th_melee = SUB_Null;
+    self.th_missile = SUB_Null;
+    self.th_pain = SUB_Null;
+    self.use = SUB_Null;
+    self.charmed = FALSE;
+    self.think = MonsterGroundToGroundConverters[rng - 1];
     self.nextthink = time;
 };
 
 // To convert a monster present in ground. Prevents spawning Rotfish in ground (because they can't move there).
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnGroundBiased = {
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
+    
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
+    {
+        maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterGround[i];
+    }
     amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-    rng = Random(1, 100);
+    rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
     i = 0;
-    while(!DONE && minrng < 100 && i < amountOfChoices)
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
         if(ProbabilitiesMonsterToMonsterGround[i] > 0)
         {
@@ -642,14 +666,21 @@ void() ConvertToMonsterOnGroundBiased = {
 // To convert a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertToMonsterOnWaterBiased = {
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
+    
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
+    {
+        maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterWater[i];
+    }
+
     amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-    rng = Random(1, 100);
+    rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
     i = 0;
-    while(!DONE && minrng < 100 && i < amountOfChoices)
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
         if(ProbabilitiesMonsterToMonsterWater[i] > 0)
         {
@@ -941,8 +972,8 @@ void() ConvertToPowerupBiased = {
 // Chances are completely even, even in Biased mode.
 void() ConvertToWeaponUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
+    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt, ConvertToLaserCannon, ConvertToProximityGun, ConvertToMjolnir };
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
     rng = Random(1, 6);
     if(!HideInBackpacks)
         self.think = Converters[rng - 1];
@@ -956,27 +987,30 @@ void() ConvertToWeaponUnbiased = {
 
 // Creates a "bag" of six randomly permutated weapons
 void() CreateWeaponPermutation = {
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
-    local float numbers[] = { 0, 1, 2, 3, 4, 5 };
-    local float shuffledNumbers[6];
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local float numbers[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    local float shuffledNumbers[numbers.length];
     local float rng, count, i, j, shuffled;
-    count = 6;
+    count = numbers.length;
     // If the player owns SOME of the spawnable weapons, but not all of them, place them first in the shuffled list because they will be skipped
     if(SpawnedWeapons && !(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
         SpawnedWeapons & IT_SUPER_NAILGUN && 
         SpawnedWeapons & IT_GRENADE_LAUNCHER && 
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING))
+        SpawnedWeapons & IT_LIGHTNING && 
+        SpawnedWeapons & IT_LASER_CANNON && 
+        SpawnedWeapons & IT_PROXIMITY_GUN && 
+        SpawnedWeapons & IT_MJOLNIR))
     {
         rng = 0;
         shuffled = 1;
-        for(j = 0; j < 6 && shuffled; j++)
+        for(j = 0; j < numbers.length && shuffled; j++)
         {
             shuffled = 0;
             for(i = 0; i < count; i++)
             {
-                if(rng < 6)
+                if(rng < numbers.length)
                 {
                     if(SpawnedWeapons & PickupTypes[i])
                     {
@@ -991,7 +1025,7 @@ void() CreateWeaponPermutation = {
             }
         }
     }
-    for(i = (6 - count); i < 5; i++)
+    for(i = (numbers.length - count); i < 5; i++)
     {
         rng = Random(0, (count - 1));
         shuffledNumbers[i] = numbers[rng];
@@ -1000,7 +1034,7 @@ void() CreateWeaponPermutation = {
         count = count - 1;
     }
     shuffledNumbers[i] = numbers[count - 1];
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < numbers.length; i++)
         IndexPermutation[i] = shuffledNumbers[i];
 };
 
@@ -1022,7 +1056,10 @@ void() ConvertToWeaponBiased = {
         SpawnedWeapons & IT_SUPER_NAILGUN && 
         SpawnedWeapons & IT_GRENADE_LAUNCHER && 
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING)
+        SpawnedWeapons & IT_LIGHTNING && 
+        SpawnedWeapons & IT_LASER_CANNON && 
+        SpawnedWeapons & IT_PROXIMITY_GUN && 
+        SpawnedWeapons & IT_MJOLNIR)
     {
         rng = Random(1, 100);
         if(RandomizePowerups && rng <= 50)
@@ -1063,21 +1100,21 @@ void() ConvertToWeaponBiased = {
     }
     
     local float i, currentSurface, isValidSurface;
-    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
-    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning" };
-    local float WeaponPermutation[6];
-    local void() ConvertersPermutation[6];
-    for(i = 0; i < 6; i++)
+    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt, ConvertToLaserCannon, ConvertToProximityGun, ConvertToMjolnir };
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning", "weapon_laser_gun", "weapon_proximity_gun", "weapon_mjolnir" };
+    local float WeaponPermutation[Converters.length];
+    local void() ConvertersPermutation[Converters.length];
+    for(i = 0; i < Converters.length; i++)
     {
         ConvertersPermutation[i] = Converters[IndexPermutation[i]];
         WeaponPermutation[i] = PickupTypes[IndexPermutation[i]];
     }
     local float PickedWeapon;
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < Converters.length; i++)
     {
         PickedWeapon = WeaponPermutation[i];
-        if(PickedWeapon != IT_LIGHTNING)
+        if(PickedWeapon != IT_LIGHTNING && PickedWeapon != IT_MJOLNIR)
             isValidSurface = 1;
         else
         {
@@ -1101,7 +1138,7 @@ void() ConvertToWeaponBiased = {
             }
         }
     }
-    if(i == 6) 
+    if(i == Converters.length) 
     {
         // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
         if(RandomizePowerups)

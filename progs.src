@@ -1,6 +1,7 @@
 ../progs.dat
 
 defs.qc
+hipnotic/hipdefs.qc
 custom/extras.qc
 custom/math.qc
 custom/randomdictionary.qc
@@ -22,22 +23,46 @@ triggers.qc
 plats.qc
 misc.qc
 
-ogre.qc
-demon.qc
-shambler.qc
-knight.qc
-soldier.qc
-wizard.qc
-dog.qc
-zombie.qc
-boss.qc
+monsters/ogre.qc
+monsters/demon.qc
+monsters/shambler.qc
+monsters/knight.qc
+monsters/soldier.qc
+monsters/wizard.qc
+monsters/dog.qc
+monsters/zombie.qc
+monsters/boss.qc
 
-tarbaby.qc		// registered
-hknight.qc		// registered
-fish.qc			// registered
-shalrath.qc		// registered
-enforcer.qc		// registered
-oldone.qc		// registered
+monsters/tarbaby.qc		// registered
+monsters/hknight.qc		// registered
+monsters/fish.qc			// registered
+monsters/shalrath.qc		// registered
+monsters/enforcer.qc		// registered
+monsters/oldone.qc		// registered
+
+hipnotic/hipsubs.qc
+hipnotic/hip_brk.qc
+hipnotic/hiptrain.qc
+hipnotic/hip_expl.qc
+hipnotic/hipquake.qc
+hipnotic/hipcount.qc
+hipnotic/hipitems.qc
+hipnotic/hiprubbl.qc
+hipnotic/hip_push.qc
+hipnotic/hip_part.qc
+hipnotic/hipspawn.qc
+hipnotic/hipgrem.qc
+hipnotic/hiparma.qc
+hipnotic/hipspike.qc
+hipnotic/hiprot.qc
+hipnotic/hipscrge.qc
+hipnotic/hipholes.qc
+hipnotic/hipclock.qc
+hipnotic/hiptrig.qc
+hipnotic/hipmisc.qc
+hipnotic/hipwater.qc
+hipnotic/hipdecoy.qc
 
 custom/replacers.qc
 custom/randomizer.qc
+

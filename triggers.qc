@@ -536,6 +536,22 @@ void() trigger_onlyregistered =
 
 //============================================================================
 
+//JIM
+void( entity ent, float amount ) hurt_setdamage =
+   {
+   ent.dmg = amount;
+   if ( !amount )
+      {
+      ent.solid = SOLID_NOT;
+      }
+   else
+      {
+      ent.solid = SOLID_TRIGGER;
+      }
+   ent.nextthink = -1;
+   };
+
+
 void() hurt_on =
 {
 	self.solid = SOLID_TRIGGER;

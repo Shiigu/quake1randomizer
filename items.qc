@@ -509,6 +509,33 @@ void() weapon_touch =
 		new = IT_LIGHTNING;
 		other.ammo_cells = other.ammo_cells + 15;
 	}
+	//MED
+	else if (self.classname == "weapon_laser_gun")
+	{
+		if (leave && (other.items & IT_LASER_CANNON) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_LASER_CANNON;
+		other.ammo_cells = other.ammo_cells + 30;
+	}
+//MED
+	else if (self.classname == "weapon_mjolnir")
+	{
+		if (leave && (other.items & IT_MJOLNIR) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_MJOLNIR;
+		other.ammo_cells = other.ammo_cells + 30;
+	}
+//MED
+	else if (self.classname == "weapon_proximity_gun")
+	{
+		if (leave && (other.items & IT_PROXIMITY_GUN) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_PROXIMITY_GUN;
+		other.ammo_rockets = other.ammo_rockets + 6;
+	}
 	else
 		objerror ("weapon_touch: unknown classname");
 
