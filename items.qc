@@ -38,7 +38,7 @@ plants the object on the floor
 void() PlaceItem =
 {
 	local vector old, neworigin;
-	local float IS_IN_TELEPORTER;
+	local float IS_IN_TELEPORTER, canMove;
 
 	self.mdl = self.model;		// so it can be restored on respawn
 	self.flags = FL_ITEM;		// make extra wide
@@ -79,9 +79,7 @@ void() PlaceItem =
 		
 		if (!droptofloor())
 		{
-			self.origin_x = old_x;
-			self.origin_y = old_y;
-			self.origin_z = old_z;
+            setorigin(self, old);
 			dprint ("\nUnstuck failed. Bonus item ");
 			dprint (self.classname);
 			dprint (" removed from level at ");

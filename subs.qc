@@ -1,7 +1,7 @@
 
 
 float(float lower, float upper) Random;
-void(entity e, float flying) UnstuckMonster;
+void(entity e, float flying, float cannotTouchSolid) UnstuckMonster;
 void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
 float(entity head, float distance) IsNearAHarmfulLiquidSurface;
@@ -332,7 +332,7 @@ float(float lower, float upper) Random =
 	return floor((rand() * (upper - lower + 1)) + lower);
 };
 
-void(entity e, float flying) UnstuckMonster = 
+void(entity e, float flying, float cannotTouchSolid) UnstuckMonster = 
 {
 	local entity oldself;
 	local float CURRENT_TRY;
@@ -383,14 +383,26 @@ void(entity e, float flying) UnstuckMonster =
 		if(!flying)
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
-		canMove = walkmove(0,0);
+
+		if(cannotTouchSolid)
+		{
+			traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+			canMove = !trace_allsolid && !trace_startsolid && !trace_fraction;
+		}
+		else 
+		{	
+			canMove = walkmove(0, 0);
+		}
+
 		if(canMove && !alreadySeesTarget)
 			seesTarget = !FindTarget(FALSE);							// Don't move the monster to where they can already see the player (unless they already could do so)
 		if(canMove && (alreadySeesTarget || !seesTarget))
 		{
-			dprint(" Worked after ");
+			dprint(" Unstucking ");
+			dprint(self.classname);
+			dprint(" worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s) and relocated to (");
+			dprint(" attempt(s) and was relocated to (");
 			dprint(vtos(self.origin));
 			dprint(").\n");
 		}
@@ -451,9 +463,11 @@ void(entity e) UnstuckObject =
 		dropped = droptofloor();
 		if(dropped)
 		{
-			dprint(" Worked after ");
+			dprint(" Unstucking ");
+			dprint(self.classname);
+			dprint(" worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s) and relocated to (");
+			dprint(" attempt(s) and was relocated to (");
 			dprint(vtos(self.origin));
 			dprint(").\n");
 		}

@@ -236,7 +236,7 @@ void() spikemine_Home =
    // look in our immediate vicinity
 
    if (self.search_time < time)
-      {
+   {
       selected = world;
       cur_dist = 2000;
       head = findradius(self.origin, 2000);
@@ -284,7 +284,12 @@ void() spikemine_Home =
 
 void() spikemine_Touch =
    {
-   if (self.health>0)
+      if(self.Converted == "1" && self.Unstuckable && self.enemy == world) {
+         // If the Spike Mine had an attempt to be relocated, but is still stuck to the geometry, only make it explode once it finds an enemy.
+         // (By sheer chance, it might find a path that doesn't make it blow up instantly. Also it's fun.)         
+         return;
+      }
+      if (self.health>0)
       {
       if (other.classname == "trap_spike_mine")
          return;
@@ -329,14 +334,12 @@ void() spike_mine_first_think =
       
 	local vector old, neworigin, old_mins, old_maxs;
 	local entity	etemp;
-	local float IS_IN_TELEPORTER;
+	local float IS_IN_TELEPORTER, canMove;
 
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 10;
 	self.view_ofs = '0 0 25';
-
-   // This is the code for getting it unstuck (that doesn't work)
 
 	if(self.Converted == "1")
 	{
@@ -363,19 +366,24 @@ void() spike_mine_first_think =
 			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 		}
 
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+      traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+
+		canMove = !trace_allsolid && !trace_startsolid && !trace_fraction;
+		
+		if (!canMove && !IS_IN_TELEPORTER)
 		{
 			old_x = self.origin_x;
 			old_y = self.origin_y;
 			old_z = self.origin_z;
-			UnstuckMonster(self, 1);
+			UnstuckMonster(self, 1, 1);
 		}
 
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+      traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+		canMove = !trace_allsolid && !trace_startsolid && !trace_fraction;
+		
+		if (!canMove && !IS_IN_TELEPORTER)
 		{
-			self.origin_x = old_x;
-			self.origin_y = old_y;
-			self.origin_z = old_z;
+         setorigin(self, old);
 			dprint ("\nUnstuck failed. Spike Mine ");
 			dprint (self.classname);
 			dprint (" killed at: ");

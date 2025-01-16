@@ -277,6 +277,9 @@ void() ConvertToFiend =
 	setmodel (self, "progs/demon.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -320,6 +323,9 @@ void() ConvertToDog =
 	setmodel (self, "progs/dog.mdl");
 
 	setsize (self, '-32 -32 -24', '32 32 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -372,6 +378,9 @@ void() ConvertToEnforcer =
 	setmodel (self, "progs/enforcer.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -426,6 +435,9 @@ void() ConvertToRotfish =
 	setmodel (self, "progs/fish.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 24');
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (!(self.flags & FL_SWIM))
@@ -479,6 +491,9 @@ void() ConvertToDeathKnight =
 	setmodel (self, "progs/hknight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -532,6 +547,9 @@ void() ConvertToKnight =
 	setmodel (self, "progs/knight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -585,6 +603,9 @@ void() ConvertToOgre =
 	setmodel (self, "progs/ogre.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -638,6 +659,9 @@ void() ConvertToVore =
 	
 	setmodel (self, "progs/shalrath.mdl");
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -691,6 +715,9 @@ void() ConvertToShambler =
 	setmodel (self, "progs/shambler.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -744,6 +771,9 @@ void() ConvertToGrunt =
 	setmodel (self, "progs/soldier.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -798,6 +828,9 @@ void() ConvertToSpawn =
 	setmodel (self, "progs/tarbaby.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -851,12 +884,16 @@ void() ConvertToScrag =
 	setmodel (self, "progs/wizard.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
 	if (!(self.flags & FL_FLY))
 		self.flags = self.flags | FL_FLY;
 	if (self.flags & FL_SWIM)
 		self.flags = self.flags - (self.flags & FL_SWIM);
 	if (self.spawnflags & SPAWN_CRUCIFIED)
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
 	self.health = 80;
 	self.classname = "monster_wizard";
 	self.frame = $stand1;
@@ -905,6 +942,9 @@ void() ConvertToZombie =
 	setmodel (self, "progs/zombie.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');    
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -961,7 +1001,9 @@ void() ConvertToCentroid =
 	setmodel (self, "progs/scor.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -1022,7 +1064,9 @@ void() ConvertToGremlin =
 	setmodel (self, "progs/grem.mdl");
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-
+	
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (self.flags & FL_SWIM)
@@ -1069,16 +1113,24 @@ void() ConvertToSpikeMine =
 		return;
 	}
 
+	local vector fix;
+
+	fix = self.origin;
+
 	dprint("Converted ");
 	dprint(self.classname);
 	dprint(" to ");
 
 	setmodel (self, "progs/spikmine.mdl");
+
 	setsize (self, self.mins, self.maxs);
+
 	self.classname = "trap_spike_mine";
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_FLYMISSILE;
-
+	
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (!(self.flags & FL_MONSTER))
@@ -1094,6 +1146,9 @@ void() ConvertToSpikeMine =
 	else
 		self.health = 400;
 	self.frame = 0;
+
+	fix_z = fix_z + self.size_z / 2;
+	setorigin(self, fix);
 	
 	self.touch = SUB_Null;
 	self.th_stand = SUB_Null;
@@ -1113,15 +1168,8 @@ void() ConvertToSpikeMine =
 	self.th_missile = spikemine_Home;
 	self.think = spike_mine_first_think;
 
-	self.origin_z = self.origin_z + (self.origin_z / 2);
-	if (!walkmove(0,0))
-	{
-		self.origin_z = self.origin_z - (self.origin_z / 2);
-	}
-
 	self.nextthink = time + 0.2;
 	total_monsters = total_monsters + 1;
-	self.flags = self.flags | FL_MONSTER;
 	self.deathtype = "was blasted by a spike mine";
 	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SPIKE_MINE;
 	self.Converted = "1";
