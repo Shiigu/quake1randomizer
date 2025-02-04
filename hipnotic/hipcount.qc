@@ -49,7 +49,7 @@ void() counter_think =
 				}
 			else
 				{
-				remove (self);
+				SUB_Remove();
 				}
 			}
 		}

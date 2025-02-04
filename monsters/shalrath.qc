@@ -162,7 +162,7 @@ void() ShalHome =
 	vtemp = self.enemy.origin + '0 0 10';
 	if (self.enemy.health < 1)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	dir = normalize(vtemp - self.origin);
@@ -205,7 +205,7 @@ void() monster_shalrath =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model2 ("progs/shalrath.mdl");

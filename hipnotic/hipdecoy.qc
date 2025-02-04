@@ -103,7 +103,7 @@ void() monster_decoy =
 {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
    setup_decoy(self);

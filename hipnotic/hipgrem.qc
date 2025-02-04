@@ -409,7 +409,7 @@ void(float dist) gremlin_run =
             {
             if (self.t_length==1)
                {
-               remove(self.trigger_field);
+               SUB_Remove_Target(self.trigger_field);
                self.goalentity = self.enemy;
                self.t_length = 0;
                }
@@ -430,7 +430,7 @@ void(float dist) gremlin_run =
             {
             if (r > 250)
                {
-               remove(self.trigger_field);
+               SUB_Remove_Target(self.trigger_field);
                self.goalentity = self.enemy;
                self.t_length = 0;
 //               self.attack_state = AS_SLIDING;
@@ -1482,23 +1482,25 @@ void() monster_gremlin =
 {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
    NumGremlins = NumGremlins + 1;
-   precache_model ("progs/grem.mdl");
-   precache_model ("progs/h_grem.mdl");
 
-   precache_sound ("grem/death.wav");
-   precache_sound ("grem/attack.wav");
-   precache_sound ("demon/djump.wav");
-   precache_sound ("demon/dhit2.wav");
-   precache_sound ("grem/pain1.wav");
-   precache_sound ("grem/pain2.wav");
-   precache_sound ("grem/pain3.wav");
-   precache_sound ("grem/idle.wav");
-   precache_sound ("grem/sight1.wav");
-
+   if(!RandomizeMonsters)
+   {
+      precache_model ("progs/grem.mdl");
+      precache_model ("progs/h_grem.mdl");
+      precache_sound ("grem/death.wav");
+      precache_sound ("grem/attack.wav");
+      precache_sound ("demon/djump.wav");
+      precache_sound ("demon/dhit2.wav");
+      precache_sound ("grem/pain1.wav");
+      precache_sound ("grem/pain2.wav");
+      precache_sound ("grem/pain3.wav");
+      precache_sound ("grem/idle.wav");
+      precache_sound ("grem/sight1.wav");
+   }
    self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -1719,12 +1721,25 @@ void() Gremlin_Split =
 //   grem.gorging = FALSE;
    grem.stoleweapon = FALSE;
    grem.items = 0;
+   if(self.charmed)
+   {
+      grem.charmed = self.charmed;
+      grem.charmer = self.charmer;
+   }
    total_monsters = total_monsters + 1;
+   EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + 1;
    WriteByte (MSG_BROADCAST, SVC_UPDATESTAT);
    WriteByte (MSG_BROADCAST, STAT_TOTALMONSTERS);
    WriteLong (MSG_BROADCAST, total_monsters);
    setorigin(grem, pos);
    temp = self;
+   if(self.Converted == "1")
+   {
+      grem.Converted = "1";
+      grem.Unstuckable = 1;
+      grem.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
+      RegisterEntity(grem.EntityDisplayName);
+   }
    self = grem;
    gremlin_spawn1();
    self.enemy = world;

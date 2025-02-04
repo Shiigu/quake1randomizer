@@ -33,7 +33,7 @@ void() monster_spikemine =
 {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
    precache_model ("progs/demon.mdl");

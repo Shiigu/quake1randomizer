@@ -189,7 +189,7 @@ void() boss_death10 = [$death9, boss_death10]
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	SUB_UseTargets ();
-	remove (self);
+	SUB_Remove();
 };
 
 void(vector p) boss_missile =
@@ -265,7 +265,7 @@ void() monster_boss =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/boss.mdl");

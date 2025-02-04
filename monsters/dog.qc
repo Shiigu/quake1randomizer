@@ -331,7 +331,7 @@ void() monster_dog =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/h_dog.mdl");

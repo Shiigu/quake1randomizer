@@ -1,22 +1,22 @@
 $cd id1/models/fish
 $origin 0 0 24
-$base base		
+$base base
 $skin skin
 
-$frame attack1 attack2 attack3 attack4 attack5 attack6 
-$frame attack7 attack8 attack9 attack10 attack11 attack12 attack13 
-$frame attack14 attack15 attack16 attack17 attack18 
+$frame attack1 attack2 attack3 attack4 attack5 attack6
+$frame attack7 attack8 attack9 attack10 attack11 attack12 attack13
+$frame attack14 attack15 attack16 attack17 attack18
 
-$frame death1 death2 death3 death4 death5 death6 death7 
-$frame death8 death9 death10 death11 death12 death13 death14 death15 
-$frame death16 death17 death18 death19 death20 death21 
+$frame death1 death2 death3 death4 death5 death6 death7
+$frame death8 death9 death10 death11 death12 death13 death14 death15
+$frame death16 death17 death18 death19 death20 death21
 
-$frame swim1 swim2 swim3 swim4 swim5 swim6 swim7 swim8 
-$frame swim9 swim10 swim11 swim12 swim13 swim14 swim15 swim16 swim17 
-$frame swim18 
+$frame swim1 swim2 swim3 swim4 swim5 swim6 swim7 swim8
+$frame swim9 swim10 swim11 swim12 swim13 swim14 swim15 swim16 swim17
+$frame swim18
 
-$frame pain1 pain2 pain3 pain4 pain5 pain6 pain7 pain8 
-$frame pain9 
+$frame pain1 pain2 pain3 pain4 pain5 pain6 pain7 pain8
+$frame pain9
 
 void() swimmonster_start;
 
@@ -78,12 +78,12 @@ void() fish_melee =
 
 	if (!self.enemy)
 		return;		// removed before stroke
-		
+
 	delta = self.enemy.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
-		
+
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
 	ldmg = (random() + random()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
@@ -114,7 +114,8 @@ sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
 void() f_death2 =[      $death2,        f_death3        ] {};
 void() f_death3 =[      $death3,        f_death4        ] {};
 void() f_death4 =[      $death4,        f_death5        ] {};
-void() f_death5 =[      $death5,        f_death6        ] {};
+//MED 01/15/97 moved solid to here
+void() f_death5 =[      $death5,        f_death6        ] {self.solid = SOLID_NOT;};
 void() f_death6 =[      $death6,        f_death7        ] {};
 void() f_death7 =[      $death7,        f_death8        ] {};
 void() f_death8 =[      $death8,        f_death9        ] {};
@@ -130,7 +131,28 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {self.solid = SOLID_NOT;};
+//MED 01/15/97 removed solid from here
+//void() f_death21 =[      $death21,       f_death21       ] {self.solid = SOLID_NOT;};
+void() f_death21 =[      $death21,       f_death21       ] {};
+
+//MED 01/15/97 added fish_die
+void() fish_die =
+{
+// check for gib
+   if (self.health < -20)
+	{
+		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+      ThrowGib ("progs/gib1.mdl", self.health);
+      ThrowGib ("progs/gib2.mdl", self.health);
+      ThrowGib ("progs/gib3.mdl", self.health);
+      self.think = SUB_Remove;
+      self.nextthink= time + 0.1;
+      return;
+	}
+
+// regular death
+   f_death1 ();
+};
 
 void() f_pain1  =[      $pain1, f_pain2 ] {};
 void() f_pain2  =[      $pain2, f_pain3 ] {ai_pain(6);};
@@ -157,7 +179,7 @@ void() monster_fish =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model2 ("progs/fish.mdl");
@@ -173,14 +195,15 @@ void() monster_fish =
 
 	setsize (self, '-16 -16 -24', '16 16 24');
 	self.health = 25;
-	
+
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;
 	self.th_run = f_run1;
-	self.th_die = f_death1;
-	self.th_pain = fish_pain;
+//MED 01/15/97 added fish death
+//   self.th_die = f_death1;
+   self.th_die = fish_die;
+   self.th_pain = fish_pain;
 	self.th_melee = f_attack1;
-	
+
 	swimmonster_start ();
 };
-

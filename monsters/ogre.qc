@@ -99,6 +99,9 @@ void() OgreFireGrenade =
 	missile.owner = self;
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_BBOX;
+
+	//JIM
+	missile.classname = "grenade";
 		
 // set missile speed	
 
@@ -419,7 +422,7 @@ void() monster_ogre =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/ogre.mdl");

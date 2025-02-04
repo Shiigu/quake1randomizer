@@ -527,7 +527,7 @@ void() effect_finale =
    {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
    setorigin(self,self.origin);

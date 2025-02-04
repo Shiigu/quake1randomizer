@@ -467,7 +467,7 @@ void() StopHuntingCharmer =
 {
    self.goalentity = world;
    if (self.huntingcharmer>1)
-      remove(self.trigger_field);
+      SUB_Remove_Target(self.trigger_field);
    self.huntingcharmer = 0;
    self.think = self.th_stand;
    self.nextthink = time + 0.1;
@@ -650,7 +650,7 @@ float(float playAlertSound) FindTarget =
       head = findradius(self.origin, CHARMED_RADIUS);
       while(head)
          {
-         if(!(head.flags & FL_NOTARGET) && (head.flags & FL_MONSTER))
+         if(!(head.flags & FL_NOTARGET) && !(head.items & IT_INVISIBILITY) && (head.flags & FL_MONSTER))
             {
             if (visible(head) && (visible_distance < dist) && (head.health>0))
                {

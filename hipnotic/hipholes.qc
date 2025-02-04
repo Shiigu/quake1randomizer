@@ -62,7 +62,7 @@ void() remove_bullethole =
       }
 
    bulletholes = bulletholes.lastvictim;
-   remove( ent );
+   SUB_Remove_Target(ent);
    if ( lastbullet == ent )
       {
       lastbullet = nullentity;

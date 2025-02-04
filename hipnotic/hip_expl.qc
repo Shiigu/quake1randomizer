@@ -102,7 +102,7 @@ void() multi_exploder_fire =
       }
    if (time > self.duration)
       {
-      remove(self);
+      SUB_Remove();
       return;
       }
    expl = spawn();

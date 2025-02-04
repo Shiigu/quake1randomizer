@@ -20,7 +20,7 @@ void() damagethreshold_killed =
 
 	if ( !( self.spawnflags & MULTI_USE ) )
 	   {
-	   remove( self );
+	   SUB_Remove();
 	   }
 	};
 

@@ -229,7 +229,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	// get mad unless of the same class (except for soldiers)
       if (self != attacker && attacker != self.enemy && (self.charmer!=attacker))
 		{
-			if ( (self.classname != attacker.classname)
+			if (self.charmed || (self.classname != attacker.classname)
          || (self.classname == "monster_army" ) || (self.classname == "monster_armagon" ) )
 			{
 				if (self.enemy.classname == "player")

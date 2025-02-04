@@ -273,7 +273,7 @@ void() swimmonster_start_go =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 

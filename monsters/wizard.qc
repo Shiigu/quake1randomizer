@@ -209,7 +209,7 @@ void() Wiz_FastFire =
 		setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	}
 
-	remove (self);
+	SUB_Remove();
 };
 
 
@@ -376,20 +376,23 @@ void() monster_wizard =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
-	precache_model ("progs/wizard.mdl");
-	precache_model ("progs/h_wizard.mdl");
-	precache_model ("progs/w_spike.mdl");
-
-	precache_sound ("wizard/hit.wav");		// used by c code
-	precache_sound ("wizard/wattack.wav");
-	precache_sound ("wizard/wdeath.wav");
-	precache_sound ("wizard/widle1.wav");
-	precache_sound ("wizard/widle2.wav");
-	precache_sound ("wizard/wpain.wav");
-	precache_sound ("wizard/wsight.wav");
+	if(!RandomizeMonsters)	
+	{
+		precache_model ("progs/wizard.mdl");
+		precache_model ("progs/h_wizard.mdl");
+		precache_model ("progs/w_spike.mdl");
+	
+		precache_sound ("wizard/hit.wav");		// used by c code
+		precache_sound ("wizard/wattack.wav");
+		precache_sound ("wizard/wdeath.wav");
+		precache_sound ("wizard/widle1.wav");
+		precache_sound ("wizard/widle2.wav");
+		precache_sound ("wizard/wpain.wav");
+		precache_sound ("wizard/wsight.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;

@@ -132,7 +132,7 @@ void() remove_touch =
       return;
    other.touch = SUB_Null;
    other.model = "";
-   remove(self);
+   SUB_Remove();
 //   other.nextthink = time + 0.1;
 //   other.think = SUB_Remove;
    };
@@ -234,7 +234,7 @@ void() trigger_decoy_use =
    {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
    InitTrigger ();

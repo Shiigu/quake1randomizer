@@ -17,6 +17,8 @@ void() SUB_Null = {};
 
 void() SUB_Remove = {remove(self);};
 
+void(entity e) SUB_Remove_Target = { if(e != world) remove(e);};
+
 /*
 QuakeEd only writes a single float for angles (bad idea), so up and down are
 just constant angles.
@@ -197,7 +199,7 @@ void() DelayThink =
 {
 	activator = self.enemy;
 	SUB_UseTargets ();
-	remove(self);
+	SUB_Remove();
 };
 
 /*
@@ -262,7 +264,7 @@ void() SUB_UseTargets =
 			t = find (t, targetname, self.killtarget);
 			if (!t)
 				return;
-			remove (t);
+			SUB_Remove_Target(t);
 		} while ( 1 );
 	}
 	

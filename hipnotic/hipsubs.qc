@@ -170,6 +170,8 @@ void (entity srcent, entity destent) SUB_CopyEntity =
    destent.spawnmins=srcent.spawnmins;
    destent.spawnmaxs=srcent.spawnmaxs;
    destent.spawnclassname=srcent.spawnclassname;
+   destent.Converted=srcent.Converted;
+   destent.Unstuckable=srcent.Unstuckable;
    };
 
 //=========================

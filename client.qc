@@ -11,7 +11,7 @@ void(float item_bits, float health_bits,
     float shell_bits, float nail_bits,
     float rocket_bits, float cell_bits) EncodeParms;
 
-float	modelindex_eyes, modelindex_player, fixedSeed;
+float	modelindex_eyes, modelindex_player, fixedSeed, modelindex_hammer;
 
 /*
 =============================================================================
@@ -39,17 +39,31 @@ void() SetChangeParms =
     float item_bits, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
 	float spawnedweapons_bits, weapon_bit;
+	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
     if (self.health <= 0) 
     {
         SetNewParms ();
         return;
     }
-	// keep only bits 2 through 9
-    self.items = self.items & 1022;
+
+	hasLaserCannon = self.items & IT_LASER_CANNON;
+	hasMjolnir = self.items & IT_MJOLNIR;
+	hasProximityGun = self.items & IT_PROXIMITY_GUN;
+
+	// keep only bits 2 through 7
+    self.items = self.items & 126;
+
+	if(hasLaserCannon)
+		self.items = self.items | 128;
+	if(hasMjolnir)
+		self.items = self.items | 256;
+	if(hasProximityGun)
+		self.items = self.items | 512;
+
     item_bits = self.items * 0.5;
 
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.max_health = 50;
 	else
 		self.max_health = 100;
@@ -63,7 +77,7 @@ void() SetChangeParms =
 	if (self.health < self.max_health / 2)
 	self.health = self.max_health / 2;
 
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
     	health_bits = floor(self.health);
 	else
     	health_bits = floor(self.health - 50);
@@ -144,7 +158,7 @@ void() DecodeLevelParms =
  
     bits = parm2 & 63;
 	
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
     	self.health = bits;
 	else
     	self.health = bits + 50;
@@ -182,9 +196,20 @@ void() DecodeLevelParms =
     bits = parm2 & 127;
     self.ammo_cells = bits;
  
-    bits = parm3 & 1023;
+    bits = (parm3 & 1023) * 2;
+	if(bits & 128)
+		self.items = self.items | IT_LASER_CANNON;
+	if(bits & 256)
+		self.items = self.items | IT_MJOLNIR;
+	if(bits & 512)
+		self.items = self.items | IT_PROXIMITY_GUN;
+	
+	bits = parm3 & 127;
+
     self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
-	self.items2 = 0; // Armagon items are never kept
+
+
+	self.items2 = 0; // Armagon powerups are never kept
 
 	// Assign the extracted values back
     SpawnedWeapons = (parm4 & 63) * 2;
@@ -625,6 +650,7 @@ void() PutClientInServer =
 	spot = SelectSpawnPoint ();
     RandomMode = cvar("savedgamecfg");
 	self.classname = "player";
+
 	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.health = 50;
 	else
@@ -632,11 +658,8 @@ void() PutClientInServer =
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_WALK;
-	self.show_hostile = 0;
-	if (IsRemastered() && skill == 3 && !deathmatch)
-		self.max_health = 50;
-	else
-		self.max_health = 100;
+	self.show_hostile = 0;	
+	self.max_health = self.health;
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
@@ -646,12 +669,20 @@ void() PutClientInServer =
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	//JIM
+	self.wetsuit_finished = 0;
+	//MED
+	self.empathy_finished = 0;
+	//MED
+	self.items2 = 0;
+	self.gravity = 1.0;
+
 
 	DecodeLevelParms ();
 
 	if(EndlessCastleMapCount == -1)
 	{
-		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		sprint(self, "Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
 	}
 
@@ -664,6 +695,8 @@ void() PutClientInServer =
         (self.items & IT_ROCKET_LAUNCHER) | 
         (self.items & IT_LIGHTNING);
 	}
+
+	playerPosition = spot.origin;
 
 	Randomize();
 
@@ -694,19 +727,27 @@ void() PutClientInServer =
 	self.attack_finished = time;
 	self.th_pain = player_pain;
 	self.th_die = PlayerDie;
-	
-	self.deadflag = DEAD_NO;
-// paustime is set by teleporters to keep the player from moving a while
-	self.pausetime = 0;
-	
-//	spot = SelectSpawnPoint ();
 
-//	self.origin = spot.origin + '0 0 1';
-	self.origin = self.oldorigin = spot.origin + '0 0 1';	// 1998-07-21 Respawning where player died fix by Robert Field
+	self.deadflag = DEAD_NO;
+	// paustime is set by teleporters to keep the player from moving a while
+	self.pausetime = 0;
+
+	//   spot = SelectSpawnPoint ();
+	
+	setorigin(self, spot.origin + '0 0 1');
+
 	self.angles = spot.angles;
 	self.fixangle = TRUE;		// turn this way immediately
 
-// oh, this is a hack!
+	//JIM
+	// Clear out velocity so you're not launched into the air
+	// when you respawn.
+	self.velocity = '0 0 0';
+
+	// oh, this is a hack!
+	setmodel (self, "progs/playham.mdl");
+	modelindex_hammer = self.modelindex;
+
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
 
@@ -714,13 +755,11 @@ void() PutClientInServer =
 	modelindex_player = self.modelindex;
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-	
+
 	self.view_ofs = '0 0 22';
-	
-	self.velocity = '0 0 0';	// 1998-07-21 Player moves after respawn fix by Xian
 
 	player_stand1 ();
-	
+
 	if (deathmatch || coop)
 	{
 		makevectors(self.angles);
@@ -1096,6 +1135,7 @@ PlayerPreThink
 Called every frame before physics are run
 ================
 */
+void(float num_bubbles) DeathBubbles;
 void() PlayerPreThink =
 {
 	local	float	mspeed, aspeed;
@@ -1103,12 +1143,37 @@ void() PlayerPreThink =
 
 	if (intermission_running)
 	{
-		IntermissionThink ();	// otherwise a button could be missed between
+		earthquake_prethink();
+		IntermissionThink ();   // otherwise a button could be missed between
 		return;					// the think tics
 	}
 
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
+
+//JIM
+   // Kill player on Edge of Oblivion
+   if ( ( self.origin_z < -1300 ) && (world.model == "maps/hipdm1.bsp") &&
+      ( self.health > 0 ) )
+      {
+      self.deathtype = "falling";
+
+      if (self.invincible_finished >= time)
+         {
+         self.invincible_finished = 0;
+         self.items = self.items - (self.items & IT_INVULNERABILITY);
+         self.invincible_time = 0;
+			self.invincible_finished = 0;
+         self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+         }
+      T_Damage( self, self, world, self.health + 1000 );
+      }
+
+	//JIM
+//   if (!deathmatch)
+//      {
+      earthquake_prethink();
+//      }
 
 	makevectors (self.v_angle);		// is this still used
 
@@ -1120,6 +1185,51 @@ void() PlayerPreThink =
 		centerprint (self, "\(\=\= Endless Castle \=\=\)\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
 		PrintedEndlessCastleSplash = 1;
 	}
+	//JIM
+	//WETSUIT
+	if (self.wetsuit_finished > time)
+		{
+			mspeed = cvar("sv_maxspeed");
+		if (self.waterlevel==2)
+			{
+				self.velocity = self.velocity * 1.25;
+			}
+		if (self.waterlevel==3)
+			{
+				self.velocity = self.velocity * 1.5;
+			}
+			if(self.velocity_x > mspeed)
+				self.velocity_x = mspeed;
+			if(self.velocity_y > mspeed)
+				self.velocity_y = mspeed;
+			if(self.velocity_z > mspeed)
+				self.velocity_z = mspeed;	
+      	if (self.waterlevel >= 2)
+         {
+         // play scuba sound
+         if (self.swim_flag < time)
+            {
+            self.swim_flag = time + 7;
+            sound (self, CHAN_BODY, "misc/wetsuit.wav", 1, ATTN_NORM);
+            }
+         //MED 01/17/97
+         else
+            {
+            if (fabs(self.swim_flag - time - 6)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            else if (fabs(self.swim_flag - time - 5.5)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            else if (fabs(self.swim_flag - time - 5)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            }
+         }
+     }
 
 	if (self.waterlevel == 2)
 		CheckWaterJump ();
@@ -1129,7 +1239,7 @@ void() PlayerPreThink =
 		PlayerDeathThink ();
 		return;
 	}
-	
+
 	if (self.deadflag == DEAD_DYING)
 		return;	// dying, so do nothing
 
@@ -1140,11 +1250,11 @@ void() PlayerPreThink =
 	else
 		self.flags = self.flags | FL_JUMPRELEASED;
 
-// teleporters can force a non-moving pause time	
+// teleporters can force a non-moving pause time
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+   	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1183,7 +1293,7 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
 				self.invisible_time = time + 1;
 			}
-			
+
 			if (self.invisible_time < time)
 			{
 				self.invisible_time = time + 1;
@@ -1197,12 +1307,15 @@ void() CheckPowerups =
 			self.invisible_finished = 0;
 			self.invisible_time = 0;
 		}
-		
+
 	// use the eyes
 		self.frame = 0;
 		self.modelindex = modelindex_eyes;
 	}
-	else
+//MED 12/04/96 added mjolnir stuff
+   else if (self.weapon == IT_MJOLNIR)
+      self.modelindex = modelindex_hammer;   // don't use eyes
+   else
 		self.modelindex = modelindex_player;	// don't use eyes
 
 // invincibility
@@ -1218,14 +1331,14 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
 				self.invincible_time = time + 1;
 			}
-			
+
 			if (self.invincible_time < time)
 			{
 				self.invincible_time = time + 1;
 				stuffcmd (self, "bf\n");
 			}
 		}
-		
+
 		if (self.invincible_finished < time)
 		{	// just stopped
 			self.items = self.items - IT_INVULNERABILITY;
@@ -1252,8 +1365,8 @@ void() CheckPowerups =
 				stuffcmd (self, "bf\n");
 				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
 				self.super_time = time + 1;
-			}	  
-			
+			}
+
 			if (self.super_time < time)
 			{
 				self.super_time = time + 1;
@@ -1271,9 +1384,9 @@ void() CheckPowerups =
 			self.effects = self.effects | EF_DIMLIGHT;
 		else
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-	}	
+	}
 
-// suit	
+// suit
 	if (self.radsuit_finished)
 	{
 		self.air_finished = time + 12;		// don't drown
@@ -1288,7 +1401,7 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
 				self.rad_time = time + 1;
 			}
-			
+
 			if (self.rad_time < time)
 			{
 				self.rad_time = time + 1;
@@ -1302,8 +1415,76 @@ void() CheckPowerups =
 			self.rad_time = 0;
 			self.radsuit_finished = 0;
 		}
-	}	
+	}
 
+//JIM
+// wetsuit
+	if (self.wetsuit_finished)
+	{
+	self.air_finished = time + 12;		// don't drown
+
+	// sound and screen flash when items starts to run out
+	if (self.wetsuit_finished < time + 3)
+		{
+			if (self.wetsuit_time == 1)
+			{
+				sprint (self, "Air supply in Wetsuit is running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+				self.wetsuit_time = time + 1;
+			}
+
+			if (self.wetsuit_time < time)
+			{
+				self.wetsuit_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.wetsuit_finished < time)
+		{	// just stopped
+//MED
+         self.items2 = self.items2 - HIP_IT_WETSUIT;
+			self.wetsuit_time = 0;
+			self.wetsuit_finished = 0;
+		}
+	}
+
+//MED
+// empathy shields
+   if (self.empathy_finished)
+	{
+      // sound and screen flash when items starts to run out
+      if (self.empathy_finished < time + 3)
+		{
+         if (self.empathy_time == 1)
+			{
+            sprint (self, "Empathy Shields are running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+            self.empathy_time = time + 1;
+			}
+
+         if (self.empathy_time < time)
+			{
+            self.empathy_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+      if (self.empathy_finished < time)
+		{	// just stopped
+//MED
+         self.items2 = self.items2 - HIP_IT_EMPATHY_SHIELDS;
+         self.empathy_time = 0;
+         self.empathy_finished = 0;
+		}
+//MED
+      if (self.empathy_finished > time)
+			self.effects = self.effects | EF_DIMLIGHT;
+		else
+			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+   }
 };
 
 
@@ -1320,22 +1501,46 @@ void() PlayerPostThink =
 	local	float	r;
 
 	if (self.view_ofs == '0 0 0')
-		return;		// intermission or finale
+      {
+      earthquake_postthink();
+      return;     // intermission or finale
+      }
+
+	//JIM
+	//WETSUIT
+	if (self.wetsuit_finished > time)
+		{
+		if (self.waterlevel==2)
+			{
+			self.velocity = self.velocity * 0.8;
+			}
+		if (self.waterlevel==3)
+			{
+			self.velocity = self.velocity * 0.66;
+			}
+      }
+
+	//JIM
+//   if (!deathmatch)
+//      {
+      earthquake_postthink();
+//      }
+
 	if (self.deadflag)
-		return;		
+		return;
 
 // do weapon stuff
 
 	W_WeaponFrame ();
 
-// check to see if player landed and play landing sound	
+// check to see if player landed and play landing sound
 	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND) && (self.health > 0))
 	{
 		if (self.watertype == CONTENT_WATER)
 			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
 		else if (self.jump_flag < -650)
 		{
-			T_Damage (self, world, world, 5); 
+			T_Damage (self, world, world, 5);
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 			self.deathtype = "falling";
 		}
@@ -1682,6 +1887,9 @@ void(entity targ, entity attacker) ClientObituary =
 //MED
             if (attacker.classname == "monster_scourge")
                bprint (" was stung by a Centroid\n");
+//MED
+			if (attacker.classname == "trap_spike_mine")
+				bprint (" was blasted by a spike mine\n");
 //MED
             if (attacker.classname == "monster_armagon")
                bprint (" was outgunned by Armagon\n");

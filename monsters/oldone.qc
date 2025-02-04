@@ -139,7 +139,7 @@ void() finale_1 =
 	pl = find (world, classname, "misc_teleporttrain");
 	if (!pl)
 		error ("no teleporttrain");
-	remove (pl);
+	SUB_Remove_Target(pl);
 
 	if(EndlessCastleMapCount == 0)
 	{
@@ -255,7 +255,7 @@ void() finale_4 =
 	n.angles = '0 290 0';
 	n.frame = 1;
 
-	remove (self);
+	SUB_Remove();
 
 // switch cd track
 	WriteByte (MSG_ALL, SVC_CDTRACK);
@@ -280,7 +280,7 @@ void() monster_oldone =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 

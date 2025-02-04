@@ -16,6 +16,8 @@ void() ConvertToZombie;
 void() ConvertToCentroid;
 void() ConvertToGremlin;
 void() ConvertToSpikeMine;
+// SPAWN
+void(entity e) ConvertFuncSpawn;
 // PICKUPS
 void() ConvertToHealth;
 void() ConvertToArmor;
@@ -29,6 +31,9 @@ void() ConvertToPentagramOfProtection;
 void() ConvertToBiosuit;
 void() ConvertToRingOfShadows;
 void() ConvertToQuadDamage;
+void() ConvertToEmpathyShields;
+void() ConvertToHornOfConjuring;
+void() ConvertToWetsuit;
 // WEAPONS
 void() ConvertToDoubleBarrelledShotgun;
 void() ConvertToNailgun;
@@ -253,7 +258,22 @@ void() precache_everything =
 	precache_model ("progs/v_laserg.mdl");
 	precache_model ("progs/v_prox.mdl");
 	precache_model ("progs/lasrspik.mdl");
-	precache_model ("progs/proxbomb.mdl");
+	precache_model ("progs/proxbomb.mdl");	
+
+	precache_model("progs/empathy.mdl");
+	precache_sound("hipitems/empathy.wav");
+	precache_sound("hipitems/empathy2.wav");
+	precache_sound ("items/suit2.wav");
+
+	precache_model ("progs/wetsuit.mdl");
+	precache_sound ("misc/wetsuit.wav");
+	precache_sound ("misc/weton.wav");
+	precache_sound ("items/suit2.wav");
+ 
+	precache_model ("progs/horn.mdl");
+	precache_sound ("hipitems/horn.wav");
+	
+	precache_model ("progs/playham.mdl");
 };
 
 // START MONSTERS
@@ -263,7 +283,7 @@ void() ConvertToFiend =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -288,6 +308,17 @@ void() ConvertToFiend =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 300;
 	self.classname = "monster_demon1";
+	
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
 	self.frame = $stand1;
 	self.th_stand = demon1_stand1;
 	self.th_walk = demon1_walk1;
@@ -296,6 +327,9 @@ void() ConvertToFiend =
 	self.th_melee = Demon_MeleeAttack;// one of two attacks
 	self.th_missile = demon1_jump1;// jump attack
 	self.th_pain = demon1_pain;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
@@ -309,7 +343,7 @@ void() ConvertToDog =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -336,7 +370,8 @@ void() ConvertToDog =
 	self.classname = "monster_dog";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -344,6 +379,7 @@ void() ConvertToDog =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = dog_stand1;
 	self.th_walk = dog_walk1;
 	self.th_run = dog_run1;
@@ -351,6 +387,9 @@ void() ConvertToDog =
 	self.th_die = dog_die;
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
 	dprint(self.classname);
 	dprint("\n");
@@ -364,7 +403,7 @@ void() ConvertToEnforcer =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -391,13 +430,15 @@ void() ConvertToEnforcer =
 	self.classname = "monster_enforcer";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
 	self.th_melee = SUB_Null;
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
+
 	self.use = SUB_Null;
 	self.th_stand = enf_stand1;
 	self.th_walk = enf_walk1;
@@ -406,6 +447,9 @@ void() ConvertToEnforcer =
 	self.th_die = enf_die;
 	self.th_missile = enf_atk1;
 	self.th_melee = enf_atk1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
 	dprint(self.classname);
 	dprint("\n");
@@ -421,7 +465,7 @@ void() ConvertToRotfish =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -448,20 +492,28 @@ void() ConvertToRotfish =
 	self.classname = "monster_fish";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
 	self.th_melee = SUB_Null;
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
+
 	self.use = SUB_Null;
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;
 	self.th_run = f_run1;
-	self.th_die = f_death1;
+	self.th_die = fish_die;
 	self.th_pain = fish_pain;
 	self.th_melee = f_attack1;
+	self.th_stand = f_stand1;
+	self.th_walk = f_walk1;
+	self.th_run = f_run1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -477,7 +529,7 @@ void() ConvertToDeathKnight =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -504,7 +556,8 @@ void() ConvertToDeathKnight =
 	self.classname = "monster_hell_knight";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -512,6 +565,7 @@ void() ConvertToDeathKnight =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;
 	self.th_run = hknight_run1;
@@ -519,6 +573,9 @@ void() ConvertToDeathKnight =
 	self.th_missile = hknight_magicc1;
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -534,7 +591,7 @@ void() ConvertToKnight =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -560,7 +617,8 @@ void() ConvertToKnight =
 	self.classname = "monster_knight";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -568,12 +626,16 @@ void() ConvertToKnight =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;
 	self.th_run = knight_run1;
 	self.th_melee = knight_atk1;
 	self.th_pain = knight_pain;
 	self.th_die = knight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -589,7 +651,7 @@ void() ConvertToOgre =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -616,7 +678,8 @@ void() ConvertToOgre =
 	self.classname = "monster_ogre";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -624,6 +687,7 @@ void() ConvertToOgre =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = ogre_stand1;
 	self.th_walk = ogre_walk1;
 	self.th_run = ogre_run1;
@@ -631,6 +695,9 @@ void() ConvertToOgre =
 	self.th_melee = ogre_melee;
 	self.th_missile = ogre_nail1;
 	self.th_pain = ogre_pain;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -646,7 +713,7 @@ void() ConvertToVore =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -672,7 +739,8 @@ void() ConvertToVore =
 	self.classname = "monster_shalrath";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -680,6 +748,7 @@ void() ConvertToVore =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = shal_stand;
 	self.th_walk = shal_walk1;
 	self.th_run = shal_run1;
@@ -687,6 +756,9 @@ void() ConvertToVore =
 	self.th_pain = shalrath_pain;
 	self.th_missile = shal_attack1;
 	self.th_melee = shal_attack1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
 	dprint(self.classname);
 	dprint("\n");
@@ -702,7 +774,7 @@ void() ConvertToShambler =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -728,7 +800,8 @@ void() ConvertToShambler =
 	self.classname = "monster_shambler";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -736,6 +809,7 @@ void() ConvertToShambler =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = sham_stand1;
 	self.th_walk = sham_walk1;
 	self.th_run = sham_run1;
@@ -743,6 +817,9 @@ void() ConvertToShambler =
 	self.th_melee = sham_melee;
 	self.th_missile = sham_magic1;
 	self.th_pain = sham_pain;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -758,7 +835,7 @@ void() ConvertToGrunt =
 {	
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -784,7 +861,8 @@ void() ConvertToGrunt =
 	self.classname = "monster_army";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -792,6 +870,7 @@ void() ConvertToGrunt =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
@@ -799,6 +878,9 @@ void() ConvertToGrunt =
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 	self.th_melee = army_atk1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
 	dprint(self.classname);
 	dprint("\n");
@@ -814,7 +896,7 @@ void() ConvertToSpawn =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -841,7 +923,8 @@ void() ConvertToSpawn =
 	self.classname = "monster_tarbaby";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -849,12 +932,16 @@ void() ConvertToSpawn =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = tbaby_stand1;
 	self.th_walk = tbaby_walk1;
 	self.th_run = tbaby_run1;
 	self.th_missile = tbaby_jump1;
 	self.th_melee = tbaby_jump1;
 	self.th_die = tbaby_die1;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 	
 	dprint(self.classname);
 	dprint("\n");
@@ -870,7 +957,7 @@ void() ConvertToScrag =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -898,7 +985,8 @@ void() ConvertToScrag =
 	self.classname = "monster_wizard";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -906,6 +994,7 @@ void() ConvertToScrag =
 	self.th_missile = SUB_Null;
 	self.th_pain = SUB_Null;
 	self.use = SUB_Null;
+
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;
 	self.th_run = wiz_run1;
@@ -913,6 +1002,9 @@ void() ConvertToScrag =
 	self.th_pain = Wiz_Pain;
 	self.th_die = wiz_die;
 	self.th_melee = Wiz_Missile;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 		
 	dprint(self.classname);
 	dprint("\n");
@@ -928,7 +1020,7 @@ void() ConvertToZombie =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -953,7 +1045,8 @@ void() ConvertToZombie =
 	self.classname = "monster_zombie";
 	self.frame = $stand1;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -969,6 +1062,9 @@ void() ConvertToZombie =
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
 	self.th_melee = zombie_missile;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
     dprint(self.classname);
 	dprint("\n");
@@ -986,7 +1082,7 @@ void() ConvertToCentroid =
 
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -1013,7 +1109,8 @@ void() ConvertToCentroid =
 
 	self.health = 300;	
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -1047,7 +1144,7 @@ void() ConvertToGremlin =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -1078,7 +1175,8 @@ void() ConvertToGremlin =
 	self.max_health = 101;
 	self.yaw_speed = 40;
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -1094,6 +1192,8 @@ void() ConvertToGremlin =
 	self.th_melee = Gremlin_MeleeAttack;     // one of two attacks
 	self.th_missile = Gremlin_MissileAttack; // check for random jump or firing of weapon
 	self.th_pain = gremlin_pain;
+	self.attack_state = 0;
+	self.state = 0;
 
     dprint(self.classname);
 	dprint("\n");
@@ -1109,7 +1209,7 @@ void() ConvertToSpikeMine =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 
@@ -1130,7 +1230,11 @@ void() ConvertToSpikeMine =
 	self.movetype = MOVETYPE_FLYMISSILE;
 	
 	if (self.flags & FL_ONGROUND)
+	{
+		fix_z = fix_z + self.size_z / 2;
+		setorigin(self, fix);
 		self.flags = self.flags - (self.flags & FL_ONGROUND);
+	}
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - (self.flags & FL_FLY);
 	if (!(self.flags & FL_MONSTER))
@@ -1146,11 +1250,9 @@ void() ConvertToSpikeMine =
 	else
 		self.health = 400;
 	self.frame = 0;
-
-	fix_z = fix_z + self.size_z / 2;
-	setorigin(self, fix);
 	
-	self.touch = SUB_Null;
+	self.touch = SUB_Null;	
+	self.th_die = SUB_Null;
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
@@ -1167,16 +1269,29 @@ void() ConvertToSpikeMine =
 	self.th_melee = spikemine_Home;
 	self.th_missile = spikemine_Home;
 	self.think = spike_mine_first_think;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
 
 	self.nextthink = time + 0.2;
-	total_monsters = total_monsters + 1;
-	self.deathtype = "was blasted by a spike mine";
+	self.deathtype = "";
 	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SPIKE_MINE;
 	self.Converted = "1";
 	RegisterEntity(self.EntityDisplayName);
 };
 
 // END MONSTERS
+
+void(entity e) ConvertFuncSpawn =
+{
+	e.solid = SOLID_NOT;
+	e.movetype = MOVETYPE_NONE;
+	e.modelindex = 0;
+	e.model = "";
+	setmodel (e, e.model);
+	e.use = spawn_use_random;
+};
+
 
 // START PICKUPS
 
@@ -1492,6 +1607,77 @@ void() ConvertToQuadDamage =
 	self.Converted = "1";
 	StartItem ();
 	RegisterEntity(ENTITY_DISPLAY_NAME_QUAD_DAMAGE);
+};
+
+// Converts entity into Empathy Shields
+void() ConvertToEmpathyShields =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = hip_powerup_touch;
+	self.classname = "item_artifact_empathy_shields";
+
+	setmodel(self, "progs/empathy.mdl");
+	self.noise = "hipitems/empathy.wav";
+	self.netname = "Empathy Shields";
+	self.items2 = HIP_IT_EMPATHY_SHIELDS;
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_EMPATHY_SHIELDS);
+};
+
+// Converts entity into a Wetsuit
+void() ConvertToWetsuit =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = hip_powerup_touch;
+	self.classname = "item_artifact_wetsuit";
+
+	self.noise = "misc/weton.wav";
+	setmodel (self, "progs/wetsuit.mdl");
+	self.netname = "Wetsuit";
+	self.items2 = HIP_IT_WETSUIT;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_WETSUIT);
+};
+
+// Converts entity into a Horn of Conjuring
+// It also produces a spawn to produce the conjured monster
+void() ConvertToHornOfConjuring =
+{	
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.classname = "item_hornofconjuring";
+	self.touch = horn_touch_random;
+	setmodel(self, "progs/horn.mdl");
+	self.noise = "hipitems/horn.wav";
+	self.netname = "Horn of Conjuring";
+	self.skin = 0;
+	setsize (self, '-16 -16 0', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_HORN_OF_CONJURING);
 };
 
 // END POWERUPS

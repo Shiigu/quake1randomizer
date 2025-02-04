@@ -878,7 +878,7 @@ void() monster_armagon =
    local float sk;
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 

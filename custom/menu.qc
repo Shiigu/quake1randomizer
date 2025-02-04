@@ -293,7 +293,7 @@ void() CheckMenuImpulses = {
             SeedMenu();
         if(self.impulse == 8)
             AboutMenu();
-        if(self.impulse == 9)
+        if(self.impulse == 225)                     // "9" key, as it's now shared with the Laser Cannon
             ExitRandomMenu();
         return;
     }
@@ -549,7 +549,7 @@ void() ExitRandomMenu = {
     SetCentertime(Centertime);
     Centertime = 0;
     InRandomMenu = 0;
-    remove(InputCapturer);
+    SUB_Remove_Target(InputCapturer);
 };
 
 void() SetEndlessCastleParms = {

@@ -124,6 +124,60 @@ void() horn_touch =
    horn_active = 0;
 };
 
+void() horn_touch_random =
+{
+	local	float amount;
+   local float value;
+   local float inWater, useUnbiased;
+   local entity hornspawn;
+
+	if (other.classname != "player")
+		return;
+
+   if (deathmatch)
+	{
+		self.mdl = self.model;
+
+      self.nextthink = time + 60;
+
+		self.think = SUB_regen;
+	}
+
+   hornspawn = spawn();
+   hornspawn.classname = "hornofconjuring_spawn";
+   hornspawn.Converted = "0";
+   hornspawn.Unstuckable = 1;
+   setorigin(hornspawn, self.origin);
+   
+   traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+
+   inWater = trace_inwater;
+   playerPosition = self.origin;
+
+   if(trace_inwater && useUnbiased)
+      hornspawn.think = ConvertToMonsterOnWaterUnbiased;
+   else if(inWater && !useUnbiased)
+      hornspawn.think = ConvertToMonsterOnWaterBiased;
+   else if(!inWater && useUnbiased)
+      hornspawn.think = ConvertToMonsterOnGroundUnbiased;
+   else if(!inWater && !useUnbiased)
+      hornspawn.think = ConvertToMonsterOnGroundBiased;
+
+   hornspawn.nextthink = time + 0.1;
+   hornspawn.effects = hornspawn.effects | EF_DIMLIGHT;
+
+	self.solid = SOLID_NOT;
+	self.model = string_null;
+   sprint (other, "You got the Horn of Conjuring\n");
+   sound (other, CHAN_VOICE, self.noise, 1, ATTN_NONE);
+	stuffcmd (other, "bf\n");
+   activator = other;
+   horn_charmer = other;
+   hornspawn.charmer = horn_charmer;
+   hornspawn.charmed = 1;
+	SUB_UseTargets();				// fire all targets / killtargets
+};
+
 /*QUAKED item_hornofconjuring (0 .5 .8) (-16 -16 0) (16 16 32)
 Horn of Conjuring.
 You must make func_spawn entities connected to this entity
@@ -242,15 +296,18 @@ void() spikemine_Home =
       head = findradius(self.origin, 2000);
       while(head)
       {
-         if(!(head.flags & FL_NOTARGET) && (head.flags & FL_CLIENT))
+         if(!(head.flags & FL_NOTARGET) && !(head.items & IT_INVISIBILITY))
          {
-            if (visible(head) && (head.health > 0))
+            if((self.charmed && head.flags & FL_MONSTER) || (!self.charmed && head.flags & FL_CLIENT) || (EndlessCastleMapCount == 0 && head.flags & FL_CLIENT))
             {
-               head_dist = vlen(head.origin-self.origin);
-               if (head_dist < cur_dist)
+               if (visible(head) && (head.health > 0))
                {
-                  selected = head;
-                  cur_dist = head_dist;
+                  head_dist = vlen(head.origin-self.origin);
+                  if (head_dist < cur_dist)
+                  {
+                     selected = head;
+                     cur_dist = head_dist;
+                  }
                }
             }
          }
@@ -284,7 +341,7 @@ void() spikemine_Home =
 
 void() spikemine_Touch =
    {
-      if(self.Converted == "1" && self.Unstuckable && self.enemy == world) {
+      if(self.Converted == "1" && self.Unstuckable && (other == world && self.enemy == world)) {
          // If the Spike Mine had an attempt to be relocated, but is still stuck to the geometry, only make it explode once it finds an enemy.
          // (By sheer chance, it might find a path that doesn't make it blow up instantly. Also it's fun.)         
          return;
@@ -365,7 +422,7 @@ void() spike_mine_first_think =
 			dprint(")");
 			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 		}
-
+		
       traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
 
 		canMove = !trace_allsolid && !trace_startsolid && !trace_fraction;
@@ -384,12 +441,23 @@ void() spike_mine_first_think =
 		if (!canMove && !IS_IN_TELEPORTER)
 		{
          setorigin(self, old);
-			dprint ("\nUnstuck failed. Spike Mine ");
-			dprint (self.classname);
-			dprint (" killed at: ");
+			dprint ("\nUnstuck failed. Spike Mine killed at: ");
 			dprint (vtos(self.origin));
-			T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
 			dprint ("\n");
+			T_Damage (self, world, world, 500000); // Monster is brutally murdered for the crime of not fitting in this world. Literally.
+         sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);      
+         WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+         WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+         WriteCoord (MSG_BROADCAST, self.origin_x);
+         WriteCoord (MSG_BROADCAST, self.origin_y);
+         WriteCoord (MSG_BROADCAST, self.origin_z);      
+         sound (self, CHAN_VOICE, "misc/null.wav", 1, ATTN_NORM);
+         self.velocity = '0 0 0';
+         self.touch = SUB_Null;
+         setmodel (self, "progs/s_explod.spr");
+         self.solid = SOLID_NOT;
+         s_explode1 ();
+         remove(self);
 			return;
 		}
 	}
@@ -407,13 +475,16 @@ void() trap_spike_mine =
    {
    if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
-   precache_model ("progs/spikmine.mdl");
-   precache_sound ("weapons/r_exp3.wav");
-   precache_sound ("hipitems/spikmine.wav");
-   precache_sound ("misc/null.wav");
+   if(!RandomizeMonsters)
+   {
+      precache_model ("progs/spikmine.mdl");
+      precache_sound ("weapons/r_exp3.wav");
+      precache_sound ("hipitems/spikmine.wav");
+      precache_sound ("misc/null.wav");
+   }
    setmodel (self, "progs/spikmine.mdl");
 //   setmodel (self, "progs/spike.mdl");
    setsize (self, self.mins, self.maxs);
@@ -450,7 +521,7 @@ void() SpawnLightningThink =
    {
    if (time > self.delay)
       {
-      remove(self);
+      SUB_Remove();
       return;
       }
    self.think = SpawnLightningThink;
@@ -704,7 +775,7 @@ void() TeslaLightningThink =
    if (time > self.delay)
       {
       self.enemy.struck_by_mjolnir = 0;
-      remove(self);
+      SUB_Remove();
       return;
       }
    traceline (self.origin, self.enemy.origin, TRUE, self);
@@ -712,7 +783,7 @@ void() TeslaLightningThink =
    if (trace_fraction != 1.0 || self.enemy.health<=0 || vlen(self.origin-self.enemy.origin) > (self.distance+10))
       {
       self.enemy.struck_by_mjolnir = 0;
-      remove(self);
+      SUB_Remove();
       return;
       }
    WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);

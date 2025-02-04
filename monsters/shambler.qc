@@ -247,7 +247,7 @@ self.owner.frame = 2;
 };
 void() sham_magic6     =[      $magic6,       sham_magic9    ]
 {
-remove (self.owner);
+SUB_Remove_Target(self.owner);
 CastLightning();
 sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
 };
@@ -330,7 +330,7 @@ void() monster_shambler =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/shambler.mdl");

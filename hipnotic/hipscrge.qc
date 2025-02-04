@@ -373,7 +373,7 @@ void() scourge_die =
 {
 // check for gib
    // stop sound
-   remove (self.lastvictim);
+   SUB_Remove_Target(self.lastvictim);
    self.spawnsilent = 0;
    scourge_think();
    if (self.health < -35)
@@ -412,25 +412,29 @@ void() scourge_melee =
 // ScourgeTriggerThink
 //
 void() ScourgeTriggerThink =
-   {
+{
    local entity targ;
-
-   if (self.lastvictim.health<=0)
-      {
-      remove(self);
+   if(self.lastvictim.classname != "monster_scourge" || self.lastvictim.health <= 0)
+   {
+      SUB_Remove();
       return;
-      }
+   }
    targ = self.lastvictim;
    makevectors(targ.angles);
    setorigin(self, targ.origin + (v_forward*300) );
    self.nextthink = time + 0.1;
-   };
+};
 
 //
 // ScourgeTriggerTouch
 //
 void() ScourgeTriggerTouch =
+{
+   if(self.lastvictim.classname != "monster_scourge")
    {
+      SUB_Remove();      
+      return;
+   }
    local entity targ;
    local entity tempent;
    local vector dir;
@@ -442,7 +446,7 @@ void() ScourgeTriggerTouch =
    targ = self.lastvictim;
    if (targ.health<=0)
       {
-      remove(self);
+      SUB_Remove();
       return;
       }
    dir = targ.origin - other.origin;
@@ -471,7 +475,7 @@ void() ScourgeTriggerTouch =
       self = tempent;
 //      }
 //   dprint("ouch\n");
-   };
+};
 
 /*QUAKED monster_scourge (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
@@ -482,24 +486,28 @@ void() monster_scourge =
 
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
-   precache_model2 ("progs/scor.mdl");
-   precache_model2 ("progs/h_scourg.mdl");
-	precache_model2 ("progs/laser.mdl");
-   precache_model2 ("progs/s_light.mdl");
-   precache_model2 ("progs/spike.mdl");
 
-   precache_sound ("misc/null.wav");
-   precache_sound ("scourge/idle.wav");
-   precache_sound ("scourge/pain.wav");
-   precache_sound ("scourge/pain2.wav");
-   precache_sound ("scourge/sight.wav");
-   precache_sound ("scourge/tailswng.wav");
-   precache_sound ("scourge/walk.wav");
-   precache_sound2 ("shambler/smack.wav");
-   precache_sound2 ("weapons/rocket1i.wav");
+   if(!RandomizeMonsters)
+   {
+      precache_model2 ("progs/scor.mdl");
+      precache_model2 ("progs/h_scourg.mdl");
+      precache_model2 ("progs/laser.mdl");
+      precache_model2 ("progs/s_light.mdl");
+      precache_model2 ("progs/spike.mdl");
+   
+      precache_sound ("misc/null.wav");
+      precache_sound ("scourge/idle.wav");
+      precache_sound ("scourge/pain.wav");
+      precache_sound ("scourge/pain2.wav");
+      precache_sound ("scourge/sight.wav");
+      precache_sound ("scourge/tailswng.wav");
+      precache_sound ("scourge/walk.wav");
+      precache_sound2 ("shambler/smack.wav");
+      precache_sound2 ("weapons/rocket1i.wav");
+   }
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;

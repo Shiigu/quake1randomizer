@@ -246,7 +246,7 @@ void() monster_army =
 {	
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/soldier.mdl");

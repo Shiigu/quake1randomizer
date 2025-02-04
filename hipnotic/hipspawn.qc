@@ -97,6 +97,51 @@ void() spawn_use =
       }
    };
 
+void() spawn_use_random =
+{
+   local float inWater, useUnbiased;
+   local entity spawnentity;
+
+   if (self.spawnsilent == 0)
+      spawn_tfog (spawnentity.origin);
+
+   spawnentity = spawn();
+   spawnentity.classname = "func_spawn_spawn";
+   spawnentity.Converted = "0";
+   spawnentity.Unstuckable = 1;
+   setorigin(spawnentity, self.origin);
+   
+   traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+
+   inWater = trace_inwater;
+   playerPosition = self.origin;
+
+   if(trace_inwater && useUnbiased)
+      spawnentity.think = ConvertToMonsterOnWaterUnbiased;
+   else if(inWater && !useUnbiased)
+      spawnentity.think = ConvertToMonsterOnWaterBiased;
+   else if(!inWater && useUnbiased)
+      spawnentity.think = ConvertToMonsterOnGroundUnbiased;
+   else if(!inWater && !useUnbiased)
+      spawnentity.think = ConvertToMonsterOnGroundBiased;
+
+   spawnentity.nextthink = time + 0.1;
+   total_monsters = total_monsters + 1;
+   WriteByte (MSG_BROADCAST, SVC_UPDATESTAT);
+   WriteByte (MSG_BROADCAST, STAT_TOTALMONSTERS);
+   WriteLong (MSG_BROADCAST, total_monsters);
+
+   self.solid = SOLID_NOT;
+   self.model = string_null;
+
+   SUB_UseTargets();				// fire all targets / killtargets
+
+   if ((self.spawnmulti == 0) && (horn_active == 0))
+   {
+      remove(self);
+   }
+};
+
 //================
 //
 // func_spawn
@@ -123,7 +168,7 @@ void() func_spawn =
 
 //   if (deathmatch)
 //   {
-//      remove(self);
+//      SUB_Remove();
 //      return;
 //   }
 
