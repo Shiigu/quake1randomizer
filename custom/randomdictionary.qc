@@ -142,7 +142,8 @@ void(string key) RegisterEntity =
     }
     else
     {
-        if(i < DeadEntityQuantities.length)
+        // Prevent Horn of Conjuring monsters and Gremlins created by eating a body from resetting the counter
+        if(i < DeadEntityQuantities.length && !self.spawnfunction && !self.gorging)
             DeadEntityQuantities[i] = 0;
         EntityQuantities[i] = EntityQuantities[i] + 1;
     }

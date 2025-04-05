@@ -32,30 +32,30 @@ float IndexPermutation[6];
 
 // PROBABILITY "TABLES"
 
-string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_ogre", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_zombie", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
+string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_zombie" };
 void() MonsterUnbiasedSpawnFunctions[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToRotfish, ConvertToDeathKnight, ConvertToKnight, 
-    ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
-    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
+    ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToZombie };
 
 float ProbabilitiesMonsterToMonsterGround[15];
-float ProbabilitiesMonsterToMonsterGroundEasy[15]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12, 5, 8, 1 };
-float ProbabilitiesMonsterToMonsterGroundNormal[15]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13, 7, 9, 2 };
-float ProbabilitiesMonsterToMonsterGroundHard[15]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13, 8, 11, 2 };
-float ProbabilitiesMonsterToMonsterGroundNightmare[15]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11, 10, 10, 3 };
-float ProbabilitiesMonsterToMonsterGroundSuperNightmare[15]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13, 11, 8, 4 };
-float ProbabilitiesMonsterToMonsterGroundUnfair[15]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 8, 0, 0, 0, 10 };
+float ProbabilitiesMonsterToMonsterGroundEasy[15]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12, 3, 8, 2 };
+float ProbabilitiesMonsterToMonsterGroundNormal[15]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13, 5, 9, 3 };
+float ProbabilitiesMonsterToMonsterGroundHard[15]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13, 7, 11, 3 };
+float ProbabilitiesMonsterToMonsterGroundNightmare[15]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11, 8, 10, 4 };
+float ProbabilitiesMonsterToMonsterGroundSuperNightmare[15]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13, 10, 8, 6 };
+float ProbabilitiesMonsterToMonsterGroundUnfair[15]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 8, 0, 15, 0, 10 };
 void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
     ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
 string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
 
 float ProbabilitiesMonsterToMonsterWater[14];
-float ProbabilitiesMonsterToMonsterWaterEasy[14]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25, 5, 8, 1 };
-float ProbabilitiesMonsterToMonsterWaterNormal[14]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17, 7, 9, 2 };
-float ProbabilitiesMonsterToMonsterWaterHard[14]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15, 8, 11, 2 };
-float ProbabilitiesMonsterToMonsterWaterNightmare[14]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11, 10, 10, 3 };
-float ProbabilitiesMonsterToMonsterWaterSuperNightmare[14]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8, 11, 8, 4 };
-float ProbabilitiesMonsterToMonsterWaterUnfair[14]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0, 0, 0, 10 };
+float ProbabilitiesMonsterToMonsterWaterEasy[14]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25, 3, 8, 2 };
+float ProbabilitiesMonsterToMonsterWaterNormal[14]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17, 5, 9, 3 };
+float ProbabilitiesMonsterToMonsterWaterHard[14]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15, 7, 11, 3 };
+float ProbabilitiesMonsterToMonsterWaterNightmare[14]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11, 8, 10, 4 };
+float ProbabilitiesMonsterToMonsterWaterSuperNightmare[14]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8, 10, 8, 6 };
+float ProbabilitiesMonsterToMonsterWaterUnfair[14]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0, 15, 0, 10 };
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
                                  ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
 string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
@@ -598,6 +598,22 @@ void() ConvertEntities = {
     {
         SUB_Remove_Target(Placeholder);
         dprint("----- Finished ConvertEntities -----\n");
+        if(EndlessCastleMapCount > 0)
+        {
+            if(world.model == "maps/end.bsp")
+                nextmap = PickNextLevel();
+            else
+            {
+                local entity temp;
+                temp = find(world, classname, "trigger_changelevel");
+                while (temp != world)
+                {
+                    temp.map = PickNextLevel();
+                    temp = find(temp, classname, "trigger_changelevel");
+                }
+            }
+            PrintCurrentLevelCycle();
+        }
     }
     else
     {
@@ -637,9 +653,25 @@ void() ConvertToMonster = {
 
 // To convert a monster present in ground.
 // Every monster has an equal chance to be appear.
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundUnbiased = {
     local float rng;
-    rng = Random(1, MonsterGroundToGroundConverters.length);
+    rng = Random(1, MonsterUnbiasedClassnames.length);
+    if(IsTiedToATrigger(self)) {
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+    }
+    else {        
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+    }
+    while(MonsterUnbiasedSpawnFunctions[rng] == ConvertToRotfish)
+    {
+        if(IsTiedToATrigger(self)) {
+            rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+        }
+        else {        
+            rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+        }
+    }
     self.touch = SUB_Null;
     self.th_stand = SUB_Null;
     self.th_walk = SUB_Null;
@@ -649,15 +681,21 @@ void() ConvertToMonsterOnGroundUnbiased = {
     self.th_pain = SUB_Null;
     self.use = SUB_Null;
     self.charmed = FALSE;
-    self.think = MonsterGroundToGroundConverters[rng - 1];
+    self.think = MonsterUnbiasedSpawnFunctions[rng - 1];
     self.nextthink = time;
 };
 
 // To convert a monster present in water.
 // Every monster has an equal chance to be appear.
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterUnbiased = {
     local float rng;
-    rng = Random(1, MonsterGroundToGroundConverters.length);
+    if(IsTiedToATrigger(self)) {
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+    }
+    else {        
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+    }
     self.touch = SUB_Null;
     self.th_stand = SUB_Null;
     self.th_walk = SUB_Null;
@@ -667,7 +705,7 @@ void() ConvertToMonsterOnWaterUnbiased = {
     self.th_pain = SUB_Null;
     self.use = SUB_Null;
     self.charmed = FALSE;
-    self.think = MonsterGroundToGroundConverters[rng - 1];
+    self.think = MonsterUnbiasedSpawnFunctions[rng - 1];
     self.nextthink = time;
 };
 
@@ -675,9 +713,11 @@ void() ConvertToMonsterOnWaterUnbiased = {
 // Monsters have an arbitrarily "fair" chance to appear.
 // Prevents spawning Rotfish in ground (because they can't move there).
 // Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundBiased = {
-    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, distanceToPlayer;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
 
+    amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
     distanceToPlayer = vlen(self.origin - playerPosition);
     
     maxpossiblerng = 0;
@@ -692,6 +732,18 @@ void() ConvertToMonsterOnGroundBiased = {
             dprint(vtos(playerPosition));
             dprint(" to spawn a Spike Mine in.\n");
         }
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        {
+            if(IsTiedToATrigger(self))
+            {
+                zombieId = i;
+                preventZombies = 1;
+                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
+                dprint("Monster at ");
+                dprint(vtos(self.origin));
+                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+            }
+        }
         else
         {
             maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterGround[i];
@@ -699,8 +751,8 @@ void() ConvertToMonsterOnGroundBiased = {
     }
     if(preventSpikeMines)
         amountOfChoices = ProbabilitiesMonsterToMonsterGround.length - 1;
-    else
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;
     rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
@@ -720,16 +772,20 @@ void() ConvertToMonsterOnGroundBiased = {
         }
         i++;
     }
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
 };
 
 // To convert a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
 // Monsters have an arbitrarily "fair" chance to appear.
 // Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterBiased = {
-    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, distanceToPlayer;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
 
     distanceToPlayer = vlen(self.origin - playerPosition);
+    amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
     
     maxpossiblerng = 0;
     for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
@@ -743,6 +799,18 @@ void() ConvertToMonsterOnWaterBiased = {
             dprint(vtos(playerPosition));
             dprint(" to spawn a Spike Mine in.\n");
         }
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        {
+            if(IsTiedToATrigger(self))
+            {
+                zombieId = i;
+                preventZombies = 1;
+                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
+                dprint("Monster at ");
+                dprint(vtos(self.origin));
+                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+            }
+        }
         else
         {
             maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterWater[i];
@@ -750,9 +818,8 @@ void() ConvertToMonsterOnWaterBiased = {
     }
     if(preventSpikeMines)
         amountOfChoices = ProbabilitiesMonsterToMonsterWater.length - 1;
-    else
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;        
     rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
@@ -772,6 +839,8 @@ void() ConvertToMonsterOnWaterBiased = {
         }
         i++;
     }
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
 };
 
@@ -831,7 +900,6 @@ void() ConvertMonsterSpawnOnWaterUnbiased = {
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertMonsterSpawnOnGroundBiased = {
     local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
-    self.Converted = "1";
     self.think = SUB_Null;    
     maxpossiblerng = 0;
     for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
@@ -866,7 +934,6 @@ void() ConvertMonsterSpawnOnGroundBiased = {
 // Monsters have an arbitrarily "fair" chance to appear.
 void() ConvertMonsterSpawnOnWaterBiased = {
     local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
-    self.Converted = "1";
     self.think = SUB_Null;
     maxpossiblerng = 0;
     for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
@@ -1062,7 +1129,7 @@ void() ConvertToPowerupBiased = {
     }
     local float rng, minrng, maxrng, maxpossiblerng, DONE, i, amountOfChoices, nearALiquid;
     
-    nearALiquid = IsNearAHarmfulLiquidSurface(self, 512);
+    nearALiquid = self.classname == "item_artifact_envirosuit" || self.classname == "item_artifact_wetsuit" || IsNearAHarmfulLiquidSurface(self, 512);
     maxpossiblerng = 0;
     if(nearALiquid)
     {

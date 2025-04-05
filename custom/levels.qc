@@ -7,6 +7,7 @@ float EndlessCastleEpisode2Flags;							// 13 bit integer. MSE is hip2m6, LSE is
 float EndlessCastleEpisode3Flags;							// 14 bit integer. MSE is hipdm1, LSE is e3m1. If bit is "1" the level has been part of the cycle.
 float EndlessCastleEpisode4Flags;							// 8 bit integer. MSE is e4m8, LSE is e4m1. If bit is "1" the level has been part of the cycle.
 
+void() PrintCurrentLevelCycle;
 string() PickNextLevel;
 string(float level) ToEpisode1Level;
 string(float level) ToEpisode2Level;
@@ -16,10 +17,10 @@ float() GetElapsedTime;
 
 string() PickNextLevel = {
     if(EndlessCastleMapCount == 0) return "";
-    local float rngEpisode, rngLevel, bitFlag, ATTEMPTS, MAX_ATTEMPTS, i, addComma;
+    local float rngEpisode, rngLevel, bitFlag, ATTEMPTS, MAX_ATTEMPTS, i;
 	ATTEMPTS = 0;
 	MAX_ATTEMPTS = 30;
-	if(EndlessCastleEpisode1Flags == 8191 && EndlessCastleEpisode2Flags == 8191 && EndlessCastleEpisode3Flags == 8191 && EndlessCastleEpisode4Flags == 255)
+	if(EndlessCastleEpisode1Flags == 8191 && EndlessCastleEpisode2Flags == 8191 && EndlessCastleEpisode3Flags == 16383 && EndlessCastleEpisode4Flags == 255)
 	{
         dprint("Resetting level cycle.\n");
 		// If all levels appeared exactly once, restart randomization
@@ -28,110 +29,53 @@ string() PickNextLevel = {
 		EndlessCastleEpisode3Flags = 0;
 		EndlessCastleEpisode4Flags = 0;
 	}
-    dprint("--- CURRENT ENDLESS CASTLE CYCLE USED LEVELS ---\n");
-    dprint("EPISODE 1 -> ");
-    addComma = 0;
-    if(EndlessCastleEpisode1Flags == 0)
-    {
-        dprint("NONE");
-    }
-    else {
-        for(i = 1; i < 14; i++) {
-            bitFlag = fpow(2, i - 1);
-            if(EndlessCastleEpisode1Flags & bitFlag)
-            {
-                if(addComma == 1)
-                    dprint(", ");    
-                dprint(ToEpisode1Level(i - 1));
-                addComma = 1;
-            }
-        }
-    }
-    dprint("\nEPISODE 2 -> ");
-    addComma = 0;
-    if(EndlessCastleEpisode2Flags == 0)
-    {
-        dprint("NONE");
-    }
-    else {
-        for(i = 1; i < 14; i++) {
-            bitFlag = fpow(2, i - 1);
-            if(EndlessCastleEpisode2Flags & bitFlag)
-            {
-                if(addComma == 1)
-                    dprint(", ");    
-                dprint(ToEpisode2Level(i - 1));
-                addComma = 1;
-            }
-        }
-    }
-    dprint("\nEPISODE 3 -> ");
-    addComma = 0;
-    if(EndlessCastleEpisode3Flags == 0 || EndlessCastleEpisode3Flags == 128)
-    {
-        dprint("NONE");
-    }
-    else {
-        for(i = 1; i < 14; i++) {
-            bitFlag = fpow(2, i - 1);
-            if(EndlessCastleEpisode3Flags & bitFlag)
-            {
-                if(addComma == 1)
-                    dprint(", ");    
-                dprint(ToEpisode3Level(i - 1));
-                addComma = 1;
-            }
-        }
-    }
-    dprint("\nEPISODE 4 -> ");
-    addComma = 0;
-    if(EndlessCastleEpisode4Flags == 0)
-    {
-        dprint("NONE");
-    }
-    else {
-        for(i = 1; i < 9; i++) {
-            bitFlag = fpow(2, i - 1);
-            if(EndlessCastleEpisode4Flags & bitFlag)
-            {
-                if(addComma == 1)
-                    dprint(", ");    
-                dprint(ToEpisode4Level(i - 1));
-                addComma = 1;
-            }
-        }
-    }
-    if(EndlessCastleEpisode3Flags & 128)
-        dprint("\nend");
-	if(EndlessCastleEpisode3Flags & 16383)
-		dprint("\nhipend");
-    dprint("\n--- CURRENT ENDLESS CASTLE CYCLE USED LEVELS ---\n");
+	else
+	{
+		dprint("EndlessCastleEpisode1Flags is ");
+		dprint(ftos(EndlessCastleEpisode1Flags));
+		dprint(".\n");
+		dprint("EndlessCastleEpisode2Flags is ");
+		dprint(ftos(EndlessCastleEpisode2Flags));
+		dprint(".\n");
+		dprint("EndlessCastleEpisode3Flags is ");
+		dprint(ftos(EndlessCastleEpisode3Flags));
+		dprint(".\n");
+		dprint("EndlessCastleEpisode4Flags is ");
+		dprint(ftos(EndlessCastleEpisode4Flags));
+		dprint(".\n");
+	}
 	while(ATTEMPTS < MAX_ATTEMPTS) {
 		rngEpisode = Random(1, 4);
-		rngLevel = Random(1, 14);
+		if (rngEpisode == 4) {
+			rngLevel = Random(1, 9);
+        } else {
+			rngLevel = Random(1, 14);
+        }
 		dprint("Picked Episode ");
 		dprint(ftos(rngEpisode));
 		dprint(", Level ");
 		dprint(ftos(rngLevel));
 		dprint(".\n");
 		bitFlag = fpow(2, rngLevel - 1);					// Represents the "digit" in the level flags to check if the level had been spawned already
-		if(rngEpisode == 1 && rngLevel < 14)
+		if(rngEpisode == 1 && EndlessCastleEpisode1Flags != 8191 && rngLevel < 14)
 		{
 			if(!(EndlessCastleEpisode1Flags & bitFlag))
 			{
 				EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
 				return ToEpisode1Level(rngLevel - 1);
 			}
 		}
-		else if(rngEpisode == 2 && rngLevel < 14)
+		else if(rngEpisode == 2 && EndlessCastleEpisode2Flags != 8191 && rngLevel < 14)
 		{
 			if(!(EndlessCastleEpisode2Flags & bitFlag))
 			{
 				EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
 				return ToEpisode2Level(rngLevel - 1);
 			}
 		}
-		else if(rngEpisode == 3)
+		else if(rngEpisode == 3 && EndlessCastleEpisode3Flags != 16383)
 		{
 			// Prevent rolling Shub-Niggurath's Pit among the first three Endless Castle Levels
 			if(!(EndlessCastleEpisode3Flags & bitFlag))
@@ -139,15 +83,17 @@ string() PickNextLevel = {
 				if(EndlessCastleMapCount >= 4 || rngLevel != 8)
 				{
 					EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
+					dprint("Level is valid. Setting it as an exit.\n");
 					return ToEpisode3Level(rngLevel - 1);
 				}
 			}
 		}
-		else if(rngEpisode == 4 && rngLevel < 9)
+		else if(rngEpisode == 4 && EndlessCastleEpisode4Flags != 255 && rngLevel < 9)
 		{
 			if(!(EndlessCastleEpisode4Flags & bitFlag))
 			{
 				EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
 				return ToEpisode4Level(rngLevel - 1);
 			}
 		}
@@ -156,40 +102,56 @@ string() PickNextLevel = {
 	// If all 30 attempts have been exhausted, pick the earliest level it can encounter that has not been spawned.
     dprint("Looking for an unused Episode 1 level.\n");
 	for(i = 1; i < 14; i++) {
+		dprint("Picked Episode 1, Level ");
+		dprint(ftos(i));
+		dprint(".\n");
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode1Flags & bitFlag))
 		{
 			EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
+			dprint("Level is valid. Setting it as an exit.\n");
 			return ToEpisode1Level(i - 1);
 		}
 	}
     dprint("Looking for an unused Episode 2 level.\n");
 	for(i = 1; i < 14; i++) {
+		dprint("Picked Episode 2, Level ");
+		dprint(ftos(i));
+		dprint(".\n");
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode2Flags & bitFlag))
 		{
 			EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
+			dprint("Level is valid. Setting it as an exit.\n");
 			return ToEpisode2Level(i - 1);
 		}
 	}
     dprint("Looking for an unused Episode 3 level (or end).\n");
 	for(i = 1; i < 14; i++) {
+		dprint("Picked Episode 3, Level ");
+		dprint(ftos(i));
+		dprint(".\n");
 		bitFlag = fpow(2, i - 1);
 		if(bitFlag != 8)
 		{
 			if(!(EndlessCastleEpisode3Flags & bitFlag))
 			{
 				EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
 				return ToEpisode3Level(i - 1);
 			}
 		}
 	}
     dprint("Looking for an unused Episode 4 level.\n");
 	for(i = 1; i < 9; i++) {
+		dprint("Picked Episode 4, Level ");
+		dprint(ftos(i));
+		dprint(".\n");
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode4Flags & bitFlag))
 		{
 			EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
+			dprint("Level is valid. Setting it as an exit.\n");
 			return ToEpisode4Level(i - 1);
 		}
 	}
@@ -222,8 +184,88 @@ string(float level) ToEpisode4Level = {
 	return maps[level];
 }
 
-float GetElapsedTime() {
+float() GetElapsedTime = {
     float currentTime = time; // Get the current time
     float elapsedTime = currentTime - startTime; // Calculate elapsed time in seconds
     return elapsedTime;
+}
+
+void() PrintCurrentLevelCycle = {
+	float addComma, i, bitFlag;
+	dprint("--- CURRENT ENDLESS CASTLE CYCLE USED LEVELS ---\n");
+    dprint("EPISODE 1 -> ");
+    addComma = 0;
+    if(EndlessCastleEpisode1Flags == 0)
+    {
+        dprint("NONE");
+    }
+    else {
+        for(i = 1; i < 14; i++) {
+            bitFlag = fpow(2, i - 1);
+            if(EndlessCastleEpisode1Flags & bitFlag)
+            {
+                if(addComma == 1)
+					dprint(", ");    
+				dprint(ToEpisode1Level(i - 1));
+                addComma = 1;
+            }
+        }
+    }
+    dprint("\nEPISODE 2 -> ");
+    addComma = 0;
+    if(EndlessCastleEpisode2Flags == 0)
+    {
+        dprint("NONE");
+    }
+    else {
+        for(i = 1; i < 14; i++) {
+            bitFlag = fpow(2, i - 1);
+            if(EndlessCastleEpisode2Flags & bitFlag)
+            {
+                if(addComma == 1)
+					dprint(", ");    
+				dprint(ToEpisode2Level(i - 1));
+                addComma = 1;
+            }
+        }
+    }
+    dprint("\nEPISODE 3 -> ");
+    addComma = 0;
+    if(EndlessCastleEpisode3Flags == 0 || EndlessCastleEpisode3Flags == 128)
+    {
+        dprint("NONE");
+    }
+    else {
+        for(i = 1; i < 14; i++) {
+            bitFlag = fpow(2, i - 1);
+            if(EndlessCastleEpisode3Flags & bitFlag)
+            {
+                if(addComma == 1)
+					dprint(", ");    
+				dprint(ToEpisode3Level(i - 1));
+                addComma = 1;
+            }
+        }
+    }
+    dprint("\nEPISODE 4 -> ");
+    addComma = 0;
+    if(EndlessCastleEpisode4Flags == 0)
+    {
+        dprint("NONE");
+    }
+    else {
+        for(i = 1; i < 9; i++) {
+            bitFlag = fpow(2, i - 1);
+            if(EndlessCastleEpisode4Flags & bitFlag)
+            {
+                if(addComma == 1)
+					dprint(", ");    
+				dprint(ToEpisode4Level(i - 1));
+                addComma = 1;
+            }
+        }
+    }
+    if(EndlessCastleEpisode3Flags & 128)
+		dprint("\nend");
+	dprint("\n--- CURRENT ENDLESS CASTLE CYCLE USED LEVELS ---\n");
 }

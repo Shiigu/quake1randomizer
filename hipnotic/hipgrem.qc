@@ -1738,7 +1738,9 @@ void() Gremlin_Split =
       grem.Converted = "1";
       grem.Unstuckable = 1;
       grem.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
+      grem.gorging = TRUE;
       RegisterEntity(grem.EntityDisplayName);
+      grem.gorging = FALSE;
    }
    self = grem;
    gremlin_spawn1();

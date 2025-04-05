@@ -533,7 +533,8 @@ void() CheckMenuImpulses = {
             return;
         }
         SetEndlessCastleParms();
-        changelevel(PickNextLevel());
+        local string firstMap = PickNextLevel();
+        changelevel(firstMap);
         return;
     }
     if(CurrentMenu == FINAL_MENU)

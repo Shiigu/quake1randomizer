@@ -1078,8 +1078,6 @@ void() ConvertToZombie =
 // Replaces entity with a Centroid
 void() ConvertToCentroid =
 {
-	local entity trig;
-
 	if (deathmatch)
 	{
 		SUB_Remove();

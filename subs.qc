@@ -9,6 +9,7 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 float(float playAlertSound) FindTarget;
 float() IsRemastered;
 void(float newCentertime) SetCentertime;
+float(entity mon) IsTiedToATrigger;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
 .vector oldmins;
@@ -661,4 +662,44 @@ float() IsRemastered = {
 void(float newCentertime) SetCentertime = {	
 	cvar_set("scr_centertime", ftos(newCentertime));
 	Centertime = newCentertime;
+}
+
+float(entity mon) IsTiedToATrigger = {
+    entity e;
+    if (!mon.target)
+        return FALSE;
+
+    e = world;
+    while ((e = find(e, targetname, mon.target)))
+    {
+        if (!e.classname)
+            continue;
+
+        if (e.classname == "trigger_changelevel" ||
+            e.classname == "trigger_reactivate" ||
+            e.classname == "trigger_multiple" ||
+            e.classname == "trigger_once" ||
+            e.classname == "trigger_relay" ||
+            e.classname == "trigger_secret" ||
+            e.classname == "trigger_counter" ||
+            e.classname == "trigger_teleport" ||
+            e.classname == "trigger_setskill" ||
+            e.classname == "trigger_onlyregistered" ||
+            e.classname == "trigger_hurt" ||
+            e.classname == "trigger_push" ||
+            e.classname == "trigger_monsterjump" ||
+            e.classname == "trigger_damagethreshold" ||
+            e.classname == "trigger_usekey" ||
+            e.classname == "trigger_remove" ||
+            e.classname == "trigger_setgravity" ||
+            e.classname == "trigger_command_use" ||
+            e.classname == "trigger_command" ||
+            e.classname == "trigger_decoy_use" ||
+            e.classname == "trigger_waterfall")
+        {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }

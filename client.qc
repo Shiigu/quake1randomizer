@@ -10,6 +10,8 @@ void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
     float rocket_bits, float cell_bits) EncodeParms;
+void(float episode1_flags, float episode2_flags, float episode3_flags, 
+	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
 float	modelindex_eyes, modelindex_player, fixedSeed, modelindex_hammer;
 
@@ -38,7 +40,6 @@ void() SetChangeParms =
 {    
     float item_bits, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
-	float spawnedweapons_bits, weapon_bit;
 	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
     if (self.health <= 0) 
@@ -96,26 +97,18 @@ void() SetChangeParms =
     EncodeParms(item_bits, health_bits, armor_bits, armor_type,
                 shell_bits, nail_bits, rocket_bits, cell_bits);
 
-	spawnedweapons_bits = floor(SpawnedWeapons / 2);
+    parm4 = self.weapon;
+	parm5 = floor(SpawnedWeapons / 2);
+	parm6 = EndlessCastleMapCount;
+	
+	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleDifficultyLevel);
 
-    // Left shift self.weapon by 6
-    weapon_bit = self.weapon * 64;
-
-    // Combine the two values
-    parm4 = spawnedweapons_bits + weapon_bit;
-
-	parm5 = EndlessCastleEpisode1Flags;
-	parm6 = EndlessCastleEpisode2Flags;
-	parm7 = EndlessCastleEpisode3Flags;
-	parm8 = EndlessCastleEpisode4Flags;
-	parm9 = EndlessCastleMapCount;
-	parm10 = EndlessCastleDifficultyLevel;
-	parm11 = EndlessCastleSeed;
-	parm12 = EndlessCastleElapsedTime;
-	parm13 = EndlessCastleTotalMonsters;
-	parm14 = EndlessCastleDeadMonsters;
-	parm15 = EndlessCastleTotalSecrets;
-	parm16 = EndlessCastleFoundSecrets;
+	parm10 = EndlessCastleSeed;
+	parm11 = EndlessCastleElapsedTime;
+	parm12 = EndlessCastleTotalMonsters;
+	parm13 = EndlessCastleDeadMonsters;
+	parm14 = EndlessCastleTotalSecrets;
+	parm15 = EndlessCastleFoundSecrets;
 };
 
 // Thanks to Tome of Preach of providing a refactor for parms that leaves parm4 to parm16 empty.
@@ -130,6 +123,14 @@ void(float item_bits, float health_bits,
             + 256 * 128 * cell_bits;
     parm3 = item_bits;
 }
+
+void(float episode1_flags, float episode2_flags, float episode3_flags, 
+	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags =
+{
+    parm7 = episode1_flags + 8192 * episode4_flags;
+    parm8 = episode2_flags;
+    parm9 = (difficulty_level & 7) + 8 * episode3_flags;  // 3 bits for difficulty level + 14 bits for episode3_flags
+};
 
 void() SetNewParms =
 {
@@ -208,27 +209,33 @@ void() DecodeLevelParms =
 
     self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
 
-
 	self.items2 = 0; // Armagon powerups are never kept
 
-	// Assign the extracted values back
-    SpawnedWeapons = (parm4 & 63) * 2;
-    // Extract the current weapon by right shifting parm4 by 6
-    self.weapon = floor(parm4 / 64);
+    self.weapon = parm4;
     W_SetCurrentAmmo ();
 
-	EndlessCastleEpisode1Flags = parm5;
-	EndlessCastleEpisode2Flags = parm6;
-	EndlessCastleEpisode3Flags = parm7;
-	EndlessCastleEpisode4Flags = parm8;
-	EndlessCastleMapCount = parm9;
-	EndlessCastleDifficultyLevel = parm10;
-	EndlessCastleSeed = parm11;
-	EndlessCastleElapsedTime = parm12;
-	EndlessCastleTotalMonsters = parm13;
-	EndlessCastleDeadMonsters = parm14;
-	EndlessCastleTotalSecrets = parm15;
-	EndlessCastleFoundSecrets = parm16;
+    SpawnedWeapons = parm5 * 2;
+	EndlessCastleMapCount = parm6;
+	
+	bits = parm7 & 8191;
+    EndlessCastleEpisode1Flags = bits;
+    parm7 = (parm7 - bits) / 8192;
+
+    EndlessCastleEpisode4Flags = parm7 & 255;
+	
+    EndlessCastleEpisode2Flags = parm8 & 8191;
+	
+    EndlessCastleDifficultyLevel = parm9 & 7;
+    parm9 = (parm9 - EndlessCastleDifficultyLevel) / 8;
+
+    EndlessCastleEpisode3Flags = parm9 & 16383;
+
+	EndlessCastleSeed = parm10;
+	EndlessCastleElapsedTime = parm11;
+	EndlessCastleTotalMonsters = parm12;
+	EndlessCastleDeadMonsters = parm13;
+	EndlessCastleTotalSecrets = parm14;
+	EndlessCastleFoundSecrets = parm15;
 };
 
 
@@ -350,8 +357,110 @@ void() ExitIntermission =
 			WriteByte (MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "Despite the awful might of the Elder\nWorld, you have achieved the Rune of\nElder Magic, capstone of all types of\narcane wisdom. Beyond good and evil,\nbeyond life and death, the Rune\npulsates, heavy with import. Patient and\npotent, the Elder Being Shub-Niggurath\nweaves her dire plans to clear off all\nlife from the Earth, and bring her own\nfoul offspring to our world! For all the\ndwellers in these nightmare dimensions\nare her descendants! Once all Runes of\nmagic power are united, the energy\nbehind them will blast open the Gateway\nto Shub-Niggurath, and you can travel\nthere to foil the Hell-Mother's plots\nin person.");
 			return;
-		}
+		}//HIPNOTIC
+		else if (world.model == "maps/hip1m4.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 6);
+			WriteByte (MSG_ALL, 3);
+			WriteByte (MSG_ALL, SVC_FINALE);
+	/*
+			**************************************
+			Deep within the bowels of the
+			Research Facility, you discover the
+			passage that the followers of Quake
+			have used to enter our world.
+			The bastards used some type of
+			gigantic teleporter to overload
+			one of our own slipgates!  As long as
+			this portal exists, Earth will never
+			be safe from Quake's cruel minions.
 
+			If you can find the source of the
+			portal's power, you can shut it
+			down--possibly forever!  With only a
+			moment's consideration for your own
+			safety, you re-enter the dark domain,
+			knowing Hell would be a better fate
+			than experiencing the reign of Quake.
+	*/
+			WriteString (MSG_ALL, "Deep within the bowels of the\nResearch Facility, you discover the\npassage that the followers of Quake\nhave used to enter our world.\nThe bastards used some type of\ngigantic teleporter to overload\none of our own slipgates!  As long as\nthis portal exists, Earth will never\nbe safe from Quake's cruel minions." );
+			//WriteString (MSG_ALL, "If you can find the source of the\nportal's power, you can shut it\ndown--possibly forever!  With only a\nmoment's consideration for your own\nsafety, you re-enter the dark domain,\nknowing Hell would be a better fate\nthan experiencing the reign of Quake." );
+			return;
+		}
+		else if (world.model == "maps/hip2m5.bsp")
+			{
+	/*
+			**************************************
+			After destroying the power generator,
+			you pass beyond the gate of Mortum's
+			Keep.  A wave of nausea suddenly flows
+			over you and you find yourself cast
+			out into a liquid void.  You float
+			lifelessly, yet aware, in a lavender
+			sea of energy.
+
+			After what seems like an eternity,
+			you feel the presence of a diabolical
+			intelligence.  You are held helpless
+			for a moment as your mind is open to
+			that of Armagon--Quake's General and
+			master of this realm.  Recognizing
+			you as the one who foiled his
+			attempt to conquer Earth, a hellish
+			howl fills your mind and blots out
+			all consciousness.  When you awake,
+			you find yourself on the shores of
+			reality, but in a time and place
+			unknown to you.
+	*/
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 6);
+			WriteByte (MSG_ALL, 3);
+
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After destroying the power generator,\nyou pass beyond the gate of Mortum's\nKeep.  A wave of nausea suddenly flows\nover you and you find yourself cast\nout into a liquid void.  You float\nlifelessly, yet aware, in a lavender\nsea of energy." );
+			//WriteString (MSG_ALL, "After what seems like an eternity,\nyou feel the presence of a diabolical\nintelligence.  You are held helpless\nfor a moment as your mind is open to\nthat of Armagon--Quake's General and\nmaster of this realm.  Recognizing\nyou as the one who foiled his\nattempts to conquer Earth, a hellish\nhowl fills your mind and blots out\nall consciousness.  When you awake,\nyou find yourself on the shores of\nreality, but in a time and place\nunknown to you." );
+			return;
+		}
+		else if (world.model == "maps/hipend.bsp")
+		{
+	/*
+			**************************************
+			After the last echoes of Armagon's
+			death yell fade away, you breathe a
+			heavy sigh of relief.  With the loss
+			of his magic, Armagon's fortress
+			begins to collapse.  The rift he
+			created to send his grisly troops
+			through time slowly closes and seals
+			itself forever.  In the chaos that
+			ensues, a wall collapses, revealing
+			one remaining time portal.  With your
+			chances to escape rapidly growing
+			slim, you race for the portal,
+			mindless of your destination.  In a
+			flash of light, you find yourself
+			back at Command HQ, safe and sound.
+
+			Congratulations!  You are victorious!
+			The minions of Quake have once again
+			fallen before your mighty hand.
+			Is this the last you will see of
+			Quake's hellions?
+
+			Only time will tell...
+	*/
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 2);
+			WriteByte (MSG_ALL, 3);
+
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After the last echoes of Armagon's\ndeath yell fade away, you breathe a\nheavy sigh of relief.  With the loss\nof his magic, Armagon's fortress\nbegins to collapse.  The rift he\ncreated to send his grisly troops\nthrough time slowly closes and seals\nitself forever.  In the chaos that\nensues, a wall collapses, revealing\none remaining time portal.  With your\nchances to escape rapidly growing\nslim, you race for the portal,\nmindless of your destination.  In a\nflash of light, you find yourself\nback at Command HQ, safe and sound." );
+			//WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
+			//intermission_exittime = time + 10000000;  // never allow exit
+			return;
+		}
 		GotoNextMap();
 	}
 	
@@ -367,6 +476,27 @@ void() ExitIntermission =
 		{
 			WriteByte (MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "Now, you have all four Runes. You sense\ntremendous invisible forces moving to\nunseal ancient barriers. Shub-Niggurath\nhad hoped to use the Runes Herself to\nclear off the Earth, but now instead,\nyou will use them to enter her home and\nconfront her as an avatar of avenging\nEarth-life. If you defeat her, you will\nbe remembered forever as the savior of\nthe planet. If she conquers, it will be\nas if you had never been born.");
+			return;
+		}
+
+		//HIPNOTIC
+		if (world.model == "maps/hip1m4.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "If you can find the source of the\nportal's power, you can shut it\ndown--possibly forever!  With only a\nmoment's consideration for your own\nsafety, you re-enter the dark domain,\nknowing Hell would be a better fate\nthan experiencing the reign of Quake." );
+			return;
+		}
+		else if (world.model == "maps/hip2m5.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After what seems like an eternity,\nyou feel the presence of a diabolical\nintelligence.  You are held helpless\nfor a moment as your mind is open to\nthat of Armagon--Quake's General and\nmaster of this realm.  Recognizing\nyou as the one who foiled his\nattempt to conquer Earth, a hellish\nhowl fills your mind and blots out\nall consciousness.  When you awake,\nyou find yourself on the shores of\nreality, but in a time and place\nunknown to you." );
+			return;
+		}
+		else if (world.model == "maps/hipend.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
+			intermission_exittime = time + 10000000;  // never allow exit
 			return;
 		}
 		
@@ -403,6 +533,11 @@ void() execute_changelevel =
 		{
 			LogRandomizerResults();
 		}
+	}
+
+	if(EndlessCastleMapCount > 0)
+	{
+		PrintCurrentLevelCycle();
 	}
 
 	intermission_running = 1;
@@ -555,7 +690,15 @@ void() ClientKill =
 	set_suicide_frame ();
 	self.modelindex = modelindex_player;
 	self.frags = self.frags - 2;	// extra penalty
-	respawn ();
+	if(EndlessCastleMapCount == 0)
+	{ 
+		respawn ();
+	}
+	else
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+	}
 };
 
 float(vector v) CheckSpawnPoint =
@@ -682,7 +825,7 @@ void() PutClientInServer =
 
 	if(EndlessCastleMapCount == -1)
 	{
-		sprint(self, "Dark forces prevent your manipulation of the Endless Castle.\n");
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
 	}
 
@@ -705,22 +848,6 @@ void() PutClientInServer =
 
 	if(currentCenterTime == 100000)
 		SetCentertime(2);
-
-	if(EndlessCastleMapCount > 0)
-	{
-		if(world.model == "maps/end.bsp")
-			nextmap = PickNextLevel();
-		else
-		{
-			local entity temp;
-			temp = find(world, classname, "trigger_changelevel");
-			while (temp != world)
-			{
-				temp.map = PickNextLevel();
-				temp = find(temp, classname, "trigger_changelevel");
-			}
-		}
-	}
 
 	W_SetCurrentAmmo ();
 
@@ -1141,6 +1268,14 @@ void() PlayerPreThink =
 	local	float	mspeed, aspeed;
 	local	float	r;
 
+	
+	if (EndlessCastleMapCount > 0 && (self.flags & FL_GODMODE || self.flags & FL_NOTARGET || self.movetype & MOVETYPE_NOCLIP))
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
+
 	if (intermission_running)
 	{
 		earthquake_prethink();
@@ -1198,12 +1333,14 @@ void() PlayerPreThink =
 			{
 				self.velocity = self.velocity * 1.5;
 			}
-			if(self.velocity_x > mspeed)
+		if(self.waterlevel == 2 || self.waterlevel == 3)
+		{ if(self.velocity_x > mspeed)
 				self.velocity_x = mspeed;
 			if(self.velocity_y > mspeed)
 				self.velocity_y = mspeed;
 			if(self.velocity_z > mspeed)
 				self.velocity_z = mspeed;	
+		}
       	if (self.waterlevel >= 2)
          {
          // play scuba sound
@@ -1669,10 +1806,9 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" discharges into the water.\n");
 					return;
 				}
-            if (targ.weapon == IT_GRENADE_LAUNCHER)
-					bprint (" tries to put the pin back in\n");
-//JIM
-            else if (rnum > 0.4 )
+            	if (targ.weapon == IT_GRENADE_LAUNCHER)
+					bprint (" tries to put the pin back in\n");//JIM
+            	else if (rnum > 0.4 )
 					bprint (" becomes bored with life\n");
 				else
 					bprint (" checks if his weapon is loaded\n");

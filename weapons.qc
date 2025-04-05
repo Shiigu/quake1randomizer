@@ -1862,6 +1862,13 @@ void() CheatCommand =
 {
 	if (deathmatch || coop)
 		return;
+	
+	if (EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
 
 	self.ammo_rockets = 100;
 	self.ammo_nails = 200;
@@ -2093,33 +2100,55 @@ void() QuadCheat =
 {
 	if (deathmatch || coop)
 		return;
+
+	if (EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
 	self.items = self.items | IT_QUAD;
-   bprint ("quad cheat\n");
+   	bprint ("quad cheat\n");
 };
 
 //MED
 void() WetsuitCheat =
-	{
-   if (deathmatch || coop)
+{
+	if (deathmatch || coop)
 		return;
-   self.items2 = self.items2 | HIP_IT_WETSUIT;
+
+	if (EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
+	self.items2 = self.items2 | HIP_IT_WETSUIT;
 	self.wetsuit_time = 1;
 	self.wetsuit_finished = time + 30;
-   bprint( "wetsuit cheat\n" );
-	};
+	bprint( "wetsuit cheat\n" );
+};
 
 //MED
 void() EmpathyShieldsCheat =
-	{
-   if (deathmatch || coop)
+{
+	if (deathmatch || coop)
 		return;
-   self.items2 = self.items2 | HIP_IT_EMPATHY_SHIELDS;
-   self.empathy_time = 1;
-   self.empathy_finished = time + 30;
-   bprint( "empathy shields cheat\n" );
-	};
+
+	if (EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
+
+	self.items2 = self.items2 | HIP_IT_EMPATHY_SHIELDS;
+	self.empathy_time = 1;
+	self.empathy_finished = time + 30;
+	bprint( "empathy shields cheat\n" );
+};
 
 void() DumpEntities =
    {
@@ -2164,22 +2193,29 @@ void() DumpLiveEntities =
    };
 
 void() Genocide =
-   {
+{
    local entity   head;
 
-   if (deathmatch || coop)
+	if (deathmatch || coop)
 		return;
-   bprint("Genocide!\n");
-   head = nextent(world);
-   while (head!=world)
-      {
-      if ((head.health > 0) && (head.flags & FL_MONSTER))
-         {
-         T_Damage(head,world,world,head.health+10);
-         }
-      head = nextent(head);
-      }
-   };
+
+	if (EndlessCastleMapCount > 0)
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
+	bprint("Genocide!\n");
+	head = nextent(world);
+	while (head!=world)
+	{
+		if ((head.health > 0) && (head.flags & FL_MONSTER))
+		{
+			T_Damage(head,world,world,head.health+10);
+		}
+		head = nextent(head);
+	}
+};
 
 float dump_coord;
 void () ToggleDump =
