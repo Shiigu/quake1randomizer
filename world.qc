@@ -1,12 +1,14 @@
 
 void() InitBodyQue;
 void() precache_everything;
+//JIM
+void() InitBulletHoles;
 
 
 void() main =
 {
 	dprint ("main function\n");
-	
+
 // these are just commands the the prog compiler to copy these files
 
 	precache_file ("progs.dat");
@@ -53,35 +55,35 @@ void() main =
 	precache_file ("gfx/dim_tcp.lmp");
 	precache_file ("gfx/dim_mult.lmp");
 	precache_file ("gfx/mainmenu.lmp");
-	
+
 	precache_file ("gfx/box_tl.lmp");
 	precache_file ("gfx/box_tm.lmp");
 	precache_file ("gfx/box_tr.lmp");
-	
+
 	precache_file ("gfx/box_ml.lmp");
 	precache_file ("gfx/box_mm.lmp");
 	precache_file ("gfx/box_mm2.lmp");
 	precache_file ("gfx/box_mr.lmp");
-	
+
 	precache_file ("gfx/box_bl.lmp");
 	precache_file ("gfx/box_bm.lmp");
 	precache_file ("gfx/box_br.lmp");
-	
+
 	precache_file ("gfx/sp_menu.lmp");
 	precache_file ("gfx/ttl_sgl.lmp");
 	precache_file ("gfx/ttl_main.lmp");
 	precache_file ("gfx/ttl_cstm.lmp");
-	
+
 	precache_file ("gfx/mp_menu.lmp");
-	
+
 	precache_file ("gfx/netmen1.lmp");
 	precache_file ("gfx/netmen2.lmp");
 	precache_file ("gfx/netmen3.lmp");
 	precache_file ("gfx/netmen4.lmp");
 	precache_file ("gfx/netmen5.lmp");
-	
+
 	precache_file ("gfx/sell.lmp");
-	
+
 	precache_file ("gfx/help0.lmp");
 	precache_file ("gfx/help1.lmp");
 	precache_file ("gfx/help2.lmp");
@@ -105,6 +107,9 @@ void() main =
 	precache_sound ("ambience/water1.wav");
 	precache_sound ("ambience/wind2.wav");
 
+//MED
+//Added Hipnotic Pack
+/*
 // shareware
 	precache_file ("maps/start.bsp");
 
@@ -153,6 +158,28 @@ void() main =
 	precache_file2 ("maps/dm4.bsp");
 	precache_file2 ("maps/dm5.bsp");
 	precache_file2 ("maps/dm6.bsp");
+*/
+	precache_file ("maps/start.bsp");
+
+	precache_file ("maps/hip1m1.bsp");
+	precache_file ("maps/hip1m2.bsp");
+	precache_file ("maps/hip1m3.bsp");
+	precache_file ("maps/hip1m4.bsp");
+	precache_file ("maps/hip1m5.bsp");
+	precache_file ("maps/hip2m1.bsp");
+	precache_file ("maps/hip2m2.bsp");
+	precache_file ("maps/hip2m3.bsp");
+	precache_file ("maps/hip2m4.bsp");
+	precache_file ("maps/hip2m5.bsp");
+	precache_file ("maps/hip2m6.bsp");
+	precache_file ("maps/hip3m1.bsp");
+	precache_file ("maps/hip3m2.bsp");
+	precache_file ("maps/hip3m3.bsp");
+	precache_file ("maps/hip3m4.bsp");
+	precache_file ("maps/hipdm1.bsp");
+	precache_file ("maps/hipend.bsp");
+	precache_file ("maps/zoo.bsp");
+	precache_file ("maps/mark.bsp");
 };
 
 
@@ -170,10 +197,14 @@ World Types:
 2: base
 */
 //=======================
+
 void() worldspawn =
 {
-	lastspawn = world;
+   lastspawn = world;
 	InitBodyQue ();
+
+	//JIM
+	InitBulletHoles();
 
 // custom map attributes
 	if (self.model == "maps/e1m8.bsp")
@@ -181,17 +212,17 @@ void() worldspawn =
 	else
 		cvar_set ("sv_gravity", "800");
 
-// the area based ambient sounds MUST be the first precache_sounds
+	// the area based ambient sounds MUST be the first precache_sounds
 
 	precache_everything();
-// player precaches	
+	// player precaches
 	W_Precache ();			// get weapon precaches
 
-// sounds used from C physics code
+	// sounds used from C physics code
 	precache_sound ("demon/dland2.wav");		// landing thud
 	precache_sound ("misc/h2ohit1.wav");		// landing splash
 
-// setup precaches allways needed
+	// setup precaches allways needed
 	precache_sound ("items/itembk2.wav");		// item respawn sound
 	precache_sound ("player/plyrjmp8.wav");		// player jump
 	precache_sound ("player/land.wav");			// player landing
@@ -239,7 +270,7 @@ void() worldspawn =
 	precache_sound ("player/death4.wav");
 	precache_sound ("player/death5.wav");
 
-// ax sounds	
+// ax sounds
 	precache_sound ("weapons/ax1.wav");			// ax swoosh
 	precache_sound ("player/axhit1.wav");		// ax hit meat
 	precache_sound ("player/axhit2.wav");		// ax hit world
@@ -256,9 +287,24 @@ void() worldspawn =
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
 
+	//MED 10/21/96 added flies sound
+	precache_sound ("misc/flys.wav");
+	//MED 01/13/97 added explosion sounds
+	precache_sound ("misc/shortexp.wav");
+	precache_sound ("misc/longexpl.wav");
+	precache_sound ("misc/foot1.wav");
+	precache_sound ("misc/foot2.wav");
+	precache_sound ("misc/foot3.wav");
+	precache_sound ("misc/foot4.wav");
+	precache_sound ("misc/foot5.wav");
+	precache_sound ("misc/foot6.wav");
+	precache_sound ("misc/foot7.wav");
+
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
+	//MED 12/03/96 added player with hammer
+	precache_model ("progs/playham.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
@@ -273,12 +319,19 @@ void() worldspawn =
 	precache_model ("progs/v_shot2.mdl");
 	precache_model ("progs/v_nail2.mdl");
 	precache_model ("progs/v_rock2.mdl");
+	//MED 10/31/96 added precache for hip view models
+	precache_model ("progs/v_laserg.mdl");
+	precache_model ("progs/v_hammer.mdl");
+	precache_model ("progs/v_prox.mdl");
+	precache_model ("progs/proxbomb.mdl");
 
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun
 	precache_model ("progs/bolt3.mdl");		// for boss shock
 	precache_model ("progs/lavaball.mdl");	// for testing
-	
+	//MED 10/18/96 added precache for laser cannon
+	precache_model ("progs/lasrspik.mdl");
+
 	precache_model ("progs/missile.mdl");
 	precache_model ("progs/grenade.mdl");
 	precache_model ("progs/spike.mdl");
@@ -289,7 +342,7 @@ void() worldspawn =
 	precache_model ("progs/zom_gib.mdl");
 
 	precache_model ("progs/v_light.mdl");
-	
+
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -297,44 +350,52 @@ void() worldspawn =
 
 	// 0 normal
 	lightstyle(0, "m");
-	
+
 	// 1 FLICKER (first variety)
 	lightstyle(1, "mmnmmommommnonmmonqnmmo");
-	
+
 	// 2 SLOW STRONG PULSE
 	lightstyle(2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
+
 	// 3 CANDLE (first variety)
 	lightstyle(3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
+
 	// 4 FAST STROBE
 	lightstyle(4, "mamamamamama");
-	
+
 	// 5 GENTLE PULSE 1
 	lightstyle(5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
+
 	// 6 FLICKER (second variety)
 	lightstyle(6, "nmonqnmomnmomomno");
-	
+
 	// 7 CANDLE (second variety)
 	lightstyle(7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
+
 	// 8 CANDLE (third variety)
 	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
+
 	// 9 SLOW STROBE (fourth variety)
 	lightstyle(9, "aaaaaaaazzzzzzzz");
-	
+
 	// 10 FLUORESCENT FLICKER
 	lightstyle(10, "mmamammmmammamamaaamammma");
 
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	lightstyle(11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-	
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing
 	lightstyle(63, "a");
+
+//JIM
+	StopEarthQuake();
+//MED
+   if (cvar("crosshair") == 2)
+      footsteps = 1;
+   else
+      footsteps = 0;
 };
 
 void() StartFrame =
@@ -369,7 +430,7 @@ void() bodyque =
 void() InitBodyQue =
 {
 	local entity	e;
-	
+
 	bodyque_head = spawn();
 	bodyque_head.classname = "bodyque";
 	bodyque_head.owner = spawn();

@@ -4,7 +4,7 @@ Used as a positional target for spotlights, etc.
 */
 void() info_null =
 {
-	remove(self);
+	SUB_Remove();
 };
 
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
@@ -42,7 +42,7 @@ void() light =
 {
 	if (!self.targetname)
 	{	// inert light
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -206,7 +206,7 @@ local entity	fireball;
 void() fire_touch =
 {
 	T_Damage (other, self, self, 20);
-	remove(self);
+	SUB_Remove();
 };
 
 //============================================================================
@@ -252,7 +252,7 @@ void() misc_explobox =
 		dprint ("item fell out of level at ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
-		remove(self);
+		SUB_Remove();
 	}
 };
 
@@ -284,7 +284,7 @@ void() misc_explobox2 =
 		dprint ("item fell out of level at ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
-		remove(self);
+		SUB_Remove();
 	}
 };
 
@@ -380,7 +380,7 @@ void() air_bubbles =
 {
 	if (deathmatch)
 	{
-		remove (self);
+		SUB_Remove();
 		return;
 	}
 	precache_model ("progs/s_bubble.spr");
@@ -428,7 +428,7 @@ local entity	bubble;
 	self.frame = 1;
 	self.cnt = 10;
 	if (self.waterlevel != 3)
-		remove (self);
+		SUB_Remove();
 };
 
 void() bubble_remove =
@@ -438,7 +438,7 @@ void() bubble_remove =
 //		dprint ("bump");
 		return;
 	}
-	remove(self);
+	SUB_Remove();
 };
 
 void() bubble_bob =
@@ -450,7 +450,7 @@ local vector	vtmp1, modi;
 	if (self.cnt == 4)
 		bubble_split();
 	if (self.cnt == 20)
-		remove(self);
+		SUB_Remove();
 
 	rnd1 = self.velocity_x + (-10 + (random() * 20));
 	rnd2 = self.velocity_y + (-10 + (random() * 20));

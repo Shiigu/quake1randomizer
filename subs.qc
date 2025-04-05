@@ -1,7 +1,7 @@
 
 
 float(float lower, float upper) Random;
-void(entity e, float flying) UnstuckMonster;
+void(entity e, float flying, float cannotTouchSolid) UnstuckMonster;
 void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
 float(entity head, float distance) IsNearAHarmfulLiquidSurface;
@@ -9,6 +9,7 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 float(float playAlertSound) FindTarget;
 float() IsRemastered;
 void(float newCentertime) SetCentertime;
+float(entity mon) IsTiedToATrigger;
 .string Converted;  // "" if it isn't flagged for conversion, "0" if it's flagged but not converted, "1" if it is converte
 .vector oldsize;
 .vector oldmins;
@@ -16,6 +17,8 @@ void(float newCentertime) SetCentertime;
 void() SUB_Null = {};
 
 void() SUB_Remove = {remove(self);};
+
+void(entity e) SUB_Remove_Target = { if(e != world) remove(e);};
 
 /*
 QuakeEd only writes a single float for angles (bad idea), so up and down are
@@ -197,7 +200,7 @@ void() DelayThink =
 {
 	activator = self.enemy;
 	SUB_UseTargets ();
-	remove(self);
+	SUB_Remove();
 };
 
 /*
@@ -262,7 +265,7 @@ void() SUB_UseTargets =
 			t = find (t, targetname, self.killtarget);
 			if (!t)
 				return;
-			remove (t);
+			SUB_Remove_Target(t);
 		} while ( 1 );
 	}
 	
@@ -332,7 +335,7 @@ float(float lower, float upper) Random =
 	return floor((rand() * (upper - lower + 1)) + lower);
 };
 
-void(entity e, float flying) UnstuckMonster = 
+void(entity e, float flying, float cannotTouchSolid) UnstuckMonster = 
 {
 	local entity oldself;
 	local float CURRENT_TRY;
@@ -383,14 +386,26 @@ void(entity e, float flying) UnstuckMonster =
 		if(!flying)
 			droptofloor();
 		CURRENT_TRY = CURRENT_TRY + 1;
-		canMove = walkmove(0,0);
+
+		if(cannotTouchSolid)
+		{
+			traceline(self.origin, self.origin + '0 0 0.1', FALSE, self);
+			canMove = !trace_allsolid && !trace_startsolid && !trace_fraction;
+		}
+		else 
+		{	
+			canMove = walkmove(0, 0);
+		}
+
 		if(canMove && !alreadySeesTarget)
 			seesTarget = !FindTarget(FALSE);							// Don't move the monster to where they can already see the player (unless they already could do so)
 		if(canMove && (alreadySeesTarget || !seesTarget))
 		{
-			dprint(" Worked after ");
+			dprint(" Unstucking ");
+			dprint(self.classname);
+			dprint(" worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s) and relocated to (");
+			dprint(" attempt(s) and was relocated to (");
 			dprint(vtos(self.origin));
 			dprint(").\n");
 		}
@@ -451,9 +466,11 @@ void(entity e) UnstuckObject =
 		dropped = droptofloor();
 		if(dropped)
 		{
-			dprint(" Worked after ");
+			dprint(" Unstucking ");
+			dprint(self.classname);
+			dprint(" worked after ");
 			dprint(ftos(CURRENT_TRY));
-			dprint(" attempt(s) and relocated to (");
+			dprint(" attempt(s) and was relocated to (");
 			dprint(vtos(self.origin));
 			dprint(").\n");
 		}
@@ -645,4 +662,44 @@ float() IsRemastered = {
 void(float newCentertime) SetCentertime = {	
 	cvar_set("scr_centertime", ftos(newCentertime));
 	Centertime = newCentertime;
+}
+
+float(entity mon) IsTiedToATrigger = {
+    entity e;
+    if (!mon.target)
+        return FALSE;
+
+    e = world;
+    while ((e = find(e, targetname, mon.target)))
+    {
+        if (!e.classname)
+            continue;
+
+        if (e.classname == "trigger_changelevel" ||
+            e.classname == "trigger_reactivate" ||
+            e.classname == "trigger_multiple" ||
+            e.classname == "trigger_once" ||
+            e.classname == "trigger_relay" ||
+            e.classname == "trigger_secret" ||
+            e.classname == "trigger_counter" ||
+            e.classname == "trigger_teleport" ||
+            e.classname == "trigger_setskill" ||
+            e.classname == "trigger_onlyregistered" ||
+            e.classname == "trigger_hurt" ||
+            e.classname == "trigger_push" ||
+            e.classname == "trigger_monsterjump" ||
+            e.classname == "trigger_damagethreshold" ||
+            e.classname == "trigger_usekey" ||
+            e.classname == "trigger_remove" ||
+            e.classname == "trigger_setgravity" ||
+            e.classname == "trigger_command_use" ||
+            e.classname == "trigger_command" ||
+            e.classname == "trigger_decoy_use" ||
+            e.classname == "trigger_waterfall")
+        {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }

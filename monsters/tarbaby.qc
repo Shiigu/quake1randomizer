@@ -192,7 +192,7 @@ void() monster_tarbaby =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model2 ("progs/tarbaby.mdl");

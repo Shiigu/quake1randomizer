@@ -1,10 +1,14 @@
-void() Randomize;
 void() ConvertEntities;
 void() ConvertToMonster;
-void() ConvertToMonsterOnGroundBiased;
 void() ConvertToMonsterOnGroundUnbiased;
-void() ConvertToMonsterOnWaterBiased;
 void() ConvertToMonsterOnWaterUnbiased;
+void() ConvertToMonsterOnGroundBiased;
+void() ConvertToMonsterOnWaterBiased;
+void() ConvertMonsterSpawn;
+void() ConvertMonsterSpawnOnGroundUnbiased;
+void() ConvertMonsterSpawnOnWaterUnbiased;
+void() ConvertMonsterSpawnOnGroundBiased;
+void() ConvertMonsterSpawnOnWaterBiased;
 void() ConvertToPickupBiased;
 void() ConvertToPickupUnbiased;
 void() ConvertToAmmoBiased;
@@ -28,25 +32,33 @@ float IndexPermutation[6];
 
 // PROBABILITY "TABLES"
 
-float ProbabilitiesMonsterToMonsterGround[12];
-float ProbabilitiesMonsterToMonsterGroundEasy[12]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12 };
-float ProbabilitiesMonsterToMonsterGroundNormal[12]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13 };
-float ProbabilitiesMonsterToMonsterGroundHard[12]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13 };
-float ProbabilitiesMonsterToMonsterGroundNightmare[12]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11 };
-float ProbabilitiesMonsterToMonsterGroundSuperNightmare[12]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13 };
-float ProbabilitiesMonsterToMonsterGroundUnfair[12]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 10, 0 };
-void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
-                                ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre };
+string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_zombie" };
+void() MonsterUnbiasedSpawnFunctions[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToRotfish, ConvertToDeathKnight, ConvertToKnight, 
+    ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToZombie };
 
-float ProbabilitiesMonsterToMonsterWater[11];
-float ProbabilitiesMonsterToMonsterWaterEasy[11]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25 };
-float ProbabilitiesMonsterToMonsterWaterNormal[11]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17 };
-float ProbabilitiesMonsterToMonsterWaterHard[11]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15 };
-float ProbabilitiesMonsterToMonsterWaterNightmare[11]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11 };
-float ProbabilitiesMonsterToMonsterWaterSuperNightmare[11]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8 };
-float ProbabilitiesMonsterToMonsterWaterUnfair[11]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0 };
+float ProbabilitiesMonsterToMonsterGround[15];
+float ProbabilitiesMonsterToMonsterGroundEasy[15]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12, 3, 8, 2 };
+float ProbabilitiesMonsterToMonsterGroundNormal[15]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13, 5, 9, 3 };
+float ProbabilitiesMonsterToMonsterGroundHard[15]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13, 7, 11, 3 };
+float ProbabilitiesMonsterToMonsterGroundNightmare[15]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11, 8, 10, 4 };
+float ProbabilitiesMonsterToMonsterGroundSuperNightmare[15]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13, 10, 8, 6 };
+float ProbabilitiesMonsterToMonsterGroundUnfair[15]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 8, 0, 15, 0, 10 };
+void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
+    ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
+string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
+
+float ProbabilitiesMonsterToMonsterWater[14];
+float ProbabilitiesMonsterToMonsterWaterEasy[14]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25, 3, 8, 2 };
+float ProbabilitiesMonsterToMonsterWaterNormal[14]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17, 5, 9, 3 };
+float ProbabilitiesMonsterToMonsterWaterHard[14]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15, 7, 11, 3 };
+float ProbabilitiesMonsterToMonsterWaterNightmare[14]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11, 8, 10, 4 };
+float ProbabilitiesMonsterToMonsterWaterSuperNightmare[14]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8, 10, 8, 6 };
+float ProbabilitiesMonsterToMonsterWaterUnfair[14]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0, 15, 0, 10 };
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
-                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
+                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
+string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
 
 float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
 float ProbabilityToRemovePickupEasy                 = 0;
@@ -82,25 +94,26 @@ float ProbabilityForSmallAmmoPackNightmare          = 75;
 float ProbabilityForSmallAmmoPackSuperNightmare     = 80;
 float ProbabilityForSmallAmmoPackUnfair             = 100;
 
-float ProbabilitiesForPowerupsNearWater[6];
-float ProbabilitiesForPowerupsNearWaterEasy[6]              = { 20, 20, 20, 15, 20, 5 };
-float ProbabilitiesForPowerupsNearWaterNormal[6]            = { 18, 18, 18, 18, 18, 10 };
-float ProbabilitiesForPowerupsNearWaterHard[6]              = { 17, 17, 17, 17, 17, 15 };
-float ProbabilitiesForPowerupsNearWaterNightmare[6]         = { 15, 15, 15, 20, 15, 20 };
-float ProbabilitiesForPowerupsNearWaterSuperNightmare[6]    = { 12, 12, 12, 24, 12, 28 };
-float ProbabilitiesForPowerupsNearWaterUnfair[6]            = { 5, 5, 5, 30, 10, 45 };
-void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
-string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit" };
+float ProbabilitiesForPowerupsNearWater[9];
+float ProbabilitiesForPowerupsNearWaterEasy[9]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20 };
+float ProbabilitiesForPowerupsNearWaterNormal[9]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15 };
+float ProbabilitiesForPowerupsNearWaterHard[9]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10 };
+float ProbabilitiesForPowerupsNearWaterNightmare[9]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8 };
+float ProbabilitiesForPowerupsNearWaterSuperNightmare[9]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5 };
+float ProbabilitiesForPowerupsNearWaterUnfair[9]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5 };
+void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
+string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring" };
 
-float ProbabilitiesForPowerupsNotNearWater[6];
-float ProbabilitiesForPowerupsNotNearWaterEasy[6]           = { 20, 20, 20, 15, 20, 5 };
-float ProbabilitiesForPowerupsNotNearWaterNormal[6]         = { 19, 19, 19, 19, 19, 5 };
-float ProbabilitiesForPowerupsNotNearWaterHard[6]           = { 18, 18, 18, 18, 18, 10 };
-float ProbabilitiesForPowerupsNotNearWaterNightmare[6]      = { 15, 15, 15, 20, 15, 20 };
-float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[6] = { 12, 12, 12, 24, 12, 28 };
-float ProbabilitiesForPowerupsNotNearWaterUnfair[6]         = { 5, 5, 5, 45, 10, 30 };
-void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased };
-string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "" };
+float ProbabilitiesForPowerupsNotNearWater[8];
+float ProbabilitiesForPowerupsNotNearWaterEasy[8]           = { 20, 20, 20, 15, 20, 5, 20, 20 };
+float ProbabilitiesForPowerupsNotNearWaterNormal[8]         = { 19, 19, 19, 19, 19, 5, 18, 15 };
+float ProbabilitiesForPowerupsNotNearWaterHard[8]           = { 18, 18, 18, 18, 18, 10, 17, 10 };
+float ProbabilitiesForPowerupsNotNearWaterNightmare[8]      = { 15, 15, 15, 20, 15, 20, 15, 8 };
+float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[8] = { 12, 12, 12, 24, 12, 28, 12, 5 };
+float ProbabilitiesForPowerupsNotNearWaterUnfair[8]         = { 5, 5, 5, 45, 10, 30, 8, 5 };
+
+void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring };
+string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring" };
 
 float ProbabilityForWeaponIntoPowerup;
 float ProbabilityForWeaponIntoPowerupEasy           = 3;
@@ -375,7 +388,10 @@ void() ConvertEntities = {
         SpawnedWeapons & IT_SUPER_NAILGUN && 
         SpawnedWeapons & IT_GRENADE_LAUNCHER && 
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING)
+        SpawnedWeapons & IT_LIGHTNING && 
+        SpawnedWeapons & IT_LASER_CANNON && 
+        SpawnedWeapons & IT_PROXIMITY_GUN && 
+        SpawnedWeapons & IT_MJOLNIR)
     {
         SpawnedWeapons = 0;
     }
@@ -390,23 +406,29 @@ void() ConvertEntities = {
         temp.Unstuckable = 0;
         if(temp.classname != "worldspawn")
         {
-            if(temp.flags & FL_MONSTER)
+            if(temp.flags & FL_MONSTER || temp.classname == "trap_spike_mine")
             {
                 dprint("Found ");
                 dprint(temp.classname);
                 dprint(". ");
                 if(RandomizeMonsters)
                 {
-                    if(temp.classname == "monster_oldone" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
+                    if(temp.classname == "monster_oldone" || temp.classname == "monster_armagon" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
                     {
                         if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
                         {
+                            temp.solid = SOLID_NOT;
                             dprint("This Zombie is cruficied. ");
                         }
                         dprint("Didn't flag for Convert.\n");
                     }
                     else 
                     {
+                        if(temp.classname == "trap_spike_mine")
+                        {
+                            temp.angles = '0 0 0';
+                            temp.avelocity = '0 0 0';
+                        }
                         temp.Converted = "0";
                         temp.Unstuckable = 1;
                         temp.think = SUB_Null;
@@ -490,7 +512,8 @@ void() ConvertEntities = {
                 }
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
-                || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage")
+                || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage"
+                || temp.classname == "item_artifact_wetsuit" || temp.classname == "item_hornofconjuring" || temp.classname == "item_artifact_empathy_shields")
                 {
                     if(RandomizePowerups)
                     {
@@ -519,7 +542,8 @@ void() ConvertEntities = {
                 }
                 else if(temp.classname == "weapon_supershotgun" || temp.classname == "weapon_nailgun"
                 || temp.classname == "weapon_supernailgun" || temp.classname == "weapon_grenadelauncher"
-                || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning")
+                || temp.classname == "weapon_rocketlauncher" || temp.classname == "weapon_lightning"
+                || temp.classname == "weapon_laser_gun" || temp.classname == "weapon_mjolnir" || temp.classname == "weapon_proximity_gun")
                 {
                     if(RandomizeWeaponsAndAmmo)
                     {
@@ -545,6 +569,25 @@ void() ConvertEntities = {
                         temp.nextClassname = self.classname;
                         dprint("Ignored due to randomizer settings.\n");
                     }
+                }                
+            }
+            else if(temp.classname == "func_spawn" || temp.classname == "func_spawn_small")
+            {
+                dprint("Found ");
+                dprint(temp.classname);
+                dprint(". ");
+                if(RandomizeMonsters)
+                {
+                    temp.Converted = "0";
+                    temp.think = ConvertMonsterSpawn;
+                    temp.nextthink = time;
+                    dprint("Flagged as a Monster Spawn.\n");
+                }
+                else
+                {
+                    temp.Converted = "1";
+                    temp.nextClassname = self.classname;
+                    dprint("Ignored due to randomizer settings.\n");
                 }
             }
         }
@@ -553,8 +596,24 @@ void() ConvertEntities = {
 	}
     if(temp == world || i < MAX_PER_CALL)
     {
-        remove(Placeholder);
+        SUB_Remove_Target(Placeholder);
         dprint("----- Finished ConvertEntities -----\n");
+        if(EndlessCastleMapCount > 0)
+        {
+            if(world.model == "maps/end.bsp")
+                nextmap = PickNextLevel();
+            else
+            {
+                local entity temp;
+                temp = find(world, classname, "trigger_changelevel");
+                while (temp != world)
+                {
+                    temp.map = PickNextLevel();
+                    temp = find(temp, classname, "trigger_changelevel");
+                }
+            }
+            PrintCurrentLevelCycle();
+        }
     }
     else
     {
@@ -565,7 +624,7 @@ void() ConvertEntities = {
 
 
 // Converts a monster from one type to another randomly.
-// Chances are completely even
+// Chance depends on whether Biased Mode is on, and whether the monster is on water.
 void() ConvertToMonster = {
     if(pointcontents(self.origin) != CONTENT_EMPTY)
     {
@@ -592,37 +651,114 @@ void() ConvertToMonster = {
     self.nextthink = time;
 };
 
-// To convert a monster present in ground. Prevents spawning Rotfish in ground.
+// To convert a monster present in ground.
 // Every monster has an equal chance to be appear.
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundUnbiased = {
     local float rng;
-    rng = Random(1, 12);
-    self.think = MonsterGroundToGroundConverters[rng - 1];
+    rng = Random(1, MonsterUnbiasedClassnames.length);
+    if(IsTiedToATrigger(self)) {
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+    }
+    else {        
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+    }
+    while(MonsterUnbiasedSpawnFunctions[rng] == ConvertToRotfish)
+    {
+        if(IsTiedToATrigger(self)) {
+            rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+        }
+        else {        
+            rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+        }
+    }
+    self.touch = SUB_Null;
+    self.th_stand = SUB_Null;
+    self.th_walk = SUB_Null;
+    self.th_run = SUB_Null;
+    self.th_melee = SUB_Null;
+    self.th_missile = SUB_Null;
+    self.th_pain = SUB_Null;
+    self.use = SUB_Null;
+    self.charmed = FALSE;
+    self.think = MonsterUnbiasedSpawnFunctions[rng - 1];
     self.nextthink = time;
 };
 
 // To convert a monster present in water.
 // Every monster has an equal chance to be appear.
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, ConvertToZombie,
-                                ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish };
-    rng = Random(1, 13);
-    self.think = Converters[rng - 1];
+    if(IsTiedToATrigger(self)) {
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
+    }
+    else {        
+        rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
+    }
+    self.touch = SUB_Null;
+    self.th_stand = SUB_Null;
+    self.th_walk = SUB_Null;
+    self.th_run = SUB_Null;
+    self.th_melee = SUB_Null;
+    self.th_missile = SUB_Null;
+    self.th_pain = SUB_Null;
+    self.use = SUB_Null;
+    self.charmed = FALSE;
+    self.think = MonsterUnbiasedSpawnFunctions[rng - 1];
     self.nextthink = time;
 };
 
-// To convert a monster present in ground. Prevents spawning Rotfish in ground (because they can't move there).
+// To convert a monster present in ground.
 // Monsters have an arbitrarily "fair" chance to appear.
+// Prevents spawning Rotfish in ground (because they can't move there).
+// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundBiased = {
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
+
     amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-    rng = Random(1, 100);
+    distanceToPlayer = vlen(self.origin - playerPosition);
+    
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
+    {
+        if(MonsterGroundToGroundClassnames[i] == "trap_spike_mine" && distanceToPlayer < 128)
+        {
+            preventSpikeMines = 1;
+            dprint("Monster at ");
+            dprint(vtos(self.origin));
+            dprint(" is too close to the player at ");
+            dprint(vtos(playerPosition));
+            dprint(" to spawn a Spike Mine in.\n");
+        }
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        {
+            if(IsTiedToATrigger(self))
+            {
+                zombieId = i;
+                preventZombies = 1;
+                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
+                dprint("Monster at ");
+                dprint(vtos(self.origin));
+                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+            }
+        }
+        else
+        {
+            maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterGround[i];
+        }
+    }
+    if(preventSpikeMines)
+        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length - 1;
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;
+    rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
     i = 0;
-    while(!DONE && minrng < 100 && i < amountOfChoices)
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
         if(ProbabilitiesMonsterToMonsterGround[i] > 0)
         {
@@ -636,20 +772,60 @@ void() ConvertToMonsterOnGroundBiased = {
         }
         i++;
     }
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
 };
 
 // To convert a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
 // Monsters have an arbitrarily "fair" chance to appear.
+// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterBiased = {
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
+
+    distanceToPlayer = vlen(self.origin - playerPosition);
     amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-    rng = Random(1, 100);
+    
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
+    {
+        if(MonsterWaterToWaterClassnames[i] == "trap_spike_mine" && distanceToPlayer < 128)
+        {
+            preventSpikeMines = 1;
+            dprint("Monster at ");
+            dprint(vtos(self.origin));
+            dprint(" is too close to the player at ");
+            dprint(vtos(playerPosition));
+            dprint(" to spawn a Spike Mine in.\n");
+        }
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        {
+            if(IsTiedToATrigger(self))
+            {
+                zombieId = i;
+                preventZombies = 1;
+                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
+                dprint("Monster at ");
+                dprint(vtos(self.origin));
+                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+            }
+        }
+        else
+        {
+            maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterWater[i];
+        }
+    }
+    if(preventSpikeMines)
+        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length - 1;
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;        
+    rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
     i = 0;
-    while(!DONE && minrng < 100 && i < amountOfChoices)
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
         if(ProbabilitiesMonsterToMonsterWater[i] > 0)
         {
@@ -663,7 +839,130 @@ void() ConvertToMonsterOnWaterBiased = {
         }
         i++;
     }
+    if(preventZombies)
+        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
+};
+
+// Sets a func_spawn for a Monster from one type to another randomly.
+// Chance depends on whether Biased Mode is on, and whether the monster is on water.
+void() ConvertMonsterSpawn = {
+    if(pointcontents(self.origin) != CONTENT_EMPTY)
+    {
+        if (!UnbiasedMode)
+        {
+            self.think = ConvertMonsterSpawnOnWaterBiased;
+        }
+        else
+        {
+            self.think = ConvertMonsterSpawnOnWaterUnbiased;
+        }
+    }
+    else
+    {
+        if (!UnbiasedMode)
+        {
+            self.think = ConvertMonsterSpawnOnGroundBiased;
+        }
+        else
+        {
+            self.think = ConvertMonsterSpawnOnGroundUnbiased;
+        }
+    }
+    self.nextthink = time;
+};
+
+// To set a func_spawn for a monster present in ground.
+// Every monster has an equal chance to be appear.
+void() ConvertMonsterSpawnOnGroundUnbiased = {
+    local float rng;
+    rng = Random(1, MonsterUnbiasedClassnames.length);
+    self.Converted = "1";
+    self.think = SUB_Null;
+    self.spawnfunction = MonsterUnbiasedSpawnFunctions[rng - 1];
+    self.spawnclassname = MonsterUnbiasedClassnames[rng - 1];
+    ConvertFuncSpawn(self);
+};
+
+// To set a func_spawn for a monster present in water.
+// Every monster has an equal chance to be appear.
+void() ConvertMonsterSpawnOnWaterUnbiased = {
+    local float rng;
+    self.Converted = "1";
+    self.think = SUB_Null;
+    rng = Random(1, MonsterUnbiasedClassnames.length);
+    self.spawnfunction = MonsterUnbiasedSpawnFunctions[rng - 1];
+    self.spawnclassname = MonsterUnbiasedClassnames[rng - 1];
+    ConvertFuncSpawn(self);
+};
+
+// To set a func_spawn for a monster present in ground. Prevents spawning Rotfish in ground (because they can't move there).
+// Monsters have an arbitrarily "fair" chance to appear.
+void() ConvertMonsterSpawnOnGroundBiased = {
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
+    self.think = SUB_Null;    
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
+    {
+        maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterGround[i];
+    }
+    amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
+    rng = Random(1, maxpossiblerng);
+    minrng = 0;
+    maxrng = 0;
+    DONE = 0;
+    i = 0;
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
+    {
+        if(ProbabilitiesMonsterToMonsterGround[i] > 0)
+        {
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesMonsterToMonsterGround[i];
+            if(rng >= minrng && rng <= maxrng)
+            {
+                DONE = 1;
+                self.spawnfunction = MonsterGroundToGroundConverters[i];
+                self.spawnclassname = MonsterGroundToGroundClassnames[i];
+            }
+        }
+        i++;
+    }
+    ConvertFuncSpawn(self);
+};
+
+// To set a func_spawn for a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
+// Monsters have an arbitrarily "fair" chance to appear.
+void() ConvertMonsterSpawnOnWaterBiased = {
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices;
+    self.think = SUB_Null;
+    maxpossiblerng = 0;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
+    {
+        maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterWater[i];
+    }
+
+    amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
+    rng = Random(1, maxpossiblerng);
+    minrng = 0;
+    maxrng = 0;
+    DONE = 0;
+    i = 0;
+    while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
+    {
+        if(ProbabilitiesMonsterToMonsterWater[i] > 0)
+        {
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesMonsterToMonsterWater[i];
+            if(rng >= minrng && rng <= maxrng)
+            {
+                DONE = 1;
+                self.spawnfunction = MonsterGroundToGroundConverters[i];
+                self.spawnclassname = MonsterWaterToWaterClassnames[i];
+            }
+        }
+        i++;
+    }
+    ConvertFuncSpawn(self);
 };
 
 // Converts a pickup of one type to another randomly.
@@ -686,7 +985,7 @@ void() ConvertToPickupBiased = {
     {
         local float rngRemove = Random(1, 100);
         if(rngRemove <= ProbabilityToRemovePickup)
-            remove(self);
+            SUB_Remove();
     }
     local float rngType, rngQuality;
     local float ProbabilityForSameType = 90;
@@ -759,7 +1058,7 @@ void() ConvertToAmmoBiased = {
     {
         local float rngRemove = Random(1, 100);
         if(rngRemove <= ProbabilityToRemovePickup)
-            remove(self);
+            SUB_Remove();
     }
     local float AmmoTypeRng, AmmoSizeRng, AmmoPackSize, minrng, maxrng, DONE, i, amountOfChoices;
     AmmoTypeRng = Random(1, 100);
@@ -776,19 +1075,22 @@ void() ConvertToAmmoBiased = {
     self.netname = string_null;
     while(!DONE && minrng < 100 && i < amountOfChoices)
     {
-        minrng = maxrng + 1;
-        maxrng = maxrng + ProbabilitiesAmmoTypes[i];
-        if(AmmoTypeRng >= minrng && AmmoTypeRng <= maxrng)
+        if(ProbabilitiesAmmoTypes[i] > 0)
         {
-            DONE = 1;
-            self.QualityType = AmmoPackSize;
-            self.netname = AmmoNetNames[i];
-            if(!HideInBackpacks)
-                self.think = AmmoTypeConverters[i];
-            else
+            minrng = maxrng + 1;
+            maxrng = maxrng + ProbabilitiesAmmoTypes[i];
+            if(AmmoTypeRng >= minrng && AmmoTypeRng <= maxrng)
             {
-                self.PickupType = i + 1;
-                self.think = ConvertToAmmoBackpack;
+                DONE = 1;
+                self.QualityType = AmmoPackSize;
+                self.netname = AmmoNetNames[i];
+                if(!HideInBackpacks)
+                    self.think = AmmoTypeConverters[i];
+                else
+                {
+                    self.PickupType = i + 1;
+                    self.think = ConvertToAmmoBackpack;
+                }
             }
         }
         i++;
@@ -803,11 +1105,11 @@ void() ConvertToAmmoBiased = {
 };
 
 // Converts a powerup of one type to another randomly.
-// Equal chance for a Megahealth, Red Armor, Pentagram of Protection, Quad Damage, Ring of Shadows or Biosuit
+// Equal chance for a Megahealth, Red Armor, Pentagram of Protection, Quad Damage, Ring of Shadows, Biosuit, Empathy Shields, Wetsuit or Horn of Conjuring
 void() ConvertToPowerupUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit };
-    rng = Random(1, 6);
+    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
+    rng = Random(1, Converters.length);
     if(rng == 4 || rng == 5)
         self.QualityType = 3;
     self.think = Converters[rng - 1];
@@ -823,11 +1125,27 @@ void() ConvertToPowerupBiased = {
     {
         local float rngRemove = Random(1, 100);
         if(rngRemove <= ProbabilityToRemovePickup)
-            remove(self);
+            SUB_Remove();
     }
-    local float rng, minrng, maxrng, DONE, i, amountOfChoices, nearALiquid;
-    nearALiquid = IsNearAHarmfulLiquidSurface(self, 512);
-    rng = Random(1, 100);
+    local float rng, minrng, maxrng, maxpossiblerng, DONE, i, amountOfChoices, nearALiquid;
+    
+    nearALiquid = self.classname == "item_artifact_envirosuit" || self.classname == "item_artifact_wetsuit" || IsNearAHarmfulLiquidSurface(self, 512);
+    maxpossiblerng = 0;
+    if(nearALiquid)
+    {
+        for(i = 0; i < ProbabilitiesForPowerupsNearWater.length; i++)
+        {
+            maxpossiblerng = maxpossiblerng + ProbabilitiesForPowerupsNearWater[i];
+        }
+    }
+    else 
+    {
+        for(i = 0; i < ProbabilitiesForPowerupsNotNearWater.length; i++)
+        {
+            maxpossiblerng = maxpossiblerng + ProbabilitiesForPowerupsNotNearWater[i];
+        }
+    }
+    rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
     DONE = 0;
@@ -835,37 +1153,40 @@ void() ConvertToPowerupBiased = {
     if(nearALiquid)
     {
         amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        while(!DONE && minrng < 100 && i < amountOfChoices)
+        while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
         {
-            minrng = maxrng + 1;
-            maxrng = maxrng + ProbabilitiesForPowerupsNearWater[i];
-            if(rng >= minrng && rng <= maxrng)
+            if(ProbabilitiesForPowerupsNearWater[i] > 0)
             {
-                if(i != 4 && PowerupsNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                minrng = maxrng + 1;
+                maxrng = maxrng + ProbabilitiesForPowerupsNearWater[i];
+                if(rng >= minrng && rng <= maxrng)
                 {
-                    if(!IsNearOneOf(self, PowerupsNearWaterClassnames[i], "", ""))
-                    {                    
-                        DONE = 1;
-                        if(i == 3)                          // ConvertToHealth
-                        {
-                            self.healamount = 100;
-                            self.QualityType = 3;
+                    if(i != 4 && PowerupsNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                    {
+                        if(!IsNearOneOf(self, PowerupsNearWaterClassnames[i], "", ""))
+                        {                    
+                            DONE = 1;
+                            if(i == 3)                          // ConvertToHealth
+                            {
+                                self.healamount = 100;
+                                self.QualityType = 3;
+                            }
+                            self.nextClassname = PowerupsNearWaterClassnames[i];
+                            self.think = PowerupsNearWaterConverters[i];
                         }
-                        self.nextClassname = PowerupsNearWaterClassnames[i];
-                        self.think = PowerupsNearWaterConverters[i];
                     }
-                }
-                else if(i == 4)                             // ConvertToArmor
-                {
-                    if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
-                    {                    
-                        DONE = 1;
-                        self.QualityType = 3;
-                        self.nextClassname = PowerupsNearWaterClassnames[i];
-                        self.think = PowerupsNearWaterConverters[i];
+                    else if(i == 4)                             // ConvertToArmor
+                    {
+                        if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
+                        {                    
+                            DONE = 1;
+                            self.QualityType = 3;
+                            self.nextClassname = PowerupsNearWaterClassnames[i];
+                            self.think = PowerupsNearWaterConverters[i];
+                        }
                     }
+                    break;
                 }
-                break;
             }
             i++;
         }
@@ -873,50 +1194,53 @@ void() ConvertToPowerupBiased = {
     else
     {
         amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        while(!DONE && minrng < 100 && i < amountOfChoices)
+        while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
         {
-            minrng = maxrng + 1;
-            maxrng = maxrng + ProbabilitiesForPowerupsNotNearWater[i];
-            if(rng >= minrng && rng <= maxrng)
+            if(ProbabilitiesForPowerupsNotNearWater[i] > 0)
             {
-                if(i != 4 && i != 5 && PowerupsNotNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                minrng = maxrng + 1;
+                maxrng = maxrng + ProbabilitiesForPowerupsNotNearWater[i];
+                if(rng >= minrng && rng <= maxrng)
                 {
-                    if(!IsNearOneOf(self, PowerupsNotNearWaterClassnames[i], "", ""))
-                    {                    
-                        DONE = 1;
-                        if(i == 3)                          // ConvertToHealth
-                        {
-                            self.healamount = 100;
-                            self.QualityType = 3;
+                    if(i != 4 && i != 5 && PowerupsNotNearWaterClassnames[i] != "")  // Not ConvertToArmor
+                    {
+                        if(!IsNearOneOf(self, PowerupsNotNearWaterClassnames[i], "", ""))
+                        {                    
+                            DONE = 1;
+                            if(i == 3)                          // ConvertToHealth
+                            {
+                                self.healamount = 100;
+                                self.QualityType = 3;
+                            }
+                            self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                            self.think = PowerupsNotNearWaterConverters[i];
                         }
-                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
-                        self.think = PowerupsNotNearWaterConverters[i];
                     }
-                }
-                else if(i == 4)                             // ConvertToArmor
-                {
-                    if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
-                    {                    
-                        DONE = 1;
-                        self.QualityType = 3;
-                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
-                        self.think = PowerupsNotNearWaterConverters[i];
-                    }
-                }
-                else if(i == 5)
-                {
-                    if(RandomizeWeaponsAndAmmo)
+                    else if(i == 4)                             // ConvertToArmor
                     {
-                        self.nextClassname = PowerupsNotNearWaterClassnames[i];
-                        self.think = PowerupsNotNearWaterConverters[i];
+                        if(!IsNearOneOf(self, "item_armor1", "item_armor2", "item_armorInv"))
+                        {                    
+                            DONE = 1;
+                            self.QualityType = 3;
+                            self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                            self.think = PowerupsNotNearWaterConverters[i];
+                        }
                     }
-                    else
+                    else if(i == 5)
                     {
-                        self.nextClassname = "item_artifact_super_damage";
-                        self.think = ConvertToQuadDamage;
+                        if(RandomizeWeaponsAndAmmo)
+                        {
+                            self.nextClassname = PowerupsNotNearWaterClassnames[i];
+                            self.think = PowerupsNotNearWaterConverters[i];
+                        }
+                        else
+                        {
+                            self.nextClassname = "item_artifact_super_damage";
+                            self.think = ConvertToQuadDamage;
+                        }
                     }
+                    break;
                 }
-                break;
             }
             i++;
         }
@@ -941,8 +1265,8 @@ void() ConvertToPowerupBiased = {
 // Chances are completely even, even in Biased mode.
 void() ConvertToWeaponUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
+    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt, ConvertToLaserCannon, ConvertToProximityGun, ConvertToMjolnir };
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
     rng = Random(1, 6);
     if(!HideInBackpacks)
         self.think = Converters[rng - 1];
@@ -956,27 +1280,30 @@ void() ConvertToWeaponUnbiased = {
 
 // Creates a "bag" of six randomly permutated weapons
 void() CreateWeaponPermutation = {
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
-    local float numbers[] = { 0, 1, 2, 3, 4, 5 };
-    local float shuffledNumbers[6];
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local float numbers[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    local float shuffledNumbers[numbers.length];
     local float rng, count, i, j, shuffled;
-    count = 6;
+    count = numbers.length;
     // If the player owns SOME of the spawnable weapons, but not all of them, place them first in the shuffled list because they will be skipped
     if(SpawnedWeapons && !(SpawnedWeapons & IT_SUPER_SHOTGUN && 
         SpawnedWeapons & IT_NAILGUN && 
         SpawnedWeapons & IT_SUPER_NAILGUN && 
         SpawnedWeapons & IT_GRENADE_LAUNCHER && 
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING))
+        SpawnedWeapons & IT_LIGHTNING && 
+        SpawnedWeapons & IT_LASER_CANNON && 
+        SpawnedWeapons & IT_PROXIMITY_GUN && 
+        SpawnedWeapons & IT_MJOLNIR))
     {
         rng = 0;
         shuffled = 1;
-        for(j = 0; j < 6 && shuffled; j++)
+        for(j = 0; j < numbers.length && shuffled; j++)
         {
             shuffled = 0;
             for(i = 0; i < count; i++)
             {
-                if(rng < 6)
+                if(rng < numbers.length)
                 {
                     if(SpawnedWeapons & PickupTypes[i])
                     {
@@ -991,7 +1318,7 @@ void() CreateWeaponPermutation = {
             }
         }
     }
-    for(i = (6 - count); i < 5; i++)
+    for(i = (numbers.length - count); i < 5; i++)
     {
         rng = Random(0, (count - 1));
         shuffledNumbers[i] = numbers[rng];
@@ -1000,7 +1327,7 @@ void() CreateWeaponPermutation = {
         count = count - 1;
     }
     shuffledNumbers[i] = numbers[count - 1];
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < numbers.length; i++)
         IndexPermutation[i] = shuffledNumbers[i];
 };
 
@@ -1014,7 +1341,7 @@ void() ConvertToWeaponBiased = {
     {
         local float rngRemove = Random(1, 100);
         if(rngRemove <= ProbabilityToRemovePickup)
-            remove(self);
+            SUB_Remove();
     }
     local float rng;
     if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
@@ -1022,7 +1349,10 @@ void() ConvertToWeaponBiased = {
         SpawnedWeapons & IT_SUPER_NAILGUN && 
         SpawnedWeapons & IT_GRENADE_LAUNCHER && 
         SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING)
+        SpawnedWeapons & IT_LIGHTNING && 
+        SpawnedWeapons & IT_LASER_CANNON && 
+        SpawnedWeapons & IT_PROXIMITY_GUN && 
+        SpawnedWeapons & IT_MJOLNIR)
     {
         rng = Random(1, 100);
         if(RandomizePowerups && rng <= 50)
@@ -1063,21 +1393,21 @@ void() ConvertToWeaponBiased = {
     }
     
     local float i, currentSurface, isValidSurface;
-    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt };
-    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING };
-    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning" };
-    local float WeaponPermutation[6];
-    local void() ConvertersPermutation[6];
-    for(i = 0; i < 6; i++)
+    local void() Converters[] = { ConvertToDoubleBarrelledShotgun, ConvertToNailgun, ConvertToSuperNailgun, ConvertToGrenadeLauncher, ConvertToRocketLauncher, ConvertToThunderbolt, ConvertToLaserCannon, ConvertToProximityGun, ConvertToMjolnir };
+    local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning", "weapon_laser_gun", "weapon_proximity_gun", "weapon_mjolnir" };
+    local float WeaponPermutation[Converters.length];
+    local void() ConvertersPermutation[Converters.length];
+    for(i = 0; i < Converters.length; i++)
     {
         ConvertersPermutation[i] = Converters[IndexPermutation[i]];
         WeaponPermutation[i] = PickupTypes[IndexPermutation[i]];
     }
     local float PickedWeapon;
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < Converters.length; i++)
     {
         PickedWeapon = WeaponPermutation[i];
-        if(PickedWeapon != IT_LIGHTNING)
+        if(PickedWeapon != IT_LIGHTNING && PickedWeapon != IT_MJOLNIR)
             isValidSurface = 1;
         else
         {
@@ -1101,7 +1431,7 @@ void() ConvertToWeaponBiased = {
             }
         }
     }
-    if(i == 6) 
+    if(i == Converters.length) 
     {
         // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
         if(RandomizePowerups)

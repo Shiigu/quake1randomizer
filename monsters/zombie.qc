@@ -145,7 +145,7 @@ void() ZombieGrenadeTouch =
 	{
 		T_Damage (other, self, self.owner, 10 );
 		sound (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM);
-		remove (self);
+		SUB_Remove();
 		return;
 	}
 	sound (self, CHAN_WEAPON, "zombie/z_miss.wav", 1, ATTN_NORM);	// bounce sound
@@ -471,7 +471,7 @@ void() monster_zombie =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 
@@ -489,6 +489,7 @@ void() monster_zombie =
 	precache_sound ("zombie/z_miss.wav");
 	precache_sound ("zombie/z_hit.wav");
 	precache_sound ("zombie/idle_w2.wav");
+
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;

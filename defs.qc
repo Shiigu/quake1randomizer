@@ -300,7 +300,8 @@ float	IT_CELLS				= 2048;
 float	IT_ARMOR1				= 8192;
 float	IT_ARMOR2				= 16384;
 float	IT_ARMOR3				= 32768;
-float	IT_SUPERHEALTH			= 65536;
+//MED 11/02/96 added new hip weapon removed SUPERHEALTH
+//float IT_SUPERHEALTH       = 65536;
 
 float	IT_KEY1					= 131072;
 float	IT_KEY2					= 262144;
@@ -666,6 +667,7 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// values at level start
 												// for coop respawn
 
+
 //============================================================================
 
 //
@@ -679,6 +681,7 @@ void() SUB_CalcAngleMoveDone;
 void() SUB_Null;
 void() SUB_UseTargets;
 void() SUB_Remove;
+void(entity e) SUB_Remove_Target;
 
 //
 //	combat.qc
@@ -692,6 +695,13 @@ float (entity e, float healamount, float ignore) T_Heal; // health function
 float(entity targ, entity inflictor) CanDamage;
 
 // custom/randomizer.qc
+
+void() ConvertToMonsterOnGroundBiased;
+void() ConvertToMonsterOnGroundUnbiased;
+void() ConvertToMonsterOnWaterBiased;
+void() ConvertToMonsterOnWaterUnbiased;
+
+vector playerPosition;
 
 float RandomMode;          						// Contains all the flags for Random Mode. Same value as savedgamecfg cvar.
 float RANDOM_UNBIASED_MODE = 1; 				// If present, it enters unbiased mode where the randomizer will NOT play fair.

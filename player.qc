@@ -226,6 +226,37 @@ void() player_light2   =[$light2, player_light1  ]
 	self.attack_finished = time + 0.2;
 };
 
+//MED 10/18/96 added HIPWEAPONS
+//============================================================================
+
+void()   player_hammer1 =  [32, player_hammer2   ] {self.weaponframe=1;};
+void()   player_hammer2 =  [33, player_hammer3   ] {self.weaponframe=2;};
+void()   player_hammer3 =  [34, player_hammer4   ] {self.weaponframe=3;};
+void()   player_hammer4 =  [35, player_hammer5   ] {self.weaponframe=4;HIP_FireMjolnir();};
+void()   player_hammer5 =  [36, player_hammer6   ] {self.weaponframe=4;};
+void()   player_hammer6 =  [37, player_run ] {self.weaponframe=4;};
+
+void()   player_mjolnir1 =  [38, player_mjolnir2   ] {self.weaponframe=1;};
+void()   player_mjolnir2 =  [39, player_mjolnir3   ] {self.weaponframe=2;};
+void()   player_mjolnir3 =  [40, player_mjolnir4   ] {self.weaponframe=3;};
+void()   player_mjolnir4 =  [41, player_mjolnir5   ] {self.weaponframe=4;HIP_FireMjolnir();};
+void()   player_mjolnir5 =  [42, player_mjolnir6   ] {self.weaponframe=4;};
+void()   player_mjolnir6 =  [43, player_run ] {self.weaponframe=4;};
+
+//============================================================================
+
+//MED 10/18/96 added HIPSWEAPONS
+//void() player_laser1   =[$nailatt1, player_laser2  ] {self.attack_finished = time + 0.1;self.weaponframe=1;self.nextthink = time + 0.09;HIP_FireLaser(0);};
+//void() player_laser2   =[$nailatt2, player_laser4  ] {self.attack_finished = time + 0.1;self.weaponframe=2;self.nextthink = time + 0.09;};
+//void() player_laser3   =[$nailatt1, player_laser4  ] {self.attack_finished = time + 0.1;self.weaponframe=3;self.nextthink = time + 0.09;};
+//void() player_laser4   =[$nailatt2, player_laser5  ] {self.attack_finished = time + 0.1;self.weaponframe=4;self.nextthink = time + 0.09;HIP_FireLaser(1);};
+//void() player_laser5   =[$nailatt1, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=5;self.nextthink = time + 0.09;};
+//void() player_laser6   =[$nailatt2, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=6;self.nextthink = time + 0.09;};
+void() player_laser1   =[$nailatt1, player_laser3  ] {self.attack_finished = time + 0.1;self.weaponframe=1;self.nextthink = time + 0.1;HIP_FireLaser(0);};
+void() player_laser2   =[$nailatt2, player_laser3  ] {self.attack_finished = time + 0.1;self.weaponframe=2;self.nextthink = time + 0.1;};
+void() player_laser3   =[$nailatt2, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=4;self.nextthink = time + 0.1;HIP_FireLaser(1);};
+void() player_laser4   =[$nailatt1, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=5;self.nextthink = time + 0.1;};
+
 //============================================================================
 
 
@@ -356,6 +387,7 @@ void() player_diec1;
 void() player_died1;
 void() player_diee1;
 void() player_die_ax1;
+void() player_die_ham1;
 
 void() DeathBubblesSpawn =
 {
@@ -363,7 +395,7 @@ local entity	bubble;
 //	if (self.owner.waterlevel != 3)
 	if ((self.owner.waterlevel != 3) && (self.owner.health > 0))
 		{
-			remove(self);	// remove bubble spawner
+			SUB_Remove();	// remove bubble spawner
 			return;
 		}
 	bubble = spawn();
@@ -383,7 +415,7 @@ local entity	bubble;
 	self.think = DeathBubblesSpawn;
 	self.air_finished = self.air_finished + 1;
 	if (self.air_finished >= self.bubble_count)
-		remove(self);
+		SUB_Remove();
 };
 
 void(float num_bubbles) DeathBubbles =
@@ -532,20 +564,22 @@ void() GibPlayer =
 void() PlayerDie =
 {
 	local	float	i;
-	
-//	self.items = self.items - (self.items & IT_INVISIBILITY);
-	self.items = self.items - (self.items &
-	(IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+
+	self.items = self.items - (self.items & IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes
 	self.invincible_finished = 0;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
-	self.effects = 0;	// 1998-07-23 Glowing corpse of players which had quad/pentagram until respawn fix by Maddes
-	self.modelindex = modelindex_player;	// don't use eyes
+	//JIM
+	self.wetsuit_finished = 0;
+	self.modelindex = modelindex_player;   // don't use eyes
+	//JIM
+	self.empathy_finished = 0;
+	self.items2 = self.items2 - (self.items2 & HIP_IT_EMPATHY_SHIELDS);
 
 	if (deathmatch || coop)
 		DropBackpack();
-	
+
 	self.weaponmodel="";
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
@@ -562,20 +596,27 @@ void() PlayerDie =
 	}
 
 	DeathSound();
-	
+
 	self.angles_x = 0;
 	self.angles_z = 0;
-	
+
 	if (self.weapon == IT_AXE)
 	{
 		player_die_ax1 ();
 		return;
 	}
-	
+   //MED 12/04/96
+   else if (self.weapon == IT_MJOLNIR)
+      {
+      self.modelindex = modelindex_hammer; // use hammer model
+      player_die_ham1();
+      return;
+      }
+
 	i = cvar("temp1");
 	if (!i)
 		i = 1 + floor(random()*6);
-	
+
 	if (i == 1)
 		player_diea1();
 	else if (i == 2)
@@ -668,3 +709,12 @@ void()	player_die_ax6	=	[	$axdeth6,	player_die_ax7	] {};
 void()	player_die_ax7	=	[	$axdeth7,	player_die_ax8	] {};
 void()	player_die_ax8	=	[	$axdeth8,	player_die_ax9	] {};
 void()	player_die_ax9	=	[	$axdeth9,	player_die_ax9	] {PlayerDead();};
+
+void()   player_die_ham1 =  [ 24 ,   player_die_ham2 ] {};
+void()   player_die_ham2 =  [ 25 ,   player_die_ham3 ] {};
+void()   player_die_ham3 =  [ 26 ,   player_die_ham4 ] {};
+void()   player_die_ham4 =  [ 27 ,   player_die_ham5 ] {};
+void()   player_die_ham5 =  [ 28 ,   player_die_ham6 ] {};
+void()   player_die_ham6 =  [ 29 ,   player_die_ham7 ] {};
+void()   player_die_ham7 =  [ 30 ,   player_die_ham8 ] {};
+void()   player_die_ham8 =  [ 31 ,   player_die_ham8 ] {PlayerDead();};

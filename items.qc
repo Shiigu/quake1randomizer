@@ -23,7 +23,7 @@ void() noclass =
 	dprint ("noclass spawned at");
 	dprint (vtos(self.origin));
 	dprint ("\n");
-	remove (self);
+	SUB_Remove();
 };
 
 
@@ -38,7 +38,7 @@ plants the object on the floor
 void() PlaceItem =
 {
 	local vector old, neworigin;
-	local float IS_IN_TELEPORTER;
+	local float IS_IN_TELEPORTER, canMove;
 
 	self.mdl = self.model;		// so it can be restored on respawn
 	self.flags = FL_ITEM;		// make extra wide
@@ -79,15 +79,13 @@ void() PlaceItem =
 		
 		if (!droptofloor())
 		{
-			self.origin_x = old_x;
-			self.origin_y = old_y;
-			self.origin_z = old_z;
+            setorigin(self, old);
 			dprint ("\nUnstuck failed. Bonus item ");
 			dprint (self.classname);
 			dprint (" removed from level at ");
 			dprint (vtos(self.origin));
 			dprint ("\n");
-			remove(self);
+			SUB_Remove();
 			return;
 		}
 	}
@@ -222,7 +220,6 @@ void() health_touch =
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2)
 	{
-		other.items = other.items | IT_SUPERHEALTH;
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
 		self.owner = other;
@@ -255,10 +252,6 @@ void() item_megahealth_rot =
 		self.nextthink = time + 1;
 		return;
 	}
-
-// it is possible for a player to die and respawn between rots, so don't
-// just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
 	
 	if (deathmatch == 1)	// deathmatch 2 is silly old rules
 	{
@@ -508,6 +501,33 @@ void() weapon_touch =
 		hadammo = other.ammo_rockets;			
 		new = IT_LIGHTNING;
 		other.ammo_cells = other.ammo_cells + 15;
+	}
+	//MED
+	else if (self.classname == "weapon_laser_gun")
+	{
+		if (leave && (other.items & IT_LASER_CANNON) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_LASER_CANNON;
+		other.ammo_cells = other.ammo_cells + 30;
+	}
+//MED
+	else if (self.classname == "weapon_mjolnir")
+	{
+		if (leave && (other.items & IT_MJOLNIR) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_MJOLNIR;
+		other.ammo_cells = other.ammo_cells + 30;
+	}
+//MED
+	else if (self.classname == "weapon_proximity_gun")
+	{
+		if (leave && (other.items & IT_PROXIMITY_GUN) )
+			return;
+		hadammo = other.ammo_rockets;
+		new = IT_PROXIMITY_GUN;
+		other.ammo_rockets = other.ammo_rockets + 6;
 	}
 	else
 		objerror ("weapon_touch: unknown classname");
@@ -1380,7 +1400,7 @@ void() BackpackTouch =
 	stuffcmd (other, "bf\n");
 
 // remove the backpack, change self to the player
-	remove(self);
+	SUB_Remove();
 	self = other;
 
 // change to the weapon
@@ -1544,9 +1564,9 @@ void() DropBackpack =
 
 	item = spawn();
 	item.origin = self.origin - '0 0 24';
-	
+
 	item.items = self.weapon;
-	if (item.items == IT_AXE)
+   	if (item.items == IT_AXE)
 		item.netname = "Axe";
 	else if (item.items == IT_SHOTGUN)
 		item.netname = "Shotgun";
@@ -1562,6 +1582,12 @@ void() DropBackpack =
 		item.netname = "Rocket Launcher";
 	else if (item.items == IT_LIGHTNING)
 		item.netname = "Thunderbolt";
+	else if (item.items == IT_LASER_CANNON)
+		item.netname = "Laser Cannon";
+	else if (item.items == IT_PROXIMITY_GUN)
+		item.netname = "Proximity Gun";
+	else if (item.items == IT_MJOLNIR)
+		item.netname = "Mjolnir";
 	else
 		item.netname = "";
 
@@ -1573,14 +1599,14 @@ void() DropBackpack =
 	item.velocity_z = 300;
 	item.velocity_x = -100 + (random() * 200);
 	item.velocity_y = -100 + (random() * 200);
-	
+
 	item.flags = FL_ITEM;
 	item.solid = SOLID_TRIGGER;
 	item.movetype = MOVETYPE_TOSS;
 	setmodel (item, "progs/backpack.mdl");
 	setsize (item, '-16 -16 0', '16 16 56');
 	item.touch = BackpackTouch;
-	
+
 	item.nextthink = time + 120;	// remove after 2 minutes
 	item.think = SUB_Remove;
 };

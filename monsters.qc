@@ -74,12 +74,11 @@ void() walkmonster_start_go =
 	local string	stemp;
 	local entity	etemp;
 	local vector old, neworigin;
-	local float IS_IN_TELEPORTER;
+	local float IS_IN_TELEPORTER, canMove;
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 
 	if(self.Converted == "1" && self.Unstuckable)
 	{
-
 		IS_IN_TELEPORTER = IsTouchingTeleporter(self);
 
 		if(!IS_IN_TELEPORTER)
@@ -105,19 +104,17 @@ void() walkmonster_start_go =
 			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 		}
 		
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+		if (!walkmove(0, 0) && !IS_IN_TELEPORTER)
 		{
 			old_x = self.origin_x;
 			old_y = self.origin_y;
 			old_z = self.origin_z;
-			UnstuckMonster(self, 0);
+			UnstuckMonster(self, 0, 0);
 		}
 
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+		if (!walkmove(0, 0) && !IS_IN_TELEPORTER)
 		{
-			self.origin_x = old_x;
-			self.origin_y = old_y;
-			self.origin_z = old_z;
+            setorigin(self, old);
 			dprint ("\nUnstuck failed. walkmonster ");
 			dprint (self.classname);
 			dprint (" killed at: ");
@@ -180,7 +177,7 @@ void() flymonster_start_go =
 {
 	local vector old, neworigin;
 	local entity	etemp;
-	local float IS_IN_TELEPORTER;
+	local float IS_IN_TELEPORTER, canMove;
 	self.takedamage = DAMAGE_AIM;
 
 	self.ideal_yaw = self.angles * '0 1 0';
@@ -216,16 +213,16 @@ void() flymonster_start_go =
 			dprint(")");
 			dprint(" seems to be tied to a teleporter. Excluded from unstuck checks.\n");
 		}
-
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+		
+		if (!walkmove(0, 0) && !IS_IN_TELEPORTER)
 		{
 			old_x = self.origin_x;
 			old_y = self.origin_y;
 			old_z = self.origin_z;
-			UnstuckMonster(self, 1);
+			UnstuckMonster(self, 1, 0);
 		}
-
-		if (!walkmove(0,0) && !IS_IN_TELEPORTER)
+		
+		if (!walkmove(0, 0) && !IS_IN_TELEPORTER)
 		{
 			self.origin_x = old_x;
 			self.origin_y = old_y;
@@ -276,7 +273,7 @@ void() swimmonster_start_go =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 

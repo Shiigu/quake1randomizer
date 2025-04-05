@@ -10,8 +10,10 @@ void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
     float rocket_bits, float cell_bits) EncodeParms;
+void(float episode1_flags, float episode2_flags, float episode3_flags, 
+	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
-float	modelindex_eyes, modelindex_player, fixedSeed;
+float	modelindex_eyes, modelindex_player, fixedSeed, modelindex_hammer;
 
 /*
 =============================================================================
@@ -38,21 +40,36 @@ void() SetChangeParms =
 {    
     float item_bits, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
-	float spawnedweapons_bits, weapon_bit;
+	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
     if (self.health <= 0) 
     {
         SetNewParms ();
         return;
     }
+
+	hasLaserCannon = self.items & IT_LASER_CANNON;
+	hasMjolnir = self.items & IT_MJOLNIR;
+	hasProximityGun = self.items & IT_PROXIMITY_GUN;
+
 	// keep only bits 2 through 7
     self.items = self.items & 126;
+
+	if(hasLaserCannon)
+		self.items = self.items | 128;
+	if(hasMjolnir)
+		self.items = self.items | 256;
+	if(hasProximityGun)
+		self.items = self.items | 512;
+
     item_bits = self.items * 0.5;
 
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.max_health = 50;
 	else
 		self.max_health = 100;
+
+	self.gravity = 1.0;
 
 	// cap super health
 	if (self.health > self.max_health)
@@ -61,7 +78,7 @@ void() SetChangeParms =
 	if (self.health < self.max_health / 2)
 	self.health = self.max_health / 2;
 
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
     	health_bits = floor(self.health);
 	else
     	health_bits = floor(self.health - 50);
@@ -80,26 +97,18 @@ void() SetChangeParms =
     EncodeParms(item_bits, health_bits, armor_bits, armor_type,
                 shell_bits, nail_bits, rocket_bits, cell_bits);
 
-	spawnedweapons_bits = floor(SpawnedWeapons / 2);
+    parm4 = self.weapon;
+	parm5 = floor(SpawnedWeapons / 2);
+	parm6 = EndlessCastleMapCount;
+	
+	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleDifficultyLevel);
 
-    // Left shift self.weapon by 6
-    weapon_bit = self.weapon * 64;
-
-    // Combine the two values
-    parm4 = spawnedweapons_bits + weapon_bit;
-
-	parm5 = EndlessCastleEpisode1Flags;
-	parm6 = EndlessCastleEpisode2Flags;
-	parm7 = EndlessCastleEpisode3Flags;
-	parm8 = EndlessCastleEpisode4Flags;
-	parm9 = EndlessCastleMapCount;
-	parm10 = EndlessCastleDifficultyLevel;
-	parm11 = EndlessCastleSeed;
-	parm12 = EndlessCastleElapsedTime;
-	parm13 = EndlessCastleTotalMonsters;
-	parm14 = EndlessCastleDeadMonsters;
-	parm15 = EndlessCastleTotalSecrets;
-	parm16 = EndlessCastleFoundSecrets;
+	parm10 = EndlessCastleSeed;
+	parm11 = EndlessCastleElapsedTime;
+	parm12 = EndlessCastleTotalMonsters;
+	parm13 = EndlessCastleDeadMonsters;
+	parm14 = EndlessCastleTotalSecrets;
+	parm15 = EndlessCastleFoundSecrets;
 };
 
 // Thanks to Tome of Preach of providing a refactor for parms that leaves parm4 to parm16 empty.
@@ -114,6 +123,14 @@ void(float item_bits, float health_bits,
             + 256 * 128 * cell_bits;
     parm3 = item_bits;
 }
+
+void(float episode1_flags, float episode2_flags, float episode3_flags, 
+	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags =
+{
+    parm7 = episode1_flags + 8192 * episode4_flags;
+    parm8 = episode2_flags;
+    parm9 = (difficulty_level & 7) + 8 * episode3_flags;  // 3 bits for difficulty level + 14 bits for episode3_flags
+};
 
 void() SetNewParms =
 {
@@ -142,7 +159,7 @@ void() DecodeLevelParms =
  
     bits = parm2 & 63;
 	
-	if(IsRemastered())
+	if (IsRemastered() && skill == 3 && !deathmatch)
     	self.health = bits;
 	else
     	self.health = bits + 50;
@@ -180,28 +197,45 @@ void() DecodeLevelParms =
     bits = parm2 & 127;
     self.ammo_cells = bits;
  
-    bits = parm3 & 127;
-    self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
- 
+    bits = (parm3 & 1023) * 2;
+	if(bits & 128)
+		self.items = self.items | IT_LASER_CANNON;
+	if(bits & 256)
+		self.items = self.items | IT_MJOLNIR;
+	if(bits & 512)
+		self.items = self.items | IT_PROXIMITY_GUN;
+	
+	bits = parm3 & 127;
 
-	// Assign the extracted values back
-    SpawnedWeapons = (parm4 & 63) * 2;
-    // Extract the current weapon by right shifting parm4 by 6
-    self.weapon = floor(parm4 / 64);
+    self.items = self.items | (bits * 2) | IT_SHOTGUN | IT_AXE;
+
+	self.items2 = 0; // Armagon powerups are never kept
+
+    self.weapon = parm4;
     W_SetCurrentAmmo ();
 
-	EndlessCastleEpisode1Flags = parm5;
-	EndlessCastleEpisode2Flags = parm6;
-	EndlessCastleEpisode3Flags = parm7;
-	EndlessCastleEpisode4Flags = parm8;
-	EndlessCastleMapCount = parm9;
-	EndlessCastleDifficultyLevel = parm10;
-	EndlessCastleSeed = parm11;
-	EndlessCastleElapsedTime = parm12;
-	EndlessCastleTotalMonsters = parm13;
-	EndlessCastleDeadMonsters = parm14;
-	EndlessCastleTotalSecrets = parm15;
-	EndlessCastleFoundSecrets = parm16;
+    SpawnedWeapons = parm5 * 2;
+	EndlessCastleMapCount = parm6;
+	
+	bits = parm7 & 8191;
+    EndlessCastleEpisode1Flags = bits;
+    parm7 = (parm7 - bits) / 8192;
+
+    EndlessCastleEpisode4Flags = parm7 & 255;
+	
+    EndlessCastleEpisode2Flags = parm8 & 8191;
+	
+    EndlessCastleDifficultyLevel = parm9 & 7;
+    parm9 = (parm9 - EndlessCastleDifficultyLevel) / 8;
+
+    EndlessCastleEpisode3Flags = parm9 & 16383;
+
+	EndlessCastleSeed = parm10;
+	EndlessCastleElapsedTime = parm11;
+	EndlessCastleTotalMonsters = parm12;
+	EndlessCastleDeadMonsters = parm13;
+	EndlessCastleTotalSecrets = parm14;
+	EndlessCastleFoundSecrets = parm15;
 };
 
 
@@ -323,8 +357,110 @@ void() ExitIntermission =
 			WriteByte (MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "Despite the awful might of the Elder\nWorld, you have achieved the Rune of\nElder Magic, capstone of all types of\narcane wisdom. Beyond good and evil,\nbeyond life and death, the Rune\npulsates, heavy with import. Patient and\npotent, the Elder Being Shub-Niggurath\nweaves her dire plans to clear off all\nlife from the Earth, and bring her own\nfoul offspring to our world! For all the\ndwellers in these nightmare dimensions\nare her descendants! Once all Runes of\nmagic power are united, the energy\nbehind them will blast open the Gateway\nto Shub-Niggurath, and you can travel\nthere to foil the Hell-Mother's plots\nin person.");
 			return;
-		}
+		}//HIPNOTIC
+		else if (world.model == "maps/hip1m4.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 6);
+			WriteByte (MSG_ALL, 3);
+			WriteByte (MSG_ALL, SVC_FINALE);
+	/*
+			**************************************
+			Deep within the bowels of the
+			Research Facility, you discover the
+			passage that the followers of Quake
+			have used to enter our world.
+			The bastards used some type of
+			gigantic teleporter to overload
+			one of our own slipgates!  As long as
+			this portal exists, Earth will never
+			be safe from Quake's cruel minions.
 
+			If you can find the source of the
+			portal's power, you can shut it
+			down--possibly forever!  With only a
+			moment's consideration for your own
+			safety, you re-enter the dark domain,
+			knowing Hell would be a better fate
+			than experiencing the reign of Quake.
+	*/
+			WriteString (MSG_ALL, "Deep within the bowels of the\nResearch Facility, you discover the\npassage that the followers of Quake\nhave used to enter our world.\nThe bastards used some type of\ngigantic teleporter to overload\none of our own slipgates!  As long as\nthis portal exists, Earth will never\nbe safe from Quake's cruel minions." );
+			//WriteString (MSG_ALL, "If you can find the source of the\nportal's power, you can shut it\ndown--possibly forever!  With only a\nmoment's consideration for your own\nsafety, you re-enter the dark domain,\nknowing Hell would be a better fate\nthan experiencing the reign of Quake." );
+			return;
+		}
+		else if (world.model == "maps/hip2m5.bsp")
+			{
+	/*
+			**************************************
+			After destroying the power generator,
+			you pass beyond the gate of Mortum's
+			Keep.  A wave of nausea suddenly flows
+			over you and you find yourself cast
+			out into a liquid void.  You float
+			lifelessly, yet aware, in a lavender
+			sea of energy.
+
+			After what seems like an eternity,
+			you feel the presence of a diabolical
+			intelligence.  You are held helpless
+			for a moment as your mind is open to
+			that of Armagon--Quake's General and
+			master of this realm.  Recognizing
+			you as the one who foiled his
+			attempt to conquer Earth, a hellish
+			howl fills your mind and blots out
+			all consciousness.  When you awake,
+			you find yourself on the shores of
+			reality, but in a time and place
+			unknown to you.
+	*/
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 6);
+			WriteByte (MSG_ALL, 3);
+
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After destroying the power generator,\nyou pass beyond the gate of Mortum's\nKeep.  A wave of nausea suddenly flows\nover you and you find yourself cast\nout into a liquid void.  You float\nlifelessly, yet aware, in a lavender\nsea of energy." );
+			//WriteString (MSG_ALL, "After what seems like an eternity,\nyou feel the presence of a diabolical\nintelligence.  You are held helpless\nfor a moment as your mind is open to\nthat of Armagon--Quake's General and\nmaster of this realm.  Recognizing\nyou as the one who foiled his\nattempts to conquer Earth, a hellish\nhowl fills your mind and blots out\nall consciousness.  When you awake,\nyou find yourself on the shores of\nreality, but in a time and place\nunknown to you." );
+			return;
+		}
+		else if (world.model == "maps/hipend.bsp")
+		{
+	/*
+			**************************************
+			After the last echoes of Armagon's
+			death yell fade away, you breathe a
+			heavy sigh of relief.  With the loss
+			of his magic, Armagon's fortress
+			begins to collapse.  The rift he
+			created to send his grisly troops
+			through time slowly closes and seals
+			itself forever.  In the chaos that
+			ensues, a wall collapses, revealing
+			one remaining time portal.  With your
+			chances to escape rapidly growing
+			slim, you race for the portal,
+			mindless of your destination.  In a
+			flash of light, you find yourself
+			back at Command HQ, safe and sound.
+
+			Congratulations!  You are victorious!
+			The minions of Quake have once again
+			fallen before your mighty hand.
+			Is this the last you will see of
+			Quake's hellions?
+
+			Only time will tell...
+	*/
+			WriteByte (MSG_ALL, SVC_CDTRACK);
+			WriteByte (MSG_ALL, 2);
+			WriteByte (MSG_ALL, 3);
+
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After the last echoes of Armagon's\ndeath yell fade away, you breathe a\nheavy sigh of relief.  With the loss\nof his magic, Armagon's fortress\nbegins to collapse.  The rift he\ncreated to send his grisly troops\nthrough time slowly closes and seals\nitself forever.  In the chaos that\nensues, a wall collapses, revealing\none remaining time portal.  With your\nchances to escape rapidly growing\nslim, you race for the portal,\nmindless of your destination.  In a\nflash of light, you find yourself\nback at Command HQ, safe and sound." );
+			//WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
+			//intermission_exittime = time + 10000000;  // never allow exit
+			return;
+		}
 		GotoNextMap();
 	}
 	
@@ -340,6 +476,27 @@ void() ExitIntermission =
 		{
 			WriteByte (MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "Now, you have all four Runes. You sense\ntremendous invisible forces moving to\nunseal ancient barriers. Shub-Niggurath\nhad hoped to use the Runes Herself to\nclear off the Earth, but now instead,\nyou will use them to enter her home and\nconfront her as an avatar of avenging\nEarth-life. If you defeat her, you will\nbe remembered forever as the savior of\nthe planet. If she conquers, it will be\nas if you had never been born.");
+			return;
+		}
+
+		//HIPNOTIC
+		if (world.model == "maps/hip1m4.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "If you can find the source of the\nportal's power, you can shut it\ndown--possibly forever!  With only a\nmoment's consideration for your own\nsafety, you re-enter the dark domain,\nknowing Hell would be a better fate\nthan experiencing the reign of Quake." );
+			return;
+		}
+		else if (world.model == "maps/hip2m5.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "After what seems like an eternity,\nyou feel the presence of a diabolical\nintelligence.  You are held helpless\nfor a moment as your mind is open to\nthat of Armagon--Quake's General and\nmaster of this realm.  Recognizing\nyou as the one who foiled his\nattempt to conquer Earth, a hellish\nhowl fills your mind and blots out\nall consciousness.  When you awake,\nyou find yourself on the shores of\nreality, but in a time and place\nunknown to you." );
+			return;
+		}
+		else if (world.model == "maps/hipend.bsp")
+		{
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
+			intermission_exittime = time + 10000000;  // never allow exit
 			return;
 		}
 		
@@ -376,6 +533,11 @@ void() execute_changelevel =
 		{
 			LogRandomizerResults();
 		}
+	}
+
+	if(EndlessCastleMapCount > 0)
+	{
+		PrintCurrentLevelCycle();
 	}
 
 	intermission_running = 1;
@@ -528,7 +690,15 @@ void() ClientKill =
 	set_suicide_frame ();
 	self.modelindex = modelindex_player;
 	self.frags = self.frags - 2;	// extra penalty
-	respawn ();
+	if(EndlessCastleMapCount == 0)
+	{ 
+		respawn ();
+	}
+	else
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+	}
 };
 
 float(vector v) CheckSpawnPoint =
@@ -623,6 +793,7 @@ void() PutClientInServer =
 	spot = SelectSpawnPoint ();
     RandomMode = cvar("savedgamecfg");
 	self.classname = "player";
+
 	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.health = 50;
 	else
@@ -630,11 +801,8 @@ void() PutClientInServer =
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_WALK;
-	self.show_hostile = 0;
-	if (IsRemastered() && skill == 3 && !deathmatch)
-		self.max_health = 50;
-	else
-		self.max_health = 100;
+	self.show_hostile = 0;	
+	self.max_health = self.health;
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
@@ -644,6 +812,14 @@ void() PutClientInServer =
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	//JIM
+	self.wetsuit_finished = 0;
+	//MED
+	self.empathy_finished = 0;
+	//MED
+	self.items2 = 0;
+	self.gravity = 1.0;
+
 
 	DecodeLevelParms ();
 
@@ -663,6 +839,8 @@ void() PutClientInServer =
         (self.items & IT_LIGHTNING);
 	}
 
+	playerPosition = spot.origin;
+
 	Randomize();
 
 	local float currentCenterTime;	
@@ -671,40 +849,32 @@ void() PutClientInServer =
 	if(currentCenterTime == 100000)
 		SetCentertime(2);
 
-	if(EndlessCastleMapCount > 0)
-	{
-		if(world.model == "maps/end.bsp")
-			nextmap = PickNextLevel();
-		else
-		{
-			local entity temp;
-			temp = find(world, classname, "trigger_changelevel");
-			while (temp != world)
-			{
-				temp.map = PickNextLevel();
-				temp = find(temp, classname, "trigger_changelevel");
-			}
-		}
-	}
-
 	W_SetCurrentAmmo ();
 
 	self.attack_finished = time;
 	self.th_pain = player_pain;
 	self.th_die = PlayerDie;
-	
-	self.deadflag = DEAD_NO;
-// paustime is set by teleporters to keep the player from moving a while
-	self.pausetime = 0;
-	
-//	spot = SelectSpawnPoint ();
 
-//	self.origin = spot.origin + '0 0 1';
-	self.origin = self.oldorigin = spot.origin + '0 0 1';	// 1998-07-21 Respawning where player died fix by Robert Field
+	self.deadflag = DEAD_NO;
+	// paustime is set by teleporters to keep the player from moving a while
+	self.pausetime = 0;
+
+	//   spot = SelectSpawnPoint ();
+	
+	setorigin(self, spot.origin + '0 0 1');
+
 	self.angles = spot.angles;
 	self.fixangle = TRUE;		// turn this way immediately
 
-// oh, this is a hack!
+	//JIM
+	// Clear out velocity so you're not launched into the air
+	// when you respawn.
+	self.velocity = '0 0 0';
+
+	// oh, this is a hack!
+	setmodel (self, "progs/playham.mdl");
+	modelindex_hammer = self.modelindex;
+
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
 
@@ -712,13 +882,11 @@ void() PutClientInServer =
 	modelindex_player = self.modelindex;
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-	
+
 	self.view_ofs = '0 0 22';
-	
-	self.velocity = '0 0 0';	// 1998-07-21 Player moves after respawn fix by Xian
 
 	player_stand1 ();
-	
+
 	if (deathmatch || coop)
 	{
 		makevectors(self.angles);
@@ -1094,19 +1262,53 @@ PlayerPreThink
 Called every frame before physics are run
 ================
 */
+void(float num_bubbles) DeathBubbles;
 void() PlayerPreThink =
 {
 	local	float	mspeed, aspeed;
 	local	float	r;
 
+	
+	if (EndlessCastleMapCount > 0 && (self.flags & FL_GODMODE || self.flags & FL_NOTARGET || self.movetype & MOVETYPE_NOCLIP))
+	{
+		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
+		localcmd("map start\n");
+		return;
+	}
+
 	if (intermission_running)
 	{
-		IntermissionThink ();	// otherwise a button could be missed between
+		earthquake_prethink();
+		IntermissionThink ();   // otherwise a button could be missed between
 		return;					// the think tics
 	}
 
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
+
+//JIM
+   // Kill player on Edge of Oblivion
+   if ( ( self.origin_z < -1300 ) && (world.model == "maps/hipdm1.bsp") &&
+      ( self.health > 0 ) )
+      {
+      self.deathtype = "falling";
+
+      if (self.invincible_finished >= time)
+         {
+         self.invincible_finished = 0;
+         self.items = self.items - (self.items & IT_INVULNERABILITY);
+         self.invincible_time = 0;
+			self.invincible_finished = 0;
+         self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+         }
+      T_Damage( self, self, world, self.health + 1000 );
+      }
+
+	//JIM
+//   if (!deathmatch)
+//      {
+      earthquake_prethink();
+//      }
 
 	makevectors (self.v_angle);		// is this still used
 
@@ -1118,6 +1320,53 @@ void() PlayerPreThink =
 		centerprint (self, "\(\=\= Endless Castle \=\=\)\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
 		PrintedEndlessCastleSplash = 1;
 	}
+	//JIM
+	//WETSUIT
+	if (self.wetsuit_finished > time)
+		{
+			mspeed = cvar("sv_maxspeed");
+		if (self.waterlevel==2)
+			{
+				self.velocity = self.velocity * 1.25;
+			}
+		if (self.waterlevel==3)
+			{
+				self.velocity = self.velocity * 1.5;
+			}
+		if(self.waterlevel == 2 || self.waterlevel == 3)
+		{ if(self.velocity_x > mspeed)
+				self.velocity_x = mspeed;
+			if(self.velocity_y > mspeed)
+				self.velocity_y = mspeed;
+			if(self.velocity_z > mspeed)
+				self.velocity_z = mspeed;	
+		}
+      	if (self.waterlevel >= 2)
+         {
+         // play scuba sound
+         if (self.swim_flag < time)
+            {
+            self.swim_flag = time + 7;
+            sound (self, CHAN_BODY, "misc/wetsuit.wav", 1, ATTN_NORM);
+            }
+         //MED 01/17/97
+         else
+            {
+            if (fabs(self.swim_flag - time - 6)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            else if (fabs(self.swim_flag - time - 5.5)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            else if (fabs(self.swim_flag - time - 5)<0.04)
+               {
+               DeathBubbles(1);
+               }
+            }
+         }
+     }
 
 	if (self.waterlevel == 2)
 		CheckWaterJump ();
@@ -1127,7 +1376,7 @@ void() PlayerPreThink =
 		PlayerDeathThink ();
 		return;
 	}
-	
+
 	if (self.deadflag == DEAD_DYING)
 		return;	// dying, so do nothing
 
@@ -1138,11 +1387,11 @@ void() PlayerPreThink =
 	else
 		self.flags = self.flags | FL_JUMPRELEASED;
 
-// teleporters can force a non-moving pause time	
+// teleporters can force a non-moving pause time
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+   	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1181,7 +1430,7 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
 				self.invisible_time = time + 1;
 			}
-			
+
 			if (self.invisible_time < time)
 			{
 				self.invisible_time = time + 1;
@@ -1195,12 +1444,15 @@ void() CheckPowerups =
 			self.invisible_finished = 0;
 			self.invisible_time = 0;
 		}
-		
+
 	// use the eyes
 		self.frame = 0;
 		self.modelindex = modelindex_eyes;
 	}
-	else
+//MED 12/04/96 added mjolnir stuff
+   else if (self.weapon == IT_MJOLNIR)
+      self.modelindex = modelindex_hammer;   // don't use eyes
+   else
 		self.modelindex = modelindex_player;	// don't use eyes
 
 // invincibility
@@ -1216,14 +1468,14 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
 				self.invincible_time = time + 1;
 			}
-			
+
 			if (self.invincible_time < time)
 			{
 				self.invincible_time = time + 1;
 				stuffcmd (self, "bf\n");
 			}
 		}
-		
+
 		if (self.invincible_finished < time)
 		{	// just stopped
 			self.items = self.items - IT_INVULNERABILITY;
@@ -1250,8 +1502,8 @@ void() CheckPowerups =
 				stuffcmd (self, "bf\n");
 				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
 				self.super_time = time + 1;
-			}	  
-			
+			}
+
 			if (self.super_time < time)
 			{
 				self.super_time = time + 1;
@@ -1269,9 +1521,9 @@ void() CheckPowerups =
 			self.effects = self.effects | EF_DIMLIGHT;
 		else
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-	}	
+	}
 
-// suit	
+// suit
 	if (self.radsuit_finished)
 	{
 		self.air_finished = time + 12;		// don't drown
@@ -1286,7 +1538,7 @@ void() CheckPowerups =
 				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
 				self.rad_time = time + 1;
 			}
-			
+
 			if (self.rad_time < time)
 			{
 				self.rad_time = time + 1;
@@ -1300,8 +1552,76 @@ void() CheckPowerups =
 			self.rad_time = 0;
 			self.radsuit_finished = 0;
 		}
-	}	
+	}
 
+//JIM
+// wetsuit
+	if (self.wetsuit_finished)
+	{
+	self.air_finished = time + 12;		// don't drown
+
+	// sound and screen flash when items starts to run out
+	if (self.wetsuit_finished < time + 3)
+		{
+			if (self.wetsuit_time == 1)
+			{
+				sprint (self, "Air supply in Wetsuit is running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+				self.wetsuit_time = time + 1;
+			}
+
+			if (self.wetsuit_time < time)
+			{
+				self.wetsuit_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.wetsuit_finished < time)
+		{	// just stopped
+//MED
+         self.items2 = self.items2 - HIP_IT_WETSUIT;
+			self.wetsuit_time = 0;
+			self.wetsuit_finished = 0;
+		}
+	}
+
+//MED
+// empathy shields
+   if (self.empathy_finished)
+	{
+      // sound and screen flash when items starts to run out
+      if (self.empathy_finished < time + 3)
+		{
+         if (self.empathy_time == 1)
+			{
+            sprint (self, "Empathy Shields are running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+            self.empathy_time = time + 1;
+			}
+
+         if (self.empathy_time < time)
+			{
+            self.empathy_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+      if (self.empathy_finished < time)
+		{	// just stopped
+//MED
+         self.items2 = self.items2 - HIP_IT_EMPATHY_SHIELDS;
+         self.empathy_time = 0;
+         self.empathy_finished = 0;
+		}
+//MED
+      if (self.empathy_finished > time)
+			self.effects = self.effects | EF_DIMLIGHT;
+		else
+			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+   }
 };
 
 
@@ -1318,22 +1638,46 @@ void() PlayerPostThink =
 	local	float	r;
 
 	if (self.view_ofs == '0 0 0')
-		return;		// intermission or finale
+      {
+      earthquake_postthink();
+      return;     // intermission or finale
+      }
+
+	//JIM
+	//WETSUIT
+	if (self.wetsuit_finished > time)
+		{
+		if (self.waterlevel==2)
+			{
+			self.velocity = self.velocity * 0.8;
+			}
+		if (self.waterlevel==3)
+			{
+			self.velocity = self.velocity * 0.66;
+			}
+      }
+
+	//JIM
+//   if (!deathmatch)
+//      {
+      earthquake_postthink();
+//      }
+
 	if (self.deadflag)
-		return;		
+		return;
 
 // do weapon stuff
 
 	W_WeaponFrame ();
 
-// check to see if player landed and play landing sound	
+// check to see if player landed and play landing sound
 	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND) && (self.health > 0))
 	{
 		if (self.watertype == CONTENT_WATER)
 			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
 		else if (self.jump_flag < -650)
 		{
-			T_Damage (self, world, world, 5); 
+			T_Damage (self, world, world, 5);
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 			self.deathtype = "falling";
 		}
@@ -1456,19 +1800,21 @@ void(entity targ, entity attacker) ClientObituary =
 				// killed self
 				attacker.frags = attacker.frags - 1;
 				bprint (targ.netname);
-				
+
 				if (targ.weapon == 64 && targ.waterlevel > 1)
 				{
 					bprint (" discharges into the water.\n");
 					return;
 				}
-				if (targ.weapon == IT_GRENADE_LAUNCHER)
-					bprint (" tries to put the pin back in\n");
-				else
+            	if (targ.weapon == IT_GRENADE_LAUNCHER)
+					bprint (" tries to put the pin back in\n");//JIM
+            	else if (rnum > 0.4 )
 					bprint (" becomes bored with life\n");
+				else
+					bprint (" checks if his weapon is loaded\n");
 				return;
 			}
-			else if ( (teamplay == 2) && (targ.team > 0)&&(targ.team == attacker.team) )
+         else if ( (teamplay == 2) && (targ.team > 0)&&(targ.team == attacker.team) )
 			{
 				if (rnum < 0.25)
 					deathstring = " mows down a teammate\n";
@@ -1483,11 +1829,35 @@ void(entity targ, entity attacker) ClientObituary =
 				attacker.frags = attacker.frags - 1;
 				return;
 			}
-			else
+         else
 			{
 				attacker.frags = attacker.frags + 1;
+//MED 01/19/97
+            if (empathyused == 1)
+               {
+               bprint (targ.netname);
+               if (random()<0.5)
+                  bprint (" shares ");
+               else
+                  bprint (" feels ");
+               bprint (attacker.netname);
+               bprint ("'s pain\n");
+               return;
+               }
 
-				rnum = attacker.weapon;
+//MED 11/18/96
+            if (targ.dmg_inflictor.classname == "proximity_grenade")
+               {
+               bprint (targ.netname);
+               if (random()<0.5)
+                  bprint (" got too friendly with ");
+               else
+                  bprint (" did the rhumba with ");
+               bprint (attacker.netname);
+               bprint ("'s bomb\n");
+               return;
+               }
+            rnum = attacker.weapon;
 				if (rnum == IT_AXE)
 				{
 					deathstring = " was ax-murdered by ";
@@ -1541,7 +1911,26 @@ void(entity targ, entity attacker) ClientObituary =
 					else
 						deathstring2 = "'s shaft\n";
 				}
-				bprint (targ.netname);
+//MED
+            if (rnum == IT_LASER_CANNON)
+				{
+               if (random()<0.5)
+                  {
+                  deathstring = " was toasted by ";
+                  }
+               else
+                  {
+                  deathstring = " was radiated by ";
+                  }
+               deathstring2 = "'s laser\n";
+				}
+//MED
+            if (rnum == IT_MJOLNIR)
+				{
+               deathstring = " was slammed by ";
+               deathstring2 = "'s hammer\n";
+				}
+            bprint (targ.netname);
 				bprint (deathstring);
 				bprint (attacker.netname);
 				bprint (deathstring2);
@@ -1550,10 +1939,50 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 		else
 		{
-			targ.frags = targ.frags - 1;
+			targ.frags = targ.frags - 1;		// killed self
+			rnum = targ.watertype;
+
 			bprint (targ.netname);
 
-			// killed by a montser?
+//JIM
+         if ( attacker.deathtype )
+            {
+            bprint( " " );
+            bprint ( attacker.deathtype );
+            bprint( "\n" );
+            return;
+            }
+
+			if (rnum == -3)
+			{
+				if (random() < 0.5)
+					bprint (" sleeps with the fishes\n");
+				else
+					bprint (" sucks it down\n");
+				return;
+			}
+			else if (rnum == -4)
+			{
+				if (random() < 0.5)
+					bprint (" gulped a load of slime\n");
+				else
+					bprint (" can't exist on slime alone\n");
+				return;
+			}
+			else if (rnum == -5)
+			{
+				if (targ.health < -15)
+				{
+					bprint (" burst into flames\n");
+					return;
+				}
+				if (random() < 0.5)
+					bprint (" turned into hot slag\n");
+				else
+					bprint (" visits the Volcano God\n");
+				return;
+			}
+
 			if (attacker.flags & FL_MONSTER)
 			{
 				if (attacker.classname == "monster_army")
@@ -1588,19 +2017,35 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" was scragged by a Scrag\n");
 				if (attacker.classname == "monster_zombie")
 					bprint (" joins the Zombies\n");
+//MED
+            if (attacker.classname == "monster_gremlin")
+               bprint (" was outsmarted by a Gremlin\n");
+//MED
+            if (attacker.classname == "monster_scourge")
+               bprint (" was stung by a Centroid\n");
+//MED
+			if (attacker.classname == "trap_spike_mine")
+				bprint (" was blasted by a spike mine\n");
+//MED
+            if (attacker.classname == "monster_armagon")
+               bprint (" was outgunned by Armagon\n");
 
 				return;
 			}
-
-			// tricks and traps
 			if (attacker.classname == "explo_box")
 			{
 				bprint (" blew up\n");
 				return;
 			}
 			if (attacker.solid == SOLID_BSP && attacker != world)
-			{	
+			{
 				bprint (" was squished\n");
+				return;
+			}
+			if (targ.deathtype == "falling")
+			{
+				targ.deathtype = "";
+				bprint (" fell to his death\n");
 				return;
 			}
 			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
@@ -1616,46 +2061,6 @@ void(entity targ, entity attacker) ClientObituary =
 			if (attacker.classname == "trigger_changelevel")
 			{
 				bprint (" tried to leave\n");
-				return;
-			}
-
-			// in-water deaths
-			rnum = targ.watertype;
-			if (rnum == -3)
-			{
-				if (random() < 0.5)
-					bprint (" sleeps with the fishes\n");
-				else
-					bprint (" sucks it down\n");
-				return;
-			}
-			else if (rnum == -4)
-			{
-				if (random() < 0.5)
-					bprint (" gulped a load of slime\n");
-				else
-					bprint (" can't exist on slime alone\n");
-				return;
-			}
-			else if (rnum == -5)
-			{
-				if (targ.health < -15)
-				{
-					bprint (" burst into flames\n");
-					return;
-				}
-				if (random() < 0.5)
-					bprint (" turned into hot slag\n");
-				else
-					bprint (" visits the Volcano God\n");
-				return;
-			}
-
-			// fell to their death?
-			if (targ.deathtype == "falling")
-			{
-				targ.deathtype = "";
-				bprint (" fell to his death\n");
 				return;
 			}
 

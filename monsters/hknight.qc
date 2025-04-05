@@ -400,7 +400,7 @@ void() monster_hell_knight =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model2 ("progs/hknight.mdl");

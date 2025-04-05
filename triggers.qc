@@ -298,7 +298,7 @@ void() play_teleport =
 		tmpstr = "misc/r_tele5.wav";
 
 	sound (self, CHAN_VOICE, tmpstr, 1, ATTN_NORM);
-	remove (self);
+	SUB_Remove();
 };
 
 void(vector org) spawn_tfog =
@@ -512,7 +512,7 @@ void() trigger_onlyregistered_touch =
 	{
 		self.message = "";
 		SUB_UseTargets ();
-		remove (self);
+		SUB_Remove();
 	}
 	else
 	{
@@ -535,6 +535,22 @@ void() trigger_onlyregistered =
 };
 
 //============================================================================
+
+//JIM
+void( entity ent, float amount ) hurt_setdamage =
+   {
+   ent.dmg = amount;
+   if ( !amount )
+      {
+      ent.solid = SOLID_NOT;
+      }
+   else
+      {
+      ent.solid = SOLID_TRIGGER;
+      }
+   ent.nextthink = -1;
+   };
+
 
 void() hurt_on =
 {
@@ -589,7 +605,7 @@ void() trigger_push_touch =
 		}
 	}
 	if (self.spawnflags & PUSH_ONCE)
-		remove(self);
+		SUB_Remove();
 };
 
 

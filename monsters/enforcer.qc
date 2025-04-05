@@ -47,7 +47,7 @@ void() Laser_Touch =
 
 	if (pointcontents(self.origin) == CONTENT_SKY)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	
@@ -68,7 +68,7 @@ void() Laser_Touch =
 		WriteCoord (MSG_BROADCAST, org_z);
 	}
 	
-	remove(self);	
+	SUB_Remove();	
 };
 
 void(vector org, vector vec) LaunchLaser =
@@ -314,7 +314,7 @@ void() monster_enforcer =
 {
 	if (deathmatch)
 	{
-		remove(self);
+		SUB_Remove();
 		return;
 	}
 	precache_model2 ("progs/enforcer.mdl");
