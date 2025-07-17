@@ -39,8 +39,8 @@ All the odds used in this mode are the same as the Endless Castle in Normal Odds
 Added in v1.7, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of vanilla Quake levels. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
 
 Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
-- Since there are four levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 31 possible levels, you will only see 28 per sequence.
-- Every level may only appear again 28 levels after the previous time it showed up.
+- Since there are eight levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 48 possible levels, you will only see 43 per sequence.
+- Every level may only appear again 43 levels after the previous time it showed up.
 - As a unique rule, Shub-Niggurath's lair (better known as `END`) cannot be rolled as one of the first four levels of any Endless Castle run, given the fact it's almost impossible to get out of it without a full set of weapons.
 - If, for some reason, the level picker fails to work, it will default to `E4M3`.
 
@@ -60,7 +60,9 @@ Within the Endless Castle menu itself, there are six possible difficulty modes:
 - **Super Nightmare**: *The Endless Castle starts at Level 46.*
 - **Unfair**: *The Endless Castle starts at Level 66.*
 
-**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters (outside of reloading the savegame; this option might be removed in the future if it's possible).
+The Endless Castle always uses Nightmare settings regardless of the current level. For example, `E4M3` will always have 105 enemies no matter how lenient the randomizer is right now.
+
+**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters.
 
 Using the `map` command will instantly end Endless Castle mode. Most cheat codes (such as `god`, `noclip` or `impulse 255`) will instantly boot the player out of Endless Castle mode.
 
