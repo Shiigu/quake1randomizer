@@ -53,20 +53,20 @@ Furthermore, as you venture through the Endless Castle, with every passing level
 - **Unfair Odds** start at Level 61, and will never end.
 
 Within the Endless Castle menu itself, there are six possible difficulty modes:
-- **Easy**: Sets up the levels to their Easy difficulty setting. *The Endless Castle starts at Level 1.*
-- **Normal**: Sets up the levels to their Normal difficulty setting. *The Endless Castle starts at Level 8.*
-- **Hard**: Sets up the levels to their Hard difficulty setting. *The Endless Castle starts at Level 16.*
-- **Nightmare**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 26.*
-- **Super Nightmare**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 46.*
-- **Unfair**: Sets up the levels to their Nightmare difficulty setting. *The Endless Castle starts at Level 66.*
+- **Easy**: *The Endless Castle starts at Level 1.*
+- **Normal**: *The Endless Castle starts at Level 8.*
+- **Hard**: *The Endless Castle starts at Level 16.*
+- **Nightmare**: *The Endless Castle starts at Level 26.*
+- **Super Nightmare**: *The Endless Castle starts at Level 46.*
+- **Unfair**: *The Endless Castle starts at Level 66.*
 
 **Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters (outside of reloading the savegame; this option might be removed in the future if it's possible).
 
-Using the `map` command will instantly end Endless Castle mode.
+Using the `map` command will instantly end Endless Castle mode. Most cheat codes (such as `god`, `noclip` or `impulse 255`) will instantly boot the player out of Endless Castle mode.
 
 ### Biased Mode
 
-This is the default Randomizer mode. Here, the game will try to be fair (keyword being 'try') to avoid spawning too many of the most powerful enemies. It can still accidentally spawn too many Shamblers or Vores, or simply not give you enough ammo for the weapons you have, but you can always restart...
+This is the default Randomizer mode. Here, the game will try to be fair (keyword being 'try') to avoid spawning too many of the most powerful enemies. It can still accidentally spawn too many Centroids, Shamblers or Vores, or simply not give you enough ammo for the weapons you have, but you can always restart...
 
 #### Monster replacement chances on Biased Mode
 
@@ -86,8 +86,12 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Spawn|1%|3%|4%|6%|6%|15%|
 |Scrag|11%|12%|13%|13%|13%|10%|
 |Ogre|12%|13%|13%|11%|13%|0%|
+|Centroid|3%|5%|7%|8%|10%|15%|
+|Gremlin|8%|9%|11%|10%|8%|0%|
+|Spike Mine|2%|3%|3%|4%|6%|10%|
 
 > Rotfish aren't allowed to spawn outside of water surfaces because they can't move there.
+> Zombies can't spawn on monster spots that are tied to a trigger.
 
 - For Monsters in the water:
 
@@ -104,8 +108,12 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Scrag|10%|12%|14%|15%|17%|35%|
 |Ogre|8%|9%|9%|9%|11%|0%|
 |Rotfish|25%|17%|15%|11%|8%|0%|
+|Centroid|3%|5%|7%|8%|10%|15%|
+|Gremlin|8%|9%|11%|10%|8%|0%|
+|Spike Mine|2%|3%|3%|4%|6%|10%|
 
 > Rottweilers and Knights aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
+> Zombies can't spawn on monster spots that are tied to a trigger.
 
 #### Pickup replacement chances on Biased Mode
 
@@ -169,9 +177,12 @@ Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be re
 |Pentagram of Protection|20%|18%|17%|15%|12%|5%|
 |Quad Damage|20%|18%|17%|15%|12%|5%|
 |Ring of Shadows|20%|18%|17%|15%|12%|5%|
-|100 Health Pack|15%|18%|17%|20%|24%|30%|
-|Red Armor Suit|20%|17%|15%|12%|18%|10%|
-|Biosuit|5%|10%|15%|20%|28%|45%|
+|100 Health Pack|15%|18%|17%|20%|24%|25%|
+|Red Armor Suit|20%|18%|17%|15%|12%|10%|
+|Biosuit|10%|15%|20%|25%|35%|25%|
+|Empathy Shields|20%|18%|17%|15%|12%|8%|
+|Wetsuit|10%|15%|20%|25%|35%|25%|
+|Horn of Conjuring|20%|15%|10%|8%|5%|5%|
 
 - If there's no liquid body within 512 units of distance
 
@@ -183,6 +194,8 @@ Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be re
 |100 Health Pack|15%|19%|18%|20%|24%|45%|
 |Red Armor Suit|20%|19%|18%|15%|12%|10%|
 |A weapon|5%|5%|10%|20%|28%|30%|
+|Empathy Shields|20%|18%|17%|15%|12%|8%|
+|Horn of Conjuring|20%|15%|10%|8%|5%|5%|
 
 Exclusive to Endless Castle Mode, there's a chance that the Powerup will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
@@ -190,7 +203,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Powerup will be remo
 |----|----|----|----|----|----|----|
 |Odds to Remove|0%|0%|0%|0%|5%|10%|
 
-> A Red Armor suit is not meant to spawn if there's another suit of armor (regardless of color) up to 512 units away from its center. If it does, then it spawns another powerup (except for a Biosuit) instead.
+> A Red Armor suit is not meant to spawn if there's another suit of armor (regardless of color) up to 512 units away from its center. If it does, then it spawns another powerup (except for a Biosuit or Wetsuit) instead.
 
 > Preferably, Powerups of the same type will avoid spawning within 512 units of distance from each other. It should only happen when no other powerup or weapon is available for spawning instead.
 
@@ -198,17 +211,19 @@ Exclusive to Endless Castle Mode, there's a chance that the Powerup will be remo
 
 > If weapon randomization is disabled, the weapon will be replaced by a Quad Damage, or a random Powerup in case proximity checks prevent it.
 
+> The odds of a monster spawned by the Horn of Conjuring follow the same rule as the current randomizer difficulty setting. Thus, the higher the Endless Castle level, the more likely you are to get a powerful monster.
+
 #### Weapon replacement chances on Biased Mode
 
 Every weapon has an even chance to be spawned.
 
 It works as follows:
-1. The Randomizer creates a "bag" of 6 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt). If the map has been loaded via `changelevel` (such as by reaching a map exit), the weapons that were spawned in the previous map will be skipped (prioritizing weapons that the player could not have obtained yet); otherwise, the ones to be skipped will be the weapons the player already owns.
+1. The Randomizer creates a "bag" of 9 shuffled weapons (Double-barreled Shotgun, Nailgun, Super Nailgun, Grenade Launcher, Rocket Launcher, Thunderbolt, Proximity Gun, Laser Cannon, Mjolnir). If the map has been loaded via `changelevel` (such as by reaching a map exit), the weapons that were spawned in the previous map will be skipped (prioritizing weapons that the player could not have obtained yet); otherwise, the ones to be skipped will be the weapons the player already owns.
 2. It moves across the "bag" until it finds a weapon that hasn't been spawned or skipped yet and can be spawned in the target location. Having placed the already-owned weapons first, this gives priority to weapons the player isn't currently carrying.
 3. If it reaches the end of the bag without picking a weapon that can be spawned in the target location*, it spawns a powerup (except for a Biosuit or Red Armor suit) instead.
 4. If all weapons have spawned, it creates a new "bag", and goes back to Step 2.
 
-> The "can be spawned" rule specifically involves that the Thunderbolt can't be spawned inside liquid surfaces, due to the fact it will instantly kill a non-invulnerable player if used in there.
+> The "can be spawned" rule specifically involves that the Thunderbolt and Mjolnir can't be spawned inside liquid surfaces, due to the fact they will instantly kill a non-invulnerable player if used in there.
 
 At every point in the weapon "bag", the following odds are calculated:
 
@@ -230,7 +245,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Weapon will be remov
 
 ### Unbiased Mode
 
-Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type, with the exclusive exception that Rotfish can't spawn outside of water surfaces because they wouldn't be able to move.
+Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type, with the exclusive exception that Rotfish can't spawn outside of water surfaces because they wouldn't be able to move, and Zombies cannot spawn tied to a trigger to avoid potential softlocks.
 
 Have fun!
 
@@ -246,6 +261,6 @@ This mode is disabled by default. Here, all the weapons and ammo pickups are "di
 
 The mod works as intended, but there are still a bunch of things in the mod that can be done better, which are as follows:
 - Give more 'fair' odds for the Biased mode.
-- Create forks of this mod in which it can fully work for Scourge of Armagon and Dissolution of Eternity.
+- Create forks of this mod in which it can fully work for Dissolution of Eternity.
 - Have the mod use its own, custom cvar instead of `savedgamecfg`.
 - Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 1500 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
