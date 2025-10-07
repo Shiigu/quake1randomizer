@@ -836,7 +836,10 @@ void() PutClientInServer =
         (self.items & IT_SUPER_NAILGUN) | 
         (self.items & IT_GRENADE_LAUNCHER) | 
         (self.items & IT_ROCKET_LAUNCHER) | 
-        (self.items & IT_LIGHTNING);
+        (self.items & IT_LIGHTNING) | 
+        (self.items & IT_PROXIMITY_GUN) | 
+        (self.items & IT_LASER_CANNON) | 
+        (self.items & IT_MJOLNIR);
 	}
 
 	playerPosition = spot.origin;

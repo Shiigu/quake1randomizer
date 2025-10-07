@@ -20,6 +20,8 @@ void() ConvertToWeaponUnbiased;
 void() CreateWeaponPermutation;
 void() CreateWeaponPermutation;
 
+float FULL_WEAPON_BAG = IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON | IT_PROXIMITY_GUN | IT_MJOLNIR;
+
 /* Entities will be converted to one of the same type:
     - "Monster" for Monsters
     - "Pickup" for Health (except for Mega) and Armor (except for Red)
@@ -352,6 +354,9 @@ void() Randomize = {
     dprint("RandomizePowerups is ");
     dprint(ftos(RandomizePowerups));
     dprint(".\n");
+    dprint("SpawnedWeapons is ");
+    dprint(ftos(SpawnedWeapons));
+    dprint(".\n");
     if (UnbiasedMode)
     {
         dprint("Starting unbiased randomizer. Don't say I didn't warn you.\n");
@@ -383,16 +388,9 @@ void() ConvertEntities = {
     local entity temp;
     local float i;
     local float MAX_PER_CALL = 500;
-    if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR)
+    if(SpawnedWeapons == FULL_WEAPON_BAG)
     {
+        dprint("All Weapons have Spawned at some point. Resetting Weapons Bag.\n");
         SpawnedWeapons = 0;
     }
 	temp = find(world, Converted, "");
@@ -1281,20 +1279,12 @@ void() ConvertToWeaponUnbiased = {
 // Creates a "bag" of six randomly permutated weapons
 void() CreateWeaponPermutation = {
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning", "weapon_laser_gun", "weapon_proximity_gun", "weapon_mjolnir" };
     local float numbers[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
     local float shuffledNumbers[numbers.length];
-    local float rng, count, i, j, shuffled;
+    local float rng, count, i, j, n, shuffled;
     count = numbers.length;
-    // If the player owns SOME of the spawnable weapons, but not all of them, place them first in the shuffled list because they will be skipped
-    if(SpawnedWeapons && !(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR))
+    if(SpawnedWeapons == 0)
     {
         rng = 0;
         shuffled = 1;
@@ -1305,15 +1295,12 @@ void() CreateWeaponPermutation = {
             {
                 if(rng < numbers.length)
                 {
-                    if(SpawnedWeapons & PickupTypes[i])
-                    {
-                        shuffled = 1;
-                        shuffledNumbers[rng] = numbers[i];
-                        numbers[i] = numbers[count - 1];
-                        PickupTypes[i] = PickupTypes[count - 1];
-                        count = count - 1;
-                        rng = rng + 1;
-                    }
+                    shuffled = 1;
+                    shuffledNumbers[rng] = numbers[i];
+                    numbers[i] = numbers[count - 1];
+                    PickupTypes[i] = PickupTypes[count - 1];
+                    count = count - 1;
+                    rng = rng + 1;
                 }
             }
         }
@@ -1344,25 +1331,15 @@ void() ConvertToWeaponBiased = {
             SUB_Remove();
     }
     local float rng;
-    if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR)
+    if(SpawnedWeapons == FULL_WEAPON_BAG)
     {
+        dprint("All Weapons have Spawned at some point. Trying to roll something different.\n");
         rng = Random(1, 100);
+        SpawnedWeapons = 0;
         if(RandomizePowerups && rng <= 50)
             self.think = ConvertToPowerupBiased;
         else
-        {
-            SpawnedWeapons = 0;
-            CreateWeaponPermutation();
             self.think = ConvertToWeaponBiased;
-        }
         self.nextthink = time;
         return;
     }
@@ -1371,12 +1348,14 @@ void() ConvertToWeaponBiased = {
     {    
         if(rng >= (100 - ProbabilityForWeaponIntoPowerup))
         {
+            dprint("Weapon is getting converted into a powerup.\n");
             self.think = ConvertToPowerupBiased;
             self.nextthink = time;
             return;
         }
         else if (rng >= (100 - ProbabilityForWeaponIntoPowerup - ProbabilityForWeaponIntoAmmo))
         {    
+            dprint("Weapon is getting converted into ammo.\n");
             self.think = ConvertToAmmoBiased;
             self.nextthink = time;
             return;
@@ -1386,6 +1365,7 @@ void() ConvertToWeaponBiased = {
     {
         if (rng >= (100 - ProbabilityForWeaponIntoAmmo))
         {    
+            dprint("Weapon is getting converted into ammo.\n");
             self.think = ConvertToAmmoBiased;
             self.nextthink = time;
             return;
@@ -1414,21 +1394,35 @@ void() ConvertToWeaponBiased = {
             currentSurface = pointcontents(self.origin);
             isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
         }
-        if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
+        if(SpawnedWeapons & PickedWeapon)
         {
-            if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
-            {
-                self.nextClassname = Classnames[i];
-                if(!HideInBackpacks)
-                    self.think = ConvertersPermutation[i];
-                else
-                {
-                    self.PickupType = PickedWeapon;
-                    self.think = ConvertToWeaponBackpack;
-                }
-                SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-                break;
+            dprint(Classnames[i]);
+            dprint(" had already been spawned. Looking for another.\n");
+        }
+        else if (!isValidSurface) 
+        {
+            dprint(Classnames[i]);
+            dprint(" can't be spawned on liquids. Looking for another.\n");
+        }
+        else if(IsNearOneOf(self, Classnames[i], string_null, string_null))
+        {
+            dprint(Classnames[i]);
+            dprint(" can't be spawned too close to another of its same type. Looking for another.\n");
+        }
+        else        
+        {
+            self.nextClassname = Classnames[i];
+            if(!HideInBackpacks)
+            {    
+                self.think = ConvertersPermutation[i];
             }
+            else
+            {
+                self.PickupType = PickedWeapon;
+                self.think = ConvertToWeaponBackpack;
+            }
+            SpawnedWeapons = SpawnedWeapons | PickedWeapon;
+            break;
         }
     }
     if(i == Converters.length) 
@@ -1436,14 +1430,16 @@ void() ConvertToWeaponBiased = {
         // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
         if(RandomizePowerups)
         {
+            dprint("Weapon is getting converted into a powerup.\n");
             self.think = ConvertToPowerupBiased;
         }
         else
-        {            
-            SpawnedWeapons = 0;
-            CreateWeaponPermutation();
+        {
+            dprint("Weapon is getting converted into ammo.\n");
             self.think = ConvertToAmmoBiased;
         }
+        dprint("All Weapon rolls failed. Restarting bag.\n");
+        SpawnedWeapons = 0;
         self.nextthink = time;
         return;
     }
