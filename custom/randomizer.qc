@@ -135,6 +135,8 @@ float ProbabilityForWeaponIntoAmmoUnfair            = 15;
 
 // END PROBABILITY "TABLES"
 
+vector LastOriginThatRestartedWeaponBag; // Only used to remember what was the last position that failed to roll a weapon.
+
 void() Randomize = {
     local float amountOfChoices, i;
     RandomMode = cvar("savedgamecfg");
@@ -736,6 +738,7 @@ void() ConvertToMonsterOnGroundBiased = {
             {
                 zombieId = i;
                 preventZombies = 1;
+                ProbabilitiesMonsterToMonsterGround[i] = 0;
                 originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
                 dprint("Monster at ");
                 dprint(vtos(self.origin));
@@ -1388,7 +1391,9 @@ void() ConvertToWeaponBiased = {
     {
         PickedWeapon = WeaponPermutation[i];
         if(PickedWeapon != IT_LIGHTNING && PickedWeapon != IT_MJOLNIR)
+        {
             isValidSurface = 1;
+        }
         else
         {
             currentSurface = pointcontents(self.origin);
@@ -1422,26 +1427,33 @@ void() ConvertToWeaponBiased = {
                 self.think = ConvertToWeaponBackpack;
             }
             SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-            break;
+            self.nextthink = time;
+            return;
         }
     }
-    if(i == Converters.length) 
+    
+    if(LastOriginThatRestartedWeaponBag == self.origin)
     {
-        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
-        if(RandomizePowerups)
-        {
-            dprint("Weapon is getting converted into a powerup.\n");
-            self.think = ConvertToPowerupBiased;
-        }
-        else
-        {
-            dprint("Weapon is getting converted into ammo.\n");
-            self.think = ConvertToAmmoBiased;
-        }
-        dprint("All Weapon rolls failed. Restarting bag.\n");
-        SpawnedWeapons = 0;
+        // There are some strange situations where the weapon roll keeps failing. We stop it by forcing an ammo spawn instead.
+        dprint("Weapon bag restart detected at the same location as last time. Forcing spawn of Ammo instead.\n");
+        self.think = ConvertToAmmoBiased;
         self.nextthink = time;
         return;
     }
+    // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
+    if(RandomizePowerups)
+    {
+        dprint("Weapon is getting converted into a powerup.\n");
+        self.think = ConvertToPowerupBiased;
+    }
+    else
+    {
+        dprint("Weapon is getting converted into ammo.\n");
+        self.think = ConvertToAmmoBiased;
+    }
+    dprint("All Weapon rolls failed. Restarting bag.\n");
+    SpawnedWeapons = 0;
+    LastOriginThatRestartedWeaponBag = self.origin;
     self.nextthink = time;
+    return;
 };

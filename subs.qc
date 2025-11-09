@@ -694,6 +694,12 @@ float(entity mon) IsTiedToATrigger = {
         if (!e.classname)
             continue;
 
+		dprint(mon.classname);
+		dprint(vtos(mon.origin));
+		dprint("'s target is checked against potential trigger, classname ");
+		dprint(e.classname);
+		dprint(". ");
+
         if (e.classname == "trigger_changelevel" ||
             e.classname == "trigger_reactivate" ||
             e.classname == "trigger_multiple" ||
@@ -702,11 +708,11 @@ float(entity mon) IsTiedToATrigger = {
             e.classname == "trigger_secret" ||
             e.classname == "trigger_counter" ||
             e.classname == "trigger_teleport" ||
+            e.classname == "trigger_skill_touch" ||
             e.classname == "trigger_setskill" ||
             e.classname == "trigger_onlyregistered" ||
             e.classname == "trigger_hurt" ||
             e.classname == "trigger_push" ||
-            e.classname == "trigger_monsterjump" ||
             e.classname == "trigger_damagethreshold" ||
             e.classname == "trigger_usekey" ||
             e.classname == "trigger_remove" ||
@@ -714,11 +720,20 @@ float(entity mon) IsTiedToATrigger = {
             e.classname == "trigger_command_use" ||
             e.classname == "trigger_command" ||
             e.classname == "trigger_decoy_use" ||
-            e.classname == "trigger_waterfall")
+            e.classname == "trigger_waterfall" ||
+            e.classname == "func_counter" ||
+            e.classname == "counter" ||
+            e.classname == "func_oncount" ||
+            e.classname == "func_door" ||
+            e.classname == "func_plat" ||
+            e.classname == "func_train_find" ||
+            e.classname == "func_train")
         {
+			dprint("Target is a trigger. Will be prevented from rolling zombies.\n");
             return TRUE;
         }
     }
 
+	dprint("Target is NOT a trigger. Can roll a zombie.\n");
     return FALSE;
 }
