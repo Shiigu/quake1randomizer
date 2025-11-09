@@ -703,6 +703,7 @@ void() ConvertToMonsterOnWaterUnbiased;
 
 vector playerPosition;
 
+float IsDeveloper;
 float RandomMode;          						// Contains all the flags for Random Mode. Same value as savedgamecfg cvar.
 float RANDOM_UNBIASED_MODE = 1; 				// If present, it enters unbiased mode where the randomizer will NOT play fair.
 float RANDOM_BACKPACK_MODE = 2;   				// If present, it hides all weapons and ammo in backpacks.

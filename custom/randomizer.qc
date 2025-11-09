@@ -139,6 +139,7 @@ vector LastOriginThatRestartedWeaponBag; // Only used to remember what was the l
 
 void() Randomize = {
     local float amountOfChoices, i;
+    IsDeveloper = cvar("developer");
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
     HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;    
@@ -1431,7 +1432,7 @@ void() ConvertToWeaponBiased = {
             return;
         }
     }
-    
+
     if(LastOriginThatRestartedWeaponBag == self.origin)
     {
         // There are some strange situations where the weapon roll keeps failing. We stop it by forcing an ammo spawn instead.

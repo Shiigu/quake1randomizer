@@ -685,16 +685,17 @@ void() ClientKill =
 {
 	if ((intermission_running)&&((coop)||(deathmatch)))  // not allowed during intermission
 		return;
-	bprint (self.netname);
-	bprint (" suicides\n");
-	set_suicide_frame ();
-	self.modelindex = modelindex_player;
-	self.frags = self.frags - 2;	// extra penalty
+    IsDeveloper = cvar("developer");
 	if(EndlessCastleMapCount == 0)
 	{ 
+		bprint (self.netname);
+		bprint (" suicides\n");
+		set_suicide_frame ();
+		self.modelindex = modelindex_player;
+		self.frags = self.frags - 2;	// extra penalty
 		respawn ();
 	}
-	else
+	else if (IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -820,10 +821,11 @@ void() PutClientInServer =
 	self.items2 = 0;
 	self.gravity = 1.0;
 
+    IsDeveloper = cvar("developer");
 
 	DecodeLevelParms ();
 
-	if(EndlessCastleMapCount == -1)
+	if(EndlessCastleMapCount == -1 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -1271,8 +1273,9 @@ void() PlayerPreThink =
 	local	float	mspeed, aspeed;
 	local	float	r;
 
+    IsDeveloper = cvar("developer");
 	
-	if (EndlessCastleMapCount > 0 && (self.flags & FL_GODMODE || self.flags & FL_NOTARGET || self.movetype & MOVETYPE_NOCLIP))
+	if (EndlessCastleMapCount > 0 && (self.flags & FL_GODMODE || self.flags & FL_NOTARGET || self.movetype & MOVETYPE_NOCLIP) && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
