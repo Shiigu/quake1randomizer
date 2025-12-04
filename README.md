@@ -6,6 +6,8 @@ This mod (compatible with both the classic and remastered releases of Quake 1) h
 
 This mod is installed like any other. Extract the zip file as a folder where your Quake executable is located, then use the `-game` launch parameter so that it executes the mod on launch (some source ports also have a mod selection menu).
 
+**NOTE:** The demos fail to run in the Remastered version with an Illegible Server Message error. Please ignore it, the rest of the mod works.
+
 ## How to configure
 
 To set up the game modes, press the 'M' key, and the Randomization Menu will show up. Follow the instructions in there.
