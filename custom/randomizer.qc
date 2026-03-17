@@ -18,7 +18,8 @@ void() ConvertToPowerupUnbiased;
 void() ConvertToWeaponBiased;
 void() ConvertToWeaponUnbiased;
 void() CreateWeaponPermutation;
-void() CreateWeaponPermutation;
+
+float FULL_WEAPON_BAG = IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON | IT_PROXIMITY_GUN | IT_MJOLNIR;
 
 /* Entities will be converted to one of the same type:
     - "Monster" for Monsters
@@ -28,7 +29,7 @@ void() CreateWeaponPermutation;
     - "Powerup" for Megahealth, Red Armor and Powerups */
 
 entity Placeholder;
-float IndexPermutation[6];
+float IndexPermutation[9];
 
 // PROBABILITY "TABLES"
 
@@ -133,8 +134,11 @@ float ProbabilityForWeaponIntoAmmoUnfair            = 15;
 
 // END PROBABILITY "TABLES"
 
+vector LastOriginThatRestartedWeaponBag; // Only used to remember what was the last position that failed to roll a weapon.
+
 void() Randomize = {
-    local float amountOfChoices, i;
+    local float amountOfChoices, i, atLeastOnePrint;
+    IsDeveloper = cvar("developer");
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
     HideInBackpacks = (RandomMode & RANDOM_BACKPACK_MODE) > 0;    
@@ -143,9 +147,15 @@ void() Randomize = {
     RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
     RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
 	fixedSeed = floor(cvar("gamecfg"));
+    dprint("EndlessCastleMapCount = ");
+    dprint(ftos(EndlessCastleMapCount));
+    dprint(".\n");
 
 	if(EndlessCastleMapCount == 0)
 	{
+        dprint("fixedSeed = ");
+        dprint(ftos(fixedSeed));
+        dprint(".\n");
         if(fixedSeed > 0)
         {
             seed = fixedSeed;
@@ -153,24 +163,45 @@ void() Randomize = {
         }
         else
         {
-            if(time == 0)
+            dprint("time = ");
+            dprint(ftos(time));
+            dprint(".\n");
+            dprint("lastTime = ");
+            dprint(ftos(lastTime));
+            dprint(".\n");
+            if(time == lastTime)
+                dprint("time = lastTime, using random() to get a different seed.\n");
+            if(time != 0 && time != lastTime)
                 seed = floor((10000000000 * time) % 40000000);
             else
                 seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+            lastTime = time;
         }
     }
 	else
     {
+        dprint("EndlessCastleSeed = ");
+        dprint(ftos(EndlessCastleSeed));
+        dprint(".\n");
         if(EndlessCastleSeed > 0)
         {
             seed = EndlessCastleSeed;
         }
         else
         {
-            if(time == 0)
+            dprint("time = ");
+            dprint(ftos(time));
+            dprint(".\n");
+            dprint("lastTime = ");
+            dprint(ftos(lastTime));
+            dprint(".\n");
+            if(time == lastTime)
+                dprint("time = lastTime, using random() to get a different seed.\n");
+            if(time != 0 && time != lastTime)
                 seed = floor((10000000000 * time) % 40000000);
             else
                 seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
+            lastTime = time;
             EndlessCastleSeed = seed;
         }
     }
@@ -352,6 +383,79 @@ void() Randomize = {
     dprint("RandomizePowerups is ");
     dprint(ftos(RandomizePowerups));
     dprint(".\n");
+    dprint("SpawnedWeapons is ");
+    dprint(ftos(SpawnedWeapons));
+    if(SpawnedWeapons == 0 || SpawnedWeapons == FULL_WEAPON_BAG)
+    {
+        dprint(".\n");
+    }
+    else
+    {
+        atLeastOnePrint = FALSE;
+        dprint(" (");
+        if(SpawnedWeapons & IT_SUPER_SHOTGUN)
+        {
+            dprint("Double-Barreled Shotgun");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_NAILGUN)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Nailgun");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_SUPER_NAILGUN)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Super Nailgun");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_GRENADE_LAUNCHER)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Grenade Launcher");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_ROCKET_LAUNCHER)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Rocket Launcher");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_LIGHTNING)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Thunderbolt");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_LASER_CANNON)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Laser Cannon");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_PROXIMITY_GUN)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Proximity Gun");
+            atLeastOnePrint = TRUE;
+        }
+        if(SpawnedWeapons & IT_MJOLNIR)
+        {
+            if(atLeastOnePrint)
+                dprint(", ");
+            dprint("Mjolnir");
+        }        
+        dprint(").\n");
+        atLeastOnePrint = FALSE;
+    }
     if (UnbiasedMode)
     {
         dprint("Starting unbiased randomizer. Don't say I didn't warn you.\n");
@@ -383,16 +487,9 @@ void() ConvertEntities = {
     local entity temp;
     local float i;
     local float MAX_PER_CALL = 500;
-    if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR)
+    if(SpawnedWeapons == FULL_WEAPON_BAG)
     {
+        dprint("All Weapons have Spawned at some point. Resetting Weapons Bag.\n");
         SpawnedWeapons = 0;
     }
 	temp = find(world, Converted, "");
@@ -712,7 +809,7 @@ void() ConvertToMonsterOnWaterUnbiased = {
 // To convert a monster present in ground.
 // Monsters have an arbitrarily "fair" chance to appear.
 // Prevents spawning Rotfish in ground (because they can't move there).
-// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react) or if they are tied to a trigger (to prevent potential soft-locks).
 // Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundBiased = {
     local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
@@ -732,16 +829,18 @@ void() ConvertToMonsterOnGroundBiased = {
             dprint(vtos(playerPosition));
             dprint(" to spawn a Spike Mine in.\n");
         }
-        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie" || MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
         {
             if(IsTiedToATrigger(self))
             {
                 zombieId = i;
+                preventSpikeMines = 1;
                 preventZombies = 1;
+                ProbabilitiesMonsterToMonsterGround[i] = 0;
                 originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
                 dprint("Monster at ");
                 dprint(vtos(self.origin));
-                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+                dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
             }
         }
         else
@@ -779,7 +878,7 @@ void() ConvertToMonsterOnGroundBiased = {
 
 // To convert a monster present in water. Prevents spawning Dogs and Knights in water (because they are melee-only, and thus useless there).
 // Monsters have an arbitrarily "fair" chance to appear.
-// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react).
+// Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react) or if they are tied to a trigger (to prevent potential soft-locks).
 // Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterBiased = {
     local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
@@ -799,16 +898,17 @@ void() ConvertToMonsterOnWaterBiased = {
             dprint(vtos(playerPosition));
             dprint(" to spawn a Spike Mine in.\n");
         }
-        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie")
+        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie" || MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
         {
             if(IsTiedToATrigger(self))
             {
                 zombieId = i;
                 preventZombies = 1;
+                preventSpikeMines = 1;
                 originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
                 dprint("Monster at ");
                 dprint(vtos(self.origin));
-                dprint(" is tied to a trigger. It won't spawn a Zombie.\n");
+                dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
             }
         }
         else
@@ -1278,23 +1378,15 @@ void() ConvertToWeaponUnbiased = {
     self.nextthink = time;
 };
 
-// Creates a "bag" of six randomly permutated weapons
+// Creates a "bag" of nine randomly permutated weapons
 void() CreateWeaponPermutation = {
     local float PickupTypes[] = { IT_SUPER_SHOTGUN, IT_NAILGUN, IT_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, IT_ROCKET_LAUNCHER, IT_LIGHTNING, IT_LASER_CANNON, IT_PROXIMITY_GUN, IT_MJOLNIR };
+    local string Classnames[] = { "weapon_supershotgun", "weapon_nailgun", "weapon_supernailgun", "weapon_grenadelauncher", "weapon_rocketlauncher", "weapon_lightning", "weapon_laser_gun", "weapon_proximity_gun", "weapon_mjolnir" };
     local float numbers[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
     local float shuffledNumbers[numbers.length];
-    local float rng, count, i, j, shuffled;
+    local float rng, count, i, j, n, shuffled, atLeastOnePrint;
     count = numbers.length;
-    // If the player owns SOME of the spawnable weapons, but not all of them, place them first in the shuffled list because they will be skipped
-    if(SpawnedWeapons && !(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR))
+    if(SpawnedWeapons == 0)
     {
         rng = 0;
         shuffled = 1;
@@ -1305,20 +1397,17 @@ void() CreateWeaponPermutation = {
             {
                 if(rng < numbers.length)
                 {
-                    if(SpawnedWeapons & PickupTypes[i])
-                    {
-                        shuffled = 1;
-                        shuffledNumbers[rng] = numbers[i];
-                        numbers[i] = numbers[count - 1];
-                        PickupTypes[i] = PickupTypes[count - 1];
-                        count = count - 1;
-                        rng = rng + 1;
-                    }
+                    shuffled = 1;
+                    shuffledNumbers[rng] = numbers[i];
+                    numbers[i] = numbers[count - 1];
+                    PickupTypes[i] = PickupTypes[count - 1];
+                    count = count - 1;
+                    rng = rng + 1;
                 }
             }
         }
     }
-    for(i = (numbers.length - count); i < 5; i++)
+    for(i = (numbers.length - count); i < 8; i++)
     {
         rng = Random(0, (count - 1));
         shuffledNumbers[i] = numbers[rng];
@@ -1329,6 +1418,18 @@ void() CreateWeaponPermutation = {
     shuffledNumbers[i] = numbers[count - 1];
     for(i = 0; i < numbers.length; i++)
         IndexPermutation[i] = shuffledNumbers[i];
+        
+    dprint("Weapon Permutation for the level: ");
+    atLeastOnePrint = FALSE;
+    for(i = 0; i < IndexPermutation.length; i++)
+    {
+        if(atLeastOnePrint)
+            dprint(", ");
+        dprint(Classnames[IndexPermutation[i]]);
+        atLeastOnePrint = TRUE;    
+    }
+    dprint(".\n");
+    atLeastOnePrint = FALSE;
 };
 
 // Converts a weapon of one type to another randomly.
@@ -1344,25 +1445,15 @@ void() ConvertToWeaponBiased = {
             SUB_Remove();
     }
     local float rng;
-    if(SpawnedWeapons & IT_SUPER_SHOTGUN && 
-        SpawnedWeapons & IT_NAILGUN && 
-        SpawnedWeapons & IT_SUPER_NAILGUN && 
-        SpawnedWeapons & IT_GRENADE_LAUNCHER && 
-        SpawnedWeapons & IT_ROCKET_LAUNCHER && 
-        SpawnedWeapons & IT_LIGHTNING && 
-        SpawnedWeapons & IT_LASER_CANNON && 
-        SpawnedWeapons & IT_PROXIMITY_GUN && 
-        SpawnedWeapons & IT_MJOLNIR)
+    if(SpawnedWeapons == FULL_WEAPON_BAG)
     {
+        dprint("All Weapons have Spawned at some point. Trying to roll something different.\n");
         rng = Random(1, 100);
+        SpawnedWeapons = 0;
         if(RandomizePowerups && rng <= 50)
             self.think = ConvertToPowerupBiased;
         else
-        {
-            SpawnedWeapons = 0;
-            CreateWeaponPermutation();
             self.think = ConvertToWeaponBiased;
-        }
         self.nextthink = time;
         return;
     }
@@ -1371,12 +1462,14 @@ void() ConvertToWeaponBiased = {
     {    
         if(rng >= (100 - ProbabilityForWeaponIntoPowerup))
         {
+            dprint("Weapon is getting converted into a powerup.\n");
             self.think = ConvertToPowerupBiased;
             self.nextthink = time;
             return;
         }
         else if (rng >= (100 - ProbabilityForWeaponIntoPowerup - ProbabilityForWeaponIntoAmmo))
         {    
+            dprint("Weapon is getting converted into ammo.\n");
             self.think = ConvertToAmmoBiased;
             self.nextthink = time;
             return;
@@ -1386,6 +1479,7 @@ void() ConvertToWeaponBiased = {
     {
         if (rng >= (100 - ProbabilityForWeaponIntoAmmo))
         {    
+            dprint("Weapon is getting converted into ammo.\n");
             self.think = ConvertToAmmoBiased;
             self.nextthink = time;
             return;
@@ -1408,44 +1502,69 @@ void() ConvertToWeaponBiased = {
     {
         PickedWeapon = WeaponPermutation[i];
         if(PickedWeapon != IT_LIGHTNING && PickedWeapon != IT_MJOLNIR)
+        {
             isValidSurface = 1;
+        }
         else
         {
             currentSurface = pointcontents(self.origin);
             isValidSurface = currentSurface != CONTENT_WATER && currentSurface != CONTENT_SLIME && currentSurface != CONTENT_LAVA;
         }
-        if(!(SpawnedWeapons & PickedWeapon) && isValidSurface)
+        if(SpawnedWeapons & PickedWeapon)
         {
-            if(!IsNearOneOf(self, Classnames[i], string_null, string_null))
-            {
-                self.nextClassname = Classnames[i];
-                if(!HideInBackpacks)
-                    self.think = ConvertersPermutation[i];
-                else
-                {
-                    self.PickupType = PickedWeapon;
-                    self.think = ConvertToWeaponBackpack;
-                }
-                SpawnedWeapons = SpawnedWeapons | PickedWeapon;
-                break;
+            dprint(Classnames[i]);
+            dprint(" had already been spawned. Looking for another.\n");
+        }
+        else if (!isValidSurface) 
+        {
+            dprint(Classnames[i]);
+            dprint(" can't be spawned on liquids. Looking for another.\n");
+        }
+        else if(IsNearOneOf(self, Classnames[i], string_null, string_null))
+        {
+            dprint(Classnames[i]);
+            dprint(" can't be spawned too close to another of its same type. Looking for another.\n");
+        }
+        else        
+        {
+            self.nextClassname = Classnames[i];
+            if(!HideInBackpacks)
+            {    
+                self.think = ConvertersPermutation[i];
             }
+            else
+            {
+                self.PickupType = PickedWeapon;
+                self.think = ConvertToWeaponBackpack;
+            }
+            SpawnedWeapons = SpawnedWeapons | PickedWeapon;
+            self.nextthink = time;
+            return;
         }
     }
-    if(i == Converters.length) 
+
+    if(LastOriginThatRestartedWeaponBag == self.origin)
     {
-        // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
-        if(RandomizePowerups)
-        {
-            self.think = ConvertToPowerupBiased;
-        }
-        else
-        {            
-            SpawnedWeapons = 0;
-            CreateWeaponPermutation();
-            self.think = ConvertToAmmoBiased;
-        }
+        // There are some strange situations where the weapon roll keeps failing. We stop it by forcing an ammo spawn instead.
+        dprint("Weapon bag restart detected at the same location as last time. Forcing spawn of Ammo instead.\n");
+        self.think = ConvertToAmmoBiased;
         self.nextthink = time;
         return;
     }
+    // If all weapons were rolled (or can't be spawned in the current location), it will instead spawn a powerup (if enabled; otherwise it spawns Ammo) and restarts the bag.
+    if(RandomizePowerups)
+    {
+        dprint("Weapon is getting converted into a powerup.\n");
+        self.think = ConvertToPowerupBiased;
+    }
+    else
+    {
+        dprint("Weapon is getting converted into ammo.\n");
+        self.think = ConvertToAmmoBiased;
+    }
+    dprint("All Weapon rolls failed. Restarting bag.\n");
+    SpawnedWeapons = 0;
+    LastOriginThatRestartedWeaponBag = self.origin;
     self.nextthink = time;
+    return;
 };
