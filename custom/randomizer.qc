@@ -146,65 +146,9 @@ void() Randomize = {
     RandomizeWeaponsAndAmmo = (RandomMode & DO_NOT_RANDOMIZE_WEAPONS_AND_AMMO) == 0;
     RandomizeHealthAndArmor = (RandomMode & DO_NOT_RANDOMIZE_HEALTH_AND_ARMOR) == 0;
     RandomizePowerups = (RandomMode & DO_NOT_RANDOMIZE_POWERUPS) == 0;
-	fixedSeed = floor(cvar("gamecfg"));
-    dprint("EndlessCastleMapCount = ");
-    dprint(ftos(EndlessCastleMapCount));
-    dprint(".\n");
-
-	if(EndlessCastleMapCount == 0)
-	{
-        dprint("fixedSeed = ");
-        dprint(ftos(fixedSeed));
-        dprint(".\n");
-        if(fixedSeed > 0)
-        {
-            seed = fixedSeed;
-            seedIsFixed = 1;
-        }
-        else
-        {
-            dprint("time = ");
-            dprint(ftos(time));
-            dprint(".\n");
-            dprint("lastTime = ");
-            dprint(ftos(lastTime));
-            dprint(".\n");
-            if(time == lastTime)
-                dprint("time = lastTime, using random() to get a different seed.\n");
-            if(time != 0 && time != lastTime)
-                seed = floor((10000000000 * time) % 40000000);
-            else
-                seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
-            lastTime = time;
-        }
-    }
-	else
-    {
-        dprint("EndlessCastleSeed = ");
-        dprint(ftos(EndlessCastleSeed));
-        dprint(".\n");
-        if(EndlessCastleSeed > 0)
-        {
-            seed = EndlessCastleSeed;
-        }
-        else
-        {
-            dprint("time = ");
-            dprint(ftos(time));
-            dprint(".\n");
-            dprint("lastTime = ");
-            dprint(ftos(lastTime));
-            dprint(".\n");
-            if(time == lastTime)
-                dprint("time = lastTime, using random() to get a different seed.\n");
-            if(time != 0 && time != lastTime)
-                seed = floor((10000000000 * time) % 40000000);
-            else
-                seed = floor((10000000000 * random()) % 40000000);                  // When you use "kill" or "restart", time is always 0 so this ensures there's a variable seed.
-            lastTime = time;
-            EndlessCastleSeed = seed;
-        }
-    }
+	dprint("EndlessCastleMapCount = ");
+	dprint(ftos(EndlessCastleMapCount));
+	dprint(".\n");
 
     next = 0;
 
@@ -695,8 +639,10 @@ void() ConvertEntities = {
     {
         SUB_Remove_Target(Placeholder);
         dprint("----- Finished ConvertEntities -----\n");
+		IsWorldFrozen = 0;
         if(EndlessCastleMapCount > 0)
         {
+			PrintedEndlessCastleSplash = 0;
             if(world.model == "maps/end.bsp")
                 nextmap = PickNextLevel();
             else

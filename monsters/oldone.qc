@@ -114,7 +114,7 @@ void() finale_1 =
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	
-	if(fixedSeed <= 0 && !deathmatch && !coop)
+	if(FixedSeed <= 0 && !deathmatch && !coop)
 	{
 		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 		{

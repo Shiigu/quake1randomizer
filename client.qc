@@ -13,7 +13,7 @@ void(float item_bits, float health_bits,
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
 	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
-float	modelindex_eyes, modelindex_player, fixedSeed, modelindex_hammer;
+float	modelindex_eyes, modelindex_player, modelindex_hammer;
 
 /*
 =============================================================================
@@ -527,7 +527,7 @@ void() execute_changelevel =
 {
 	local entity	pos;
 	
-	if(fixedSeed <= 0 && !deathmatch && !coop)
+	if(FixedSeed <= 0 && !deathmatch && !coop)
 	{
 		if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 		{
@@ -784,8 +784,6 @@ called each time a player is spawned
 void() DecodeLevelParms;
 void() PlayerDie;
 
-void() Randomize;
-
 void() PutClientInServer =
 {
 	startTime = time;
@@ -840,8 +838,6 @@ void() PutClientInServer =
 	}
 
 	playerPosition = spot.origin;
-
-	Randomize();
 
 	local float currentCenterTime;	
     currentCenterTime = cvar("scr_centertime");
@@ -1267,7 +1263,6 @@ void() PlayerPreThink =
 {
 	local	float	mspeed, aspeed;
 	local	float	r;
-
 	
 	if (EndlessCastleMapCount > 0 && (self.flags & FL_GODMODE || self.flags & FL_NOTARGET || self.movetype & MOVETYPE_NOCLIP))
 	{
@@ -1275,6 +1270,9 @@ void() PlayerPreThink =
 		localcmd("map start\n");
 		return;
 	}
+
+	if(!IsSeedCalculated && (EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0)
+		return;
 
 	if (intermission_running)
 	{
@@ -1750,7 +1748,7 @@ void(entity targ, entity attacker) ClientObituary =
 
 	if (targ.classname == "player")
 	{
-		if(fixedSeed <= 0 && !deathmatch && !coop)
+		if(FixedSeed <= 0 && !deathmatch && !coop)
 		{
 			if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 			{

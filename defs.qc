@@ -777,4 +777,12 @@ float startTime; // Variable to store the start time of the level
 float PrintedEndlessCastleSplash;
 
 nosave float sessionframecount; // Used to detect loaded savegames
-nosave float lastTime; // Used in case the engine loads a map at the same time, to use random() instead
+
+// FOR PREPARING THE SEED
+
+float IsWorldFrozen;
+float Entropy;
+float CurrentFrameForEntropy;
+float FRAMES_FOR_RANDOM_SEED = 8;
+float IsSeedCalculated;
+float FixedSeed;
