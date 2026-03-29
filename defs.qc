@@ -786,3 +786,5 @@ float CurrentFrameForEntropy;
 float FRAMES_FOR_RANDOM_SEED = 8;
 float IsSeedCalculated;
 float FixedSeed;
+
+entity seed_calculator;

@@ -845,6 +845,17 @@ void() PutClientInServer =
 	if(currentCenterTime == 100000)
 		SetCentertime(2);
 
+
+	if(IsSeedCalculated == 0 && IsWorldFrozen == 0)
+	{
+		dprint("Calculating seed...\n");
+		CurrentFrameForEntropy = 0;
+		IsWorldFrozen = 1;
+		seed_calculator = spawn();
+		seed_calculator.think = CalculateSeed;
+		seed_calculator.nextthink = time + 0.1;
+	}
+
 	W_SetCurrentAmmo ();
 
 	self.attack_finished = time;

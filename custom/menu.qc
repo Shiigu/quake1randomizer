@@ -257,7 +257,7 @@ void() SeedMenu = {
     }
     else
     {
-        centerprint (Client, "Current seed is\n", ftos(seed), "\n\nThe seed is currently fixed.\nThe same map will ALWAYS give\nthe same entities.\n\n", "(Changing is currently disabled,\nas you are in Endless Castle)\n\n", "[1] Return to Main Menu");
+        centerprint (Client, "Current seed is\n", ftos(EndlessCastleSeed), "\n\nIn Endless Castle Mode, the seed is fixed.\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 };

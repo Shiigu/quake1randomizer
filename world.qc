@@ -4,6 +4,8 @@ void() precache_everything;
 //JIM
 void() InitBulletHoles;
 
+void() CalculateSeed;
+
 
 void() main =
 {
@@ -200,17 +202,15 @@ World Types:
 
 void() worldspawn =
 {
+	dprint("=== Calling worldspawn ===\n");
 	FixedSeed = floor(cvar("gamecfg"));
 	dprint("FixedSeed = ");
 	dprint(ftos(FixedSeed));
 	dprint(".\n");
 	PrintedEndlessCastleSplash = -1;
 
-	if((EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0)
-	{
-		IsSeedCalculated = 0;
-		IsWorldFrozen = 1;
-	}
+	IsSeedCalculated = 0;
+		
    	lastspawn = world;
 	InitBodyQue ();
 
@@ -409,55 +409,10 @@ void() worldspawn =
       footsteps = 0;
 };
 
-void() Randomize;
-
 void() StartFrame =
 {
 	if (IsWorldFrozen)
     {
-		// If seed is predefined, either by gamecfg or Endless Castle, we use it immediately.
-
-		if(FixedSeed != 0)
-		{
-			seed = FixedSeed;
-			seedIsFixed = 1;
-			IsSeedCalculated = 1;
-		}
-		else if(EndlessCastleMapCount != 0)
-		{
-			dprint("EndlessCastleSeed = ");
-			dprint(ftos(EndlessCastleSeed));
-			dprint(".\n");
-			if(EndlessCastleSeed > 0)
-			{
-				seed = EndlessCastleSeed;
-				IsSeedCalculated = 1;
-			}
-		}
-
-		if(IsSeedCalculated)
-		{
-            dprint("seed = ");
-            dprint(ftos(seed));
-            dprint("\n");
-			Randomize();
-			return;
-		}
-
-		// We accumulate noise for enough variation before we set the seed, to ensure that the seed is different each time and not based on when the map loads.
-
-        Entropy = Entropy
-            + frametime * 1000000000
-            + time * 10000000;
-
-        CurrentFrameForEntropy = CurrentFrameForEntropy + 1;
-
-        if (CurrentFrameForEntropy >= FRAMES_FOR_RANDOM_SEED)
-        {
-            seed = floor(fabs(Entropy) % 40000000);
-            IsSeedCalculated = 1;
-        }
-
 		// In the meanwhile, we lock execution of the game so that nothing happens until the seed is ready.
 
 		return; 
@@ -472,6 +427,76 @@ void() StartFrame =
 		localcmd("map start\n");
 		return;
 	}
+};
+
+/*
+==============================================================================
+
+SEED CALCULATION
+
+==============================================================================
+*/
+
+void() Randomize;
+
+void() CalculateSeed =
+{
+	// If seed is predefined, either by gamecfg or Endless Castle, we use it immediately.
+
+	if(FixedSeed != 0)
+	{
+		seed = FixedSeed;
+		seedIsFixed = 1;
+		IsSeedCalculated = 1;
+		dprint("Seed is fixed. IsSeedCalculated = 1\n");
+	}
+	else if(EndlessCastleMapCount != 0)
+	{
+		if(EndlessCastleSeed > 0)
+		{
+			dprint("EndlessCastleSeed = ");
+			dprint(ftos(EndlessCastleSeed));
+			dprint("\n");
+			seed = EndlessCastleSeed;
+			IsSeedCalculated = 1;
+		}
+	}
+
+	if(IsSeedCalculated)
+	{
+		dprint("seed = ");
+		dprint(ftos(seed));
+		dprint("\n");
+		remove(seed_calculator);
+		Randomize();
+		return;
+	}
+
+	// We accumulate noise for enough variation before we set the seed, to ensure that the seed is different each time and not based on when the map loads.
+
+	Entropy = Entropy
+		+ frametime * 100000000
+		+ Entropy * random() * 0.5;
+
+	CurrentFrameForEntropy = CurrentFrameForEntropy + 1;
+	
+	dprint("Entropy for frame ");
+	dprint(ftos(CurrentFrameForEntropy));
+	dprint(" = ");
+	dprint(ftos(Entropy));
+	dprint("\n");
+
+	if (CurrentFrameForEntropy >= FRAMES_FOR_RANDOM_SEED)
+	{
+		seed = floor(fabs(Entropy) % 4000000025);
+		if(EndlessCastleMapCount != 0)
+			EndlessCastleSeed = seed;
+		IsSeedCalculated = 1;
+		dprint("Seed is random. IsSeedCalculated = 1\n");
+	}
+
+	seed_calculator.think = CalculateSeed;
+	seed_calculator.nextthink = seed_calculator.nextthink + random()*0.5;
 };
 
 /*
