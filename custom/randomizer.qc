@@ -640,6 +640,7 @@ void() ConvertEntities = {
         SUB_Remove_Target(Placeholder);
         dprint("----- Finished ConvertEntities -----\n");
 		IsWorldFrozen = 0;
+		cvar_set ("host_framerate", ftos(old_host_framerate));
         if(EndlessCastleMapCount > 0)
         {
 			PrintedEndlessCastleSplash = 0;

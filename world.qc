@@ -468,6 +468,7 @@ void() CalculateSeed =
 		dprint(ftos(seed));
 		dprint("\n");
 		remove(seed_calculator);
+		cvar_set ("host_framerate", ftos(old_host_framerate));
 		Randomize();
 		return;
 	}
@@ -496,7 +497,7 @@ void() CalculateSeed =
 	}
 
 	seed_calculator.think = CalculateSeed;
-	seed_calculator.nextthink = seed_calculator.nextthink + random()*0.5;
+	seed_calculator.nextthink = seed_calculator.nextthink + random() + random()*0.5;
 };
 
 /*

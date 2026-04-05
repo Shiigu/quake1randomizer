@@ -783,8 +783,10 @@ nosave float sessionframecount; // Used to detect loaded savegames
 float IsWorldFrozen;
 float Entropy;
 float CurrentFrameForEntropy;
-float FRAMES_FOR_RANDOM_SEED = 8;
+float FRAMES_FOR_RANDOM_SEED = 10;
 float IsSeedCalculated;
 float FixedSeed;
+
+nosave float old_host_framerate;
 
 entity seed_calculator;

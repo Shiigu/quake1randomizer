@@ -1648,7 +1648,7 @@ void() W_Attack =
 {
 	local	float	r;
 
-	if (!W_CheckNoAmmo ())
+	if (!W_CheckNoAmmo () || ((!IsSeedCalculated || IsWorldFrozen) && (EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0))
 		return;
 
 	makevectors	(self.v_angle);			// calculate forward angle for velocity

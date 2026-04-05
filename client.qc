@@ -1101,7 +1101,7 @@ void() PlayerJump =
 {
 	local vector start, end;
 	
-	if (self.flags & FL_WATERJUMP)
+	if (self.flags & FL_WATERJUMP || ((!IsSeedCalculated || IsWorldFrozen) && (EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0))
 		return;
 	
 	if (self.waterlevel >= 2)
@@ -1282,8 +1282,13 @@ void() PlayerPreThink =
 		return;
 	}
 
-	if(!IsSeedCalculated && (EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0)
+	if((!IsSeedCalculated || IsWorldFrozen) && (EndlessCastleMapCount == 0 || EndlessCastleSeed == 0) && FixedSeed <= 0)
+	{
+        self.velocity = '0 0 0';
+        self.avelocity = '0 0 0';
+        self.angles = '0 0 0';
 		return;
+	}
 
 	if (intermission_running)
 	{
