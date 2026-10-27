@@ -35,6 +35,9 @@ void() ConvertToShells;
 void() ConvertToNails;
 void() ConvertToRockets;
 void() ConvertToCells;
+void() ConvertToLavaNails;
+void() ConvertToMultiRockets;
+void() ConvertToPlasma;
 // POWERUPS
 void() ConvertToPentagramOfProtection;
 void() ConvertToBiosuit;
@@ -42,6 +45,8 @@ void() ConvertToRingOfShadows;
 void() ConvertToQuadDamage;
 void() ConvertToEmpathyShields;
 void() ConvertToHornOfConjuring;
+void() ConvertToPowerShield;
+void() ConvertToAntiGravBelt;
 void() ConvertToWetsuit;
 // WEAPONS
 void() ConvertToDoubleBarrelledShotgun;
@@ -336,6 +341,22 @@ void() precache_everything =
 	precache_sound2 ("guard/death.wav");
 	precache_sound2 ("guard/pain1.wav");
 	precache_sound2 ("guard/see1.wav");
+	precache_model ("maps/b_lnail0.bsp");
+	precache_model ("maps/b_lnail1.bsp");
+	precache_model ("maps/b_mrock0.bsp");
+	precache_model ("maps/b_mrock1.bsp");
+	precache_model ("maps/b_plas0.bsp");
+	precache_model ("maps/b_plas1.bsp");
+	precache_model ("progs/shield.mdl");
+	precache_model ("progs/p_shield.mdl");
+	precache_sound ("shield/pickup.wav");
+	precache_sound ("shield/hit.wav");
+	precache_sound ("shield/fadeout.wav");
+	precache_sound ("enforcer/enfstop.wav");
+	precache_model ("progs/beltup.mdl");
+	precache_sound ("belt/pickup.wav");
+	precache_sound ("belt/use.wav");
+	precache_sound ("belt/fadeout.wav");
 	precache_sound2 ("blob/mytosis.wav");
 	precache_model ("progs/mervup.mdl");
 	precache_model ("progs/statgib1.mdl");
@@ -1301,6 +1322,54 @@ void() ConvertToGremlin =
 	walkmonster_start();
 };
 
+// Replaces entity with a Power Shield (Dissolution of Eternity)
+void() ConvertToPowerShield =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = newitems_touch;
+	self.classname = "item_powerup_shield";
+	self.noise = "shield/pickup.wav";
+	setmodel (self, "progs/shield.mdl");
+	self.netname = "Power Shield";
+	self.items = 0;			// newitems_touch hands out .items too, so don't keep the old powerup's bit
+	self.rog_items = RIT_SHIELD;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_POWER_SHIELD);
+};
+
+// Replaces entity with an Anti-Grav Belt (Dissolution of Eternity)
+void() ConvertToAntiGravBelt =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = newitems_touch;
+	self.classname = "item_powerup_belt";
+	self.noise = "belt/pickup.wav";
+	setmodel (self, "progs/beltup.mdl");
+	self.netname = "Anti-Grav Belt";
+	self.items = 0;			// see ConvertToPowerShield
+	self.rog_items = RIT_ANTIGRAV;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_ANTI_GRAV_BELT);
+};
+
 // Replaces entity with a Hell Spawn (Dissolution of Eternity): a Spawn that may split in two when it gets hurt
 void() ConvertToHellSpawn =
 {
@@ -1610,7 +1679,7 @@ void() ConvertToPhantomSwordsman =
 	self.use = SUB_Null;
 
 	self.th_stand = sword_stand1;
-	self.th_walk = sword_stand1;
+	self.th_walk = sword_walk1;
 	self.th_run = sword_pause;
 	self.th_melee = sword_atk1;
 	self.th_die = sword_die;
@@ -2616,6 +2685,108 @@ void() ConvertToWeaponBackpack =
 	StartItem ();
 };
 
+// Replaces entity with lava nails (Dissolution of Eternity)
+void() ConvertToLavaNails =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_lava_spikes";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_lnail0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_SMALL);
+		self.aflag = 25;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_lnail1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_BIG);
+		self.aflag = 50;
+	}
+	self.weapon = 5;
+	self.netname = "lava nails";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
+// Replaces entity with multi rockets (Dissolution of Eternity)
+void() ConvertToMultiRockets =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_multi_rockets";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_mrock0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_SMALL);
+		self.aflag = 5;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_mrock1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_BIG);
+		self.aflag = 10;
+	}
+	self.weapon = 6;
+	self.netname = "multi rockets";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
+// Replaces entity with plasma (Dissolution of Eternity)
+void() ConvertToPlasma =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_plasma";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_plas0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_SMALL);
+		self.aflag = 6;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_plas1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_BIG);
+		self.aflag = 12;
+	}
+	self.weapon = 7;
+	self.netname = "plasma";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
 void() ConvertToAmmoBackpack =
 {	
 	dprint("Converted ");
@@ -2694,6 +2865,60 @@ void() ConvertToAmmoBackpack =
 		dprint(self.classname);
 		dprint(" (");
 		dprint(ftos(self.ammo_cells));
+		dprint(")");
+	}
+	else if (self.PickupType == 5) // Lava Nails
+	{
+		self.classname = "item_backpack_lava_nails";
+		if(self.QualityType == 1)
+		{
+			self.ammo_lava_nails = 25;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_lava_nails = 50;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_lava_nails));
+		dprint(")");
+	}
+	else if (self.PickupType == 6) // Multi Rockets
+	{
+		self.classname = "item_backpack_multi_rockets";
+		if(self.QualityType == 1)
+		{
+			self.ammo_multi_rockets = 5;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_multi_rockets = 10;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_multi_rockets));
+		dprint(")");
+	}
+	else if (self.PickupType == 7) // Plasma
+	{
+		self.classname = "item_backpack_plasma";
+		if(self.QualityType == 1)
+		{
+			self.ammo_plasma = 6;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_plasma = 12;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_plasma));
 		dprint(")");
 	}
 	else

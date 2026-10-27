@@ -577,6 +577,12 @@ void() PlayerDie =
 	self.empathy_finished = 0;
 	self.items2 = self.items2 - (self.items2 & HIP_IT_EMPATHY_SHIELDS);
 
+	// Dissolution of Eternity: no floating or shield once dead
+	self.gravity = 1.0;
+	self.shield_finished = 0;
+	self.antigrav_finished = 0;
+	self.rog_items = self.rog_items - (self.rog_items & (RIT_SHIELD | RIT_ANTIGRAV));
+
 	if (deathmatch || coop)
 		DropBackpack();
 

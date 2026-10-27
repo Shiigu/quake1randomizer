@@ -79,8 +79,13 @@ float	ROGW_PLASMA_GUN			= 268435456;
 .entity		shield_entity;
 .float		shield_death_time;
 .float		shieldSoundTime;
+.float		AGping;			// next time the Anti-Grav Belt pings
 
-.float		ammo_shells1, ammo_nails1, ammo_rockets1, ammo_cells1;
+// Ammo. Rogue keeps the real standard ammo in ammo_shells1/nails1/rockets1/cells1 and only uses ammo_shells/
+// nails/rockets/cells as the (swapped) status bar values, with UpdateAmmoCounts() filling them in. This mod
+// uses ammo_shells/nails/rockets/cells as the real ammo all over the place (and the Gremlins steal from
+// them), so those stay the truth, the alternate ammo above is kept in its own fields, and there is no swap.
+// Translation: Rogue's ammo_X1 -> ammo_X, and UpdateAmmoCounts() calls are dropped.
 
 //
 // elevator fields

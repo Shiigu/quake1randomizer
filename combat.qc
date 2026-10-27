@@ -88,8 +88,9 @@ void(entity targ, entity attacker) Killed =
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
 
+	self.gravity = 1.0;		// Dissolution of Eternity: don't die floating (Anti-Grav Belt)
 	ClientObituary(self, attacker);
-	
+
 	self.takedamage = DAMAGE_NO;
 	self.touch = SUB_Null;
 
@@ -121,6 +122,14 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
    if (discharged && targ.wetsuit_finished )
       return;
+
+// Dissolution of Eternity: the Power Shield absorbs part of every hit that comes from the front
+	if (targ.rog_items & RIT_SHIELD)
+	{
+		damage = shield_hit(targ, inflictor, attacker, damage);
+		if (damage == 0)
+			return;
+	}
 //MED moved damage_attacker down a bit
 /*
    dprint("netname = ");

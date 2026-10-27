@@ -62,6 +62,8 @@ hipnotic/hiptrig.qc
 hipnotic/hipmisc.qc
 hipnotic/hipwater.qc
 rogue/new_ai.qc
+rogue/shield.qc
+rogue/newitems.qc
 rogue/wrath.qc
 rogue/lavaman.qc
 rogue/mummy.qc

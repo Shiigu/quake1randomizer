@@ -377,6 +377,60 @@ WEAPONS
 ===============================================================================
 */
 
+// Dissolution of Eternity: the combo weapons (Lava Nailgun, Lava Super Nailgun, Multi-Grenade Launcher,
+// Multi-Rocket Launcher, Plasma Gun) are not picked up. You get each one by owning its base weapon
+// while holding some of its alternate ammo.
+void(entity comboOwner) EnableComboWeapons =
+{
+	if (comboOwner.classname != "player")
+		return;
+
+	if (!(comboOwner.rog_items & RIT_LAVA_NAILGUN))
+	{
+		if (comboOwner.ammo_lava_nails > 0 && (comboOwner.items & IT_NAILGUN))
+		{
+			sprint (comboOwner, "Lava Enabled\n");
+			comboOwner.rog_items = comboOwner.rog_items | RIT_LAVA_NAILGUN;
+		}
+	}
+
+	if (!(comboOwner.rog_items & RIT_LAVA_SUPER_NAILGUN))
+	{
+		if (comboOwner.ammo_lava_nails > 0 && (comboOwner.items & IT_SUPER_NAILGUN))
+		{
+			sprint (comboOwner, "Super Lava Enabled\n");
+			comboOwner.rog_items = comboOwner.rog_items | RIT_LAVA_SUPER_NAILGUN;
+		}
+	}
+
+	if (!(comboOwner.rog_items & RIT_MULTI_GRENADE))
+	{
+		if (comboOwner.ammo_multi_rockets > 0 && (comboOwner.items & IT_GRENADE_LAUNCHER))
+		{
+			sprint (comboOwner, "Multi Grenades Enabled\n");
+			comboOwner.rog_items = comboOwner.rog_items | RIT_MULTI_GRENADE;
+		}
+	}
+
+	if (!(comboOwner.rog_items & RIT_MULTI_ROCKET))
+	{
+		if (comboOwner.ammo_multi_rockets > 0 && (comboOwner.items & IT_ROCKET_LAUNCHER))
+		{
+			sprint (comboOwner, "Multi Rockets Enabled\n");
+			comboOwner.rog_items = comboOwner.rog_items | RIT_MULTI_ROCKET;
+		}
+	}
+
+	if (!(comboOwner.rog_items & RIT_PLASMA_GUN))
+	{
+		if (comboOwner.ammo_plasma > 0 && (comboOwner.items & IT_LIGHTNING))
+		{
+			sprint (comboOwner, "Plasma Gun Enabled\n");
+			comboOwner.rog_items = comboOwner.rog_items | RIT_PLASMA_GUN;
+		}
+	}
+};
+
 void() bound_other_ammo =
 {
 	if (other.ammo_shells > 100)
@@ -387,6 +441,14 @@ void() bound_other_ammo =
 		other.ammo_rockets = 100;		
 	if (other.ammo_cells > 100)
 		other.ammo_cells = 100;		
+
+	// Dissolution of Eternity
+	if (other.ammo_lava_nails > 200)
+		other.ammo_lava_nails = 200;
+	if (other.ammo_multi_rockets > 100)
+		other.ammo_multi_rockets = 100;
+	if (other.ammo_plasma > 100)
+		other.ammo_plasma = 100;
 };
 
 
@@ -720,6 +782,32 @@ local float		best;
 			return;
 		other.ammo_cells = other.ammo_cells + self.aflag;
 	}
+
+//	lava nails (Dissolution of Eternity)
+	if (self.weapon == 5)
+	{
+		if (other.ammo_lava_nails >= 200)
+			return;
+		other.ammo_lava_nails = other.ammo_lava_nails + self.aflag;
+	}
+
+//	multi rockets (Dissolution of Eternity)
+	if (self.weapon == 6)
+	{
+		if (other.ammo_multi_rockets >= 100)
+			return;
+		other.ammo_multi_rockets = other.ammo_multi_rockets + self.aflag;
+	}
+
+//	plasma (Dissolution of Eternity)
+	if (self.weapon == 7)
+	{
+		if (other.ammo_plasma >= 100)
+			return;
+		other.ammo_plasma = other.ammo_plasma + self.aflag;
+	}
+
+	EnableComboWeapons ( other );
 
 	bound_other_ammo ();
 	
@@ -1348,6 +1436,9 @@ void() BackpackTouch =
 	other.ammo_nails = other.ammo_nails + self.ammo_nails;
 	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
 	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+	other.ammo_lava_nails = other.ammo_lava_nails + self.ammo_lava_nails;
+	other.ammo_multi_rockets = other.ammo_multi_rockets + self.ammo_multi_rockets;
+	other.ammo_plasma = other.ammo_plasma + self.ammo_plasma;
 
 	new = self.items;
 	if (!new)
@@ -1393,6 +1484,33 @@ void() BackpackTouch =
 		sprint (other, s);
 		sprint (other, " cells");
 	}
+	if (self.ammo_lava_nails)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_lava_nails);
+		sprint (other, s);
+		sprint (other, " lava nails");
+	}
+	if (self.ammo_multi_rockets)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_multi_rockets);
+		sprint (other, s);
+		sprint (other, " multi rockets");
+	}
+	if (self.ammo_plasma)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_plasma);
+		sprint (other, s);
+		sprint (other, " plasma balls");
+	}
 	
 	sprint (other, "\n");
 // backpack touch sound
@@ -1402,6 +1520,7 @@ void() BackpackTouch =
 // remove the backpack, change self to the player
 	SUB_Remove();
 	self = other;
+	EnableComboWeapons ( self );	// Dissolution of Eternity
 
 // change to the weapon
 	if (!deathmatch)
@@ -1437,6 +1556,15 @@ void() BackpackTouch_Replaced =
 	if (!self.items && self.ammo_cells)
 		if (other.ammo_cells >= 100)
 			return;
+	if (!self.items && self.ammo_lava_nails)
+		if (other.ammo_lava_nails >= 200)
+			return;
+	if (!self.items && self.ammo_multi_rockets)
+		if (other.ammo_multi_rockets >= 100)
+			return;
+	if (!self.items && self.ammo_plasma)
+		if (other.ammo_plasma >= 100)
+			return;
 
 	if (deathmatch == 2 || coop)
 		leave = 1;
@@ -1466,6 +1594,9 @@ void() BackpackTouch_Replaced =
 	other.ammo_nails = other.ammo_nails + self.ammo_nails;
 	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
 	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+	other.ammo_lava_nails = other.ammo_lava_nails + self.ammo_lava_nails;
+	other.ammo_multi_rockets = other.ammo_multi_rockets + self.ammo_multi_rockets;
+	other.ammo_plasma = other.ammo_plasma + self.ammo_plasma;
 
 	new = self.items;
 	if (!new)
@@ -1511,6 +1642,33 @@ void() BackpackTouch_Replaced =
 		sprint (other, s);
 		sprint (other, " cells");
 	}
+	if (self.ammo_lava_nails)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_lava_nails);
+		sprint (other, s);
+		sprint (other, " lava nails");
+	}
+	if (self.ammo_multi_rockets)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_multi_rockets);
+		sprint (other, s);
+		sprint (other, " multi rockets");
+	}
+	if (self.ammo_plasma)
+	{
+		if (acount)
+			sprint(other, ", ");
+		acount = 1;
+		s = ftos(self.ammo_plasma);
+		sprint (other, s);
+		sprint (other, " plasma balls");
+	}
 	
 	sprint (other, "\n");
 // backpack touch sound
@@ -1528,6 +1686,7 @@ void() BackpackTouch_Replaced =
 	if (self.items)
 		other.weapon = self.items;
 	
+	EnableComboWeapons ( other );	// Dissolution of Eternity
 	stemp = self;
 	self = other;
 	W_SetCurrentAmmo ();
@@ -1559,7 +1718,7 @@ void() DropBackpack =
 {
 	local entity	item;
 
-	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells))
+	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells + self.ammo_lava_nails + self.ammo_multi_rockets + self.ammo_plasma))
 		return;	// nothing in it
 
 	item = spawn();
@@ -1588,6 +1747,32 @@ void() DropBackpack =
 		item.netname = "Proximity Gun";
 	else if (item.items == IT_MJOLNIR)
 		item.netname = "Mjolnir";
+	// Dissolution of Eternity: a combo weapon drops its base weapon
+	else if (item.items == ROGW_LAVA_NAILGUN)
+	{
+		item.netname = "Lava Nail Gun";
+		item.items = IT_NAILGUN;
+	}
+	else if (item.items == ROGW_LAVA_SUPER_NAILGUN)
+	{
+		item.netname = "Super Lava Nail Gun";
+		item.items = IT_SUPER_NAILGUN;
+	}
+	else if (item.items == ROGW_MULTI_GRENADE)
+	{
+		item.netname = "Multi Grenade Launcher";
+		item.items = IT_GRENADE_LAUNCHER;
+	}
+	else if (item.items == ROGW_MULTI_ROCKET)
+	{
+		item.netname = "Multi Rocket Launcher";
+		item.items = IT_ROCKET_LAUNCHER;
+	}
+	else if (item.items == ROGW_PLASMA_GUN)
+	{
+		item.netname = "Plasma Gun";
+		item.items = IT_LIGHTNING;
+	}
 	else
 		item.netname = "";
 
@@ -1595,6 +1780,9 @@ void() DropBackpack =
 	item.ammo_nails = self.ammo_nails;
 	item.ammo_rockets = self.ammo_rockets;
 	item.ammo_cells = self.ammo_cells;
+	item.ammo_lava_nails = self.ammo_lava_nails;
+	item.ammo_multi_rockets = self.ammo_multi_rockets;
+	item.ammo_plasma = self.ammo_plasma;
 
 	item.velocity_z = 300;
 	item.velocity_x = -100 + (random() * 200);

@@ -95,26 +95,41 @@ float ProbabilityForSmallAmmoPackNightmare          = 75;
 float ProbabilityForSmallAmmoPackSuperNightmare     = 80;
 float ProbabilityForSmallAmmoPackUnfair             = 100;
 
-float ProbabilitiesForPowerupsNearWater[9];
-float ProbabilitiesForPowerupsNearWaterEasy[9]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20 };
-float ProbabilitiesForPowerupsNearWaterNormal[9]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15 };
-float ProbabilitiesForPowerupsNearWaterHard[9]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10 };
-float ProbabilitiesForPowerupsNearWaterNightmare[9]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8 };
-float ProbabilitiesForPowerupsNearWaterSuperNightmare[9]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5 };
-float ProbabilitiesForPowerupsNearWaterUnfair[9]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5 };
-void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
-string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring" };
+// Dissolution of Eternity: the chance (out of 100) for any ammo to turn into one of the alternate ammos (Lava Nails,
+// Multi Rockets or Plasma, all equally likely) instead of a standard one. It is strong ammo for the player, so it is much
+// rarer than any standard ammo, and it gets rarer as the difficulty goes up. Unbiased Mode doesn't play fair, but it
+// keeps it rare too.
+float ProbabilityForAlternateAmmo;
+float ProbabilityForAlternateAmmoEasy                   = 8;
+float ProbabilityForAlternateAmmoNormal                 = 6;
+float ProbabilityForAlternateAmmoHard                   = 4;
+float ProbabilityForAlternateAmmoNightmare              = 3;
+float ProbabilityForAlternateAmmoSuperNightmare         = 2;
+float ProbabilityForAlternateAmmoUnfair                 = 0;
+float ProbabilityForAlternateAmmoUnbiased          = 10;
+void() AlternateAmmoConverters[] = { ConvertToLavaNails, ConvertToMultiRockets, ConvertToPlasma };
+string AlternateAmmoNetNames[] = { "lava nails", "multi rockets", "plasma" };
 
-float ProbabilitiesForPowerupsNotNearWater[8];
-float ProbabilitiesForPowerupsNotNearWaterEasy[8]           = { 20, 20, 20, 15, 20, 5, 20, 20 };
-float ProbabilitiesForPowerupsNotNearWaterNormal[8]         = { 19, 19, 19, 19, 19, 5, 18, 15 };
-float ProbabilitiesForPowerupsNotNearWaterHard[8]           = { 18, 18, 18, 18, 18, 10, 17, 10 };
-float ProbabilitiesForPowerupsNotNearWaterNightmare[8]      = { 15, 15, 15, 20, 15, 20, 15, 8 };
-float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[8] = { 12, 12, 12, 24, 12, 28, 12, 5 };
-float ProbabilitiesForPowerupsNotNearWaterUnfair[8]         = { 5, 5, 5, 45, 10, 30, 8, 5 };
+float ProbabilitiesForPowerupsNearWater[11];
+float ProbabilitiesForPowerupsNearWaterEasy[11]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20, 15, 5 };
+float ProbabilitiesForPowerupsNearWaterNormal[11]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15, 12, 8 };
+float ProbabilitiesForPowerupsNearWaterHard[11]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10, 9, 10 };
+float ProbabilitiesForPowerupsNearWaterNightmare[11]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8, 7, 12 };
+float ProbabilitiesForPowerupsNearWaterSuperNightmare[11]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5, 5, 14 };
+float ProbabilitiesForPowerupsNearWaterUnfair[11]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5, 4, 14 };
+void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
+string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
-void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring };
-string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring" };
+float ProbabilitiesForPowerupsNotNearWater[10];
+float ProbabilitiesForPowerupsNotNearWaterEasy[10]           = { 20, 20, 20, 15, 20, 5, 20, 20, 15, 5 };
+float ProbabilitiesForPowerupsNotNearWaterNormal[10]         = { 19, 19, 19, 19, 19, 5, 18, 15, 12, 8 };
+float ProbabilitiesForPowerupsNotNearWaterHard[10]           = { 18, 18, 18, 18, 18, 10, 17, 10, 9, 10 };
+float ProbabilitiesForPowerupsNotNearWaterNightmare[10]      = { 15, 15, 15, 20, 15, 20, 15, 8, 7, 12 };
+float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[10] = { 12, 12, 12, 24, 12, 28, 12, 5, 5, 14 };
+float ProbabilitiesForPowerupsNotNearWaterUnfair[10]         = { 5, 5, 5, 45, 10, 30, 8, 5, 4, 14 };
+
+void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
+string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
 float ProbabilityForWeaponIntoPowerup;
 float ProbabilityForWeaponIntoPowerupEasy           = 3;
@@ -186,6 +201,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupEasy;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupEasy;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackEasy;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoEasy;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupEasy;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoEasy;
     } else if (EndlessCastleMapDifficulty < ThresholdForHard) {
@@ -208,6 +224,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupNormal;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNormal;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNormal;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNormal;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNormal;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNormal;
     } else if (EndlessCastleMapDifficulty < ThresholdForNightmare) {
@@ -230,6 +247,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupHard;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupHard;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackHard;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoHard;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupHard;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoHard;
     } else if (EndlessCastleMapDifficulty < ThresholdForSuperNightmare) {
@@ -252,6 +270,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupNightmare;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNightmare;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNightmare;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNightmare;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNightmare;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNightmare;
     } else if (EndlessCastleMapDifficulty < ThresholdForUnfair) {
@@ -274,6 +293,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupSuperNightmare;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupSuperNightmare;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackSuperNightmare;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoSuperNightmare;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupSuperNightmare;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoSuperNightmare;
     } else {
@@ -296,6 +316,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupUnfair;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupUnfair;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackUnfair;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoUnfair;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupUnfair;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoUnfair;
     }
@@ -524,7 +545,8 @@ void() ConvertEntities = {
                         dprint("Ignored due to randomizer settings.\n");
                     }
                 }
-                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon")
+                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon"
+                || temp.classname == "item_lava_spikes" || temp.classname == "item_multi_rockets" || temp.classname == "item_plasma")
                 {
                     if(RandomizeWeaponsAndAmmo)
                     {
@@ -554,7 +576,8 @@ void() ConvertEntities = {
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage"
-                || temp.classname == "item_artifact_wetsuit" || temp.classname == "item_hornofconjuring" || temp.classname == "item_artifact_empathy_shields")
+                || temp.classname == "item_artifact_wetsuit" || temp.classname == "item_hornofconjuring" || temp.classname == "item_artifact_empathy_shields"
+                || temp.classname == "item_powerup_shield" || temp.classname == "item_powerup_belt")
                 {
                     if(RandomizePowerups)
                     {
@@ -1077,12 +1100,35 @@ void() ConvertToPickupBiased = {
     self.nextthink = time;
 };
 
+// Dissolution of Eternity: turns the entity into one of the alternate ammos (all equally likely).
+void(float packSize) PickAlternateAmmo = {
+    local float AmmoTypeRng;
+    AmmoTypeRng = Random(1, AlternateAmmoConverters.length);
+    self.QualityType = packSize;
+    self.netname = AlternateAmmoNetNames[AmmoTypeRng - 1];
+    if(!HideInBackpacks)
+    {
+        self.think = AlternateAmmoConverters[AmmoTypeRng - 1];
+    }
+    else
+    {
+        self.PickupType = AmmoTypeRng + 4;          // 5, 6 and 7 follow Shells, Nails, Rockets and Cells
+        self.think = ConvertToAmmoBackpack;
+    }
+    self.nextthink = time;
+};
+
 // Converts ammo of one type to another randomly.
 // Even chance for all ammo types and sizes
 void() ConvertToAmmoUnbiased = {
     local float AmmoTypeRng, AmmoSizeRng;
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
+    if(Random(1, 100) <= ProbabilityForAlternateAmmoUnbiased)
+    {
+        PickAlternateAmmo(AmmoSizeRng);
+        return;
+    }
     self.QualityType = AmmoSizeRng;
     self.netname = AmmoNetNames[AmmoTypeRng - 1];
     if(!HideInBackpacks)
@@ -1114,6 +1160,11 @@ void() ConvertToAmmoBiased = {
         AmmoPackSize = 1;
     else
         AmmoPackSize = 2;
+    if(ProbabilityForAlternateAmmo > 0 && Random(1, 100) <= ProbabilityForAlternateAmmo)
+    {
+        PickAlternateAmmo(AmmoPackSize);
+        return;
+    }
     amountOfChoices = ProbabilitiesAmmoTypes.length;
     minrng = 0;
     maxrng = 0;
@@ -1155,7 +1206,7 @@ void() ConvertToAmmoBiased = {
 // Equal chance for a Megahealth, Red Armor, Pentagram of Protection, Quad Damage, Ring of Shadows, Biosuit, Empathy Shields, Wetsuit or Horn of Conjuring
 void() ConvertToPowerupUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
+    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
     rng = Random(1, Converters.length);
     if(rng == 4 || rng == 5)
         self.QualityType = 3;

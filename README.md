@@ -179,6 +179,14 @@ Exclusive to Endless Castle Mode, there's a chance that the Pickup will be remov
 |Small|50%|65%|70%|75%|80%|100%|
 |Big|50%|35%|30%|25%|20%|0%|
 
+- Alternate ammo (Dissolution of Eternity). Before the ammo type is rolled, an ammo pack has this chance to become Lava Nails (25/50), Multi Rockets (5/10) or Plasma (6/12) instead, all equally likely and with the crate sizes above:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Alternate ammo|8%|6%|4%|3%|2%|0%|
+
+> It is strong ammo for the player, so it is far rarer than any standard ammo. Unbiased Mode keeps it at 10%.
+
 Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
@@ -200,6 +208,8 @@ Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be re
 |Empathy Shields|20%|18%|17%|15%|12%|8%|
 |Wetsuit|10%|15%|20%|25%|35%|25%|
 |Horn of Conjuring|20%|15%|10%|8%|5%|5%|
+|Power Shield|15%|12%|9%|7%|5%|4%|
+|Anti-Grav Belt|5%|8%|10%|12%|14%|14%|
 
 - If there's no liquid body within 512 units of distance
 
@@ -213,6 +223,8 @@ Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be re
 |A weapon|5%|5%|10%|20%|28%|30%|
 |Empathy Shields|20%|18%|17%|15%|12%|8%|
 |Horn of Conjuring|20%|15%|10%|8%|5%|5%|
+|Power Shield|15%|12%|9%|7%|5%|4%|
+|Anti-Grav Belt|5%|8%|10%|12%|14%|14%|
 
 Exclusive to Endless Castle Mode, there's a chance that the Powerup will be removed from the level altogether. This applies before calculating the aforementioned odds:
 

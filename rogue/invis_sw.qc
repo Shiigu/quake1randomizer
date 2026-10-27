@@ -52,6 +52,10 @@ $frame deathb9 deathb10 deathb11
 
 void()	sword_stand1	=[	$stand1,	sword_stand1	] {ai_stand();};
 
+// The Swordsman never walks, but th_walk can't be sword_stand1: ai_stand calls th_walk once its pausetime
+// has passed, and that would loop forever (a stack overflow). It only still looks for a player.
+void()	sword_walk1		=[	$stand1,	sword_walk1		] {ai_walk(0);};
+
 /*
 void()	sword_walk1 =[	$walk1, sword_walk2	] {ai_walk(4);};
 void()	sword_walk2	=[	$walk2, sword_walk3	] {ai_walk(4);};
@@ -181,8 +185,7 @@ void() monster_sword =
 		self.delay = 10;
 		
 	self.th_stand = sword_stand1;
-//	self.th_walk = sword_walk1;
-	self.th_walk = sword_stand1;
+	self.th_walk = sword_walk1;
 	self.th_run = sword_pause;
 	self.th_melee = sword_atk1;
 	self.th_die = sword_die;

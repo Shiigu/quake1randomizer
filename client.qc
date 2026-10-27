@@ -856,6 +856,9 @@ void() PutClientInServer =
 	self.wetsuit_finished = 0;
 	//MED
 	self.empathy_finished = 0;
+	//Dissolution of Eternity
+	self.shield_finished = 0;
+	self.antigrav_finished = 0;
 	//MED
 	self.items2 = 0;
 	self.gravity = 1.0;
@@ -1447,6 +1450,18 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
+// Dissolution of Eternity: the Anti-Grav Belt pings every few seconds
+	if (self.rog_items & RIT_ANTIGRAV)
+	{
+		if ( time > self.AGping )
+		{
+			sound ( self, CHAN_AUTO, "belt/use.wav", 0.4, ATTN_NORM);
+			self.AGping = time + 3;
+			if(self.AGping >= (self.antigrav_finished - 3))
+				self.AGping = self.antigrav_finished + 3;
+		}
+	}
+
    	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR)
 	{
 		self.weapon = W_BestWeapon ();
@@ -1678,6 +1693,59 @@ void() CheckPowerups =
 		else
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
    }
+
+// Dissolution of Eternity: Power Shield
+	if(self.shield_finished)
+	{
+		if ( self.shield_finished < time + 3)
+		{
+			if (self.shield_time == 1)
+			{
+				sprint (self, "Shield failing...\n");
+				sound (self, CHAN_AUTO, "shield/fadeout.wav", 1, ATTN_NORM);
+				self.shield_time = 0;
+			}
+			if (self.shield_time < time)
+			{
+				self.shield_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if ( self.shield_finished < time)
+		{
+			sprint (self, "Shield Lost.\n");
+			self.shield_finished = 0;
+			self.rog_items = self.rog_items - (self.rog_items & RIT_SHIELD);
+		}
+	}
+
+// Dissolution of Eternity: Anti-Grav Belt
+	if(self.antigrav_finished)
+	{
+		if ( self.antigrav_finished < time + 3)
+		{
+			if (self.antigrav_time == 1)
+			{
+				sprint (self, "Antigrav failing...\n");
+				self.antigrav_time = 0;
+				sound (self, CHAN_AUTO, "belt/fadeout.wav", 1, ATTN_NORM);
+			}
+			if (self.antigrav_time < time)
+			{
+				self.antigrav_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if ( self.antigrav_finished < time)
+		{
+			sprint (self, "Antigrav Lost.\n");
+			self.antigrav_finished = 0;
+			self.rog_items = self.rog_items - (self.rog_items & RIT_ANTIGRAV);
+			self.gravity = 1.0;
+		}
+	}
 };
 
 
