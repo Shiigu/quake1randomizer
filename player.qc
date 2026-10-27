@@ -199,6 +199,35 @@ void() player_nail2   =[$nailatt2, player_nail1  ]
 
 //============================================================================
 
+//============================================================================
+// Dissolution of Eternity: Lava Nailgun and Lava Super Nailgun
+void() player_lava_nail1   =[$nailatt1, player_lava_nail2  ]
+{
+	self.effects = self.effects | EF_MUZZLEFLASH;
+
+	if (!self.button0)
+		{player_run ();return;}
+	self.weaponframe = self.weaponframe + 1;
+	if (self.weaponframe == 9)
+		self.weaponframe = 1;
+	SuperDamageSound();
+	W_FireLavaSpikes (4);
+	self.attack_finished = time + 0.2;
+};
+void() player_lava_nail2   =[$nailatt2, player_lava_nail1  ]
+{
+	self.effects = self.effects | EF_MUZZLEFLASH;
+
+	if (!self.button0)
+		{player_run ();return;}
+	self.weaponframe = self.weaponframe + 1;
+	if (self.weaponframe == 9)
+		self.weaponframe = 1;
+	SuperDamageSound();
+	W_FireLavaSpikes (-4);
+	self.attack_finished = time + 0.2;
+};
+
 void() player_light1   =[$light1, player_light2  ] 
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
@@ -209,6 +238,13 @@ void() player_light1   =[$light1, player_light2  ]
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
 	SuperDamageSound();
+	// Dissolution of Eternity: the Plasma Gun fires from the same frames as the Thunderbolt
+	if (self.weapon == ROGW_PLASMA_GUN)
+	{
+		W_FirePlasma();
+		player_run();
+		return;
+	}
 	W_FireLightning();
 	self.attack_finished = time + 0.2;
 };

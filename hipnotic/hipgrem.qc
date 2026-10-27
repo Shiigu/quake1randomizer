@@ -103,11 +103,13 @@ float() GremlinAttemptWeaponSteal =
    // we are within range so lets go for it
    //
    victim = self.enemy;
-   best = victim.weapon;
+   // Dissolution of Eternity: a combo weapon is stolen through its base weapon (the Nailgun for the Lava Nailgun)
+   best = ComboBaseWeapon (victim.weapon);
    if (best == IT_AXE || best == IT_SHOTGUN || best == IT_MJOLNIR)
       return FALSE;
    // take that weapon from the entity
    victim.items = victim.items - (victim.items & best);
+   DisableOrphanedComboWeapons (victim);
    // give it to our gremlin
    self.items = self.items | best;
    self.weapon = best;

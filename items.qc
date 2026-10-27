@@ -454,19 +454,29 @@ void() bound_other_ammo =
 
 float(float w) RankForWeapon =
 {
-	if (w == IT_LIGHTNING)
+	if (w == ROGW_PLASMA_GUN)
 		return 1;
-	if (w == IT_ROCKET_LAUNCHER)
+	if (w == IT_LIGHTNING)
 		return 2;
-	if (w == IT_SUPER_NAILGUN)
+	if (w == ROGW_MULTI_ROCKET)
 		return 3;
-	if (w == IT_GRENADE_LAUNCHER)
+	if (w == IT_ROCKET_LAUNCHER)
 		return 4;
-	if (w == IT_SUPER_SHOTGUN)
+	if (w == ROGW_LAVA_SUPER_NAILGUN)
 		return 5;
-	if (w == IT_NAILGUN)
+	if (w == IT_SUPER_NAILGUN)
 		return 6;
-	return 7;
+	if (w == ROGW_MULTI_GRENADE)
+		return 7;
+	if (w == IT_GRENADE_LAUNCHER)
+		return 8;
+	if (w == IT_SUPER_SHOTGUN)
+		return 9;
+	if (w == ROGW_LAVA_NAILGUN)
+		return 10;
+	if (w == IT_NAILGUN)
+		return 11;
+	return 12;
 };
 
 /*
@@ -606,6 +616,34 @@ void() weapon_touch =
 // change to the weapon
 	old = other.items;
 	other.items = other.items | new;
+
+	// Dissolution of Eternity: picking up a base weapon while you hold its alternate ammo switches to the combo version
+	EnableComboWeapons ( other );
+	if (new == IT_LIGHTNING)
+	{
+		if (other.ammo_plasma > 0)
+			new = ROGW_PLASMA_GUN;
+	}
+	else if (new == IT_ROCKET_LAUNCHER)
+	{
+		if (other.ammo_multi_rockets > 0)
+			new = ROGW_MULTI_ROCKET;
+	}
+	else if (new == IT_GRENADE_LAUNCHER)
+	{
+		if (other.ammo_multi_rockets > 0)
+			new = ROGW_MULTI_GRENADE;
+	}
+	else if (new == IT_SUPER_NAILGUN)
+	{
+		if (other.ammo_lava_nails > 1)
+			new = ROGW_LAVA_SUPER_NAILGUN;
+	}
+	else if (new == IT_NAILGUN)
+	{
+		if (other.ammo_lava_nails > 0)
+			new = ROGW_LAVA_NAILGUN;
+	}
 	
 	stemp = self;
 	self = other;

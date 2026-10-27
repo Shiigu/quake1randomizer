@@ -135,6 +135,7 @@ float	TE_BEAM				= 13;
 float	earthquake_active;
 float	earthquake_intensity;
 float	cutscene_running;
+float	lavaGunFired;		// set when a Lava Nailgun shot goes off, W_WeaponFrame plays its sound once
 
 // TODO when ported: prototypes for void(entity theEntity) UpdateAmmoCounts
 // (weapons.qc) and void(entity ownerEntity) sphere_remove (sphere.qc). FTEQCC

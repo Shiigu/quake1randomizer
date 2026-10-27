@@ -357,6 +357,17 @@ void() precache_everything =
 	precache_sound ("belt/pickup.wav");
 	precache_sound ("belt/use.wav");
 	precache_sound ("belt/fadeout.wav");
+	precache_model ("progs/v_lava.mdl");
+	precache_model ("progs/v_lava2.mdl");
+	precache_model ("progs/v_multi.mdl");
+	precache_model ("progs/v_multi2.mdl");
+	precache_model ("progs/v_plasma.mdl");
+	precache_model ("progs/lspike.mdl");
+	precache_model ("progs/rockup.mdl");
+	precache_model ("progs/rockup_d.mdl");
+	precache_sound ("lavagun/snail.wav");
+	precache_sound ("plasma/fire.wav");
+	precache_sound ("weapons/bounce.wav");
 	precache_sound2 ("blob/mytosis.wav");
 	precache_model ("progs/mervup.mdl");
 	precache_model ("progs/statgib1.mdl");
