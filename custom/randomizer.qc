@@ -100,13 +100,13 @@ float ProbabilityForSmallAmmoPackUnfair             = 100;
 // rarer than any standard ammo, and it gets rarer as the difficulty goes up. Unbiased Mode doesn't play fair, but it
 // keeps it rare too.
 float ProbabilityForAlternateAmmo;
-float ProbabilityForAlternateAmmoEasy                   = 8;
-float ProbabilityForAlternateAmmoNormal                 = 6;
-float ProbabilityForAlternateAmmoHard                   = 4;
-float ProbabilityForAlternateAmmoNightmare              = 3;
-float ProbabilityForAlternateAmmoSuperNightmare         = 2;
-float ProbabilityForAlternateAmmoUnfair                 = 0;
-float ProbabilityForAlternateAmmoUnbiased          = 10;
+float ProbabilityForAlternateAmmoEasy                   = 20;
+float ProbabilityForAlternateAmmoNormal                 = 15;
+float ProbabilityForAlternateAmmoHard                   = 10;
+float ProbabilityForAlternateAmmoNightmare              = 8;
+float ProbabilityForAlternateAmmoSuperNightmare         = 5;
+float ProbabilityForAlternateAmmoUnfair                 = 2;
+float ProbabilityForAlternateAmmoUnbiased          = 15;
 void() AlternateAmmoConverters[] = { ConvertToLavaNails, ConvertToMultiRockets, ConvertToPlasma };
 string AlternateAmmoNetNames[] = { "lava nails", "multi rockets", "plasma" };
 

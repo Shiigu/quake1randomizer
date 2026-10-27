@@ -374,7 +374,7 @@ void()	ogre_die3	=[	$death3,	ogre_die4	]
 if (self.spawnflags & OGRE_BOSS)
 	self.ammo_multi_rockets = 2;
 else
-	self.ammo_rockets = 2;
+	self.ammo_standard_rockets = 2;
 DropBackpack();};
 void()	ogre_die4	=[	$death4,	ogre_die5	] {};
 void()	ogre_die5	=[	$death5,	ogre_die6	] {};
@@ -395,7 +395,7 @@ void()	ogre_bdie3	=[	$bdeath3,	ogre_bdie4	]
 if (self.spawnflags & OGRE_BOSS)
 	self.ammo_multi_rockets = 2;
 else
-	self.ammo_rockets = 2;
+	self.ammo_standard_rockets = 2;
 DropBackpack();};
 void()	ogre_bdie4	=[	$bdeath4,	ogre_bdie5	] {ai_forward(1);};
 void()	ogre_bdie5	=[	$bdeath5,	ogre_bdie6	] {ai_forward(3);};

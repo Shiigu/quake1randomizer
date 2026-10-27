@@ -153,7 +153,7 @@ void(float stat) HIP_FireLaser =
       player_run ();
       return;
       }
-   if (self.ammo_cells < 1)
+   if (self.ammo_standard_cells < 1)
       {
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -173,7 +173,7 @@ void(float stat) HIP_FireLaser =
    aofs = ofs * 0.707;
    if (stat == 0)
       {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+      self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
       org = org + (aofs*v_right);
       org = org - (aofs*v_up);
       HIP_LaunchLaser(org, dir, 0);
@@ -182,7 +182,7 @@ void(float stat) HIP_FireLaser =
       }
    else if (stat == 1)
       {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+      self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
       org = org + (ofs*v_up);
       if (random()<0.1)
          {
@@ -450,8 +450,8 @@ void() HIP_FireMjolnirLightning =
 // explode if under water
 	if (self.waterlevel > 1)
 	{
-		cells = self.ammo_cells;
-		self.ammo_cells = 0;
+		cells = self.ammo_standard_cells;
+		self.ammo_standard_cells = 0;
       discharged = 1;
 		T_RadiusDamage (self, self, 35*cells, world);
       discharged = 0;
@@ -466,7 +466,7 @@ void() HIP_FireMjolnirLightning =
 //   }
 //   self.punchangle_x = 12;
 
-   self.currentammo = self.ammo_cells = self.ammo_cells - 15;
+   self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 15;
 
    HIP_SpawnMjolnirBase();
    };
@@ -487,7 +487,7 @@ void() HIP_FireMjolnir =
 //   ang_y = 0;
    makevectors(self.v_angle);
    traceline (source, source + v_forward*32, FALSE, self);
-   if (trace_fraction == 1.0 && (self.ammo_cells >= 15))
+   if (trace_fraction == 1.0 && (self.ammo_standard_cells >= 15))
       {
       source = source + v_forward*32;
       traceline (source , source - v_up*50, FALSE, self);
@@ -818,7 +818,7 @@ void() W_FireShotgun =
 
 	self.punchangle_x = -2;
 
-	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+	self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 1;
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
 };
@@ -843,7 +843,7 @@ void() W_FireSuperShotgun =
 
 	self.punchangle_x = -4;
 
-	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
+	self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 2;
 	dir = aim (self, 100000);
 	FireBullets (14, dir, '0.14 0.08 0');
 };
@@ -923,7 +923,7 @@ void() W_FireRocket =
 {
 	local	entity missile, mpuff;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -1022,7 +1022,7 @@ void() W_FireLightning =
 	local	vector		org;
 	local	float		cells;
 
-	if (self.ammo_cells < 1)
+	if (self.ammo_standard_cells < 1)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1032,8 +1032,8 @@ void() W_FireLightning =
 // explode if under water
 	if (self.waterlevel > 1)
 	{
-		cells = self.ammo_cells;
-		self.ammo_cells = 0;
+		cells = self.ammo_standard_cells;
+		self.ammo_standard_cells = 0;
       //MED 01/05/97 added discharge flag
       discharged = 1;
 		T_RadiusDamage (self, self, 35*cells, world);
@@ -1049,7 +1049,7 @@ void() W_FireLightning =
 	}
 	self.punchangle_x = -2;
 
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
 
 	org = self.origin + '0 0 16';
 
@@ -1108,7 +1108,7 @@ void() W_FireGrenade =
 {
 	local	entity missile, mpuff;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
@@ -1263,7 +1263,7 @@ void() W_FireProximityGrenade =
    local entity missile, mpuff;
 
    NumProximityGrenades = NumProximityGrenades + 1;
-   self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+   self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
    sound (self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
 
@@ -1349,7 +1349,7 @@ void() W_FireSuperSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
+	self.currentammo = self.ammo_standard_nails = self.ammo_standard_nails - 2;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16', dir);
 	newmis.touch = superspike_touch;
@@ -1365,13 +1365,13 @@ void(float ox) W_FireSpikes =
 
 	makevectors (self.v_angle);
 
-	if (self.ammo_nails >= 2 && self.weapon == IT_SUPER_NAILGUN)
+	if (self.ammo_standard_nails >= 2 && self.weapon == IT_SUPER_NAILGUN)
 	{
 		W_FireSuperSpikes ();
 		return;
 	}
 
-	if (self.ammo_nails < 1)
+	if (self.ammo_standard_nails < 1)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1380,7 +1380,7 @@ void(float ox) W_FireSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+	self.currentammo = self.ammo_standard_nails = self.ammo_standard_nails - 1;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
 
@@ -1487,17 +1487,17 @@ float(float w) WeaponOwned =
 float(float w) WeaponLacksAmmo =
 {
 	if (w == IT_SHOTGUN)
-		return (self.ammo_shells < 1);
+		return (self.ammo_standard_shells < 1);
 	if (w == IT_SUPER_SHOTGUN)
-		return (self.ammo_shells < 2);
+		return (self.ammo_standard_shells < 2);
 	if (w == IT_NAILGUN)
-		return (self.ammo_nails < 1);
+		return (self.ammo_standard_nails < 1);
 	if (w == IT_SUPER_NAILGUN)
-		return (self.ammo_nails < 2);
+		return (self.ammo_standard_nails < 2);
 	if (w == IT_GRENADE_LAUNCHER || w == IT_ROCKET_LAUNCHER || w == IT_PROXIMITY_GUN)
-		return (self.ammo_rockets < 1);
+		return (self.ammo_standard_rockets < 1);
 	if (w == IT_LIGHTNING || w == IT_LASER_CANNON)
-		return (self.ammo_cells < 1);
+		return (self.ammo_standard_cells < 1);
 	if (w == ROGW_LAVA_NAILGUN || w == ROGW_LAVA_SUPER_NAILGUN)
 		return (self.ammo_lava_nails < 1);
 	if (w == ROGW_MULTI_GRENADE || w == ROGW_MULTI_ROCKET)
@@ -1625,14 +1625,14 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_SHOTGUN)
 	{
-		self.currentammo = self.ammo_shells;
+		self.currentammo = self.ammo_standard_shells;
 		self.weaponmodel = "progs/v_shot.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
-		self.currentammo = self.ammo_shells;
+		self.currentammo = self.ammo_standard_shells;
 		self.weaponmodel = "progs/v_shot2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
@@ -1680,14 +1680,14 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails;
+		self.currentammo = self.ammo_standard_nails;
 		self.weaponmodel = "progs/v_nail.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails;
+		self.currentammo = self.ammo_standard_nails;
 		self.weaponmodel = "progs/v_nail2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
@@ -1695,28 +1695,28 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_LASER_CANNON)
 	{
-		self.currentammo = self.ammo_cells;
+		self.currentammo = self.ammo_standard_cells;
       self.weaponmodel = "progs/v_laserg.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
    else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
-		self.currentammo = self.ammo_rockets;
+		self.currentammo = self.ammo_standard_rockets;
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
-		self.currentammo = self.ammo_rockets;
+		self.currentammo = self.ammo_standard_rockets;
 		self.weaponmodel = "progs/v_rock2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == IT_LIGHTNING)
 	{
-		self.currentammo = self.ammo_cells;
+		self.currentammo = self.ammo_standard_cells;
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
@@ -1724,7 +1724,7 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_MJOLNIR)
 	{
-      self.currentammo = self.ammo_cells;
+      self.currentammo = self.ammo_standard_cells;
       self.weaponmodel = "progs/v_hammer.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
@@ -1732,7 +1732,7 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_PROXIMITY_GUN)
 	{
-      self.currentammo = self.ammo_rockets;
+      self.currentammo = self.ammo_standard_rockets;
       self.weaponmodel = "progs/v_prox.mdl";
 		self.weaponframe = 0;
       self.items = self.items | IT_ROCKETS;
@@ -1751,33 +1751,33 @@ float() W_BestWeapon =
 
 	it = self.items;
 
-   if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_LIGHTNING) )
+   if (self.waterlevel <= 1 && self.ammo_standard_cells >= 1 && (it & IT_LIGHTNING) )
       return IT_LIGHTNING;
 //MED
-   else if(self.ammo_cells >= 1 && (it & IT_LASER_CANNON) )
+   else if(self.ammo_standard_cells >= 1 && (it & IT_LASER_CANNON) )
       return IT_LASER_CANNON;
 //Dissolution of Eternity
    else if(self.ammo_lava_nails >= 2 && Rog_HasWeapon(self, ROGW_LAVA_SUPER_NAILGUN) )
 		return ROGW_LAVA_SUPER_NAILGUN;
-   else if(self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
+   else if(self.ammo_standard_nails >= 2 && (it & IT_SUPER_NAILGUN) )
 		return IT_SUPER_NAILGUN;
-	else if(self.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
+	else if(self.ammo_standard_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
 		return IT_SUPER_SHOTGUN;
 //Dissolution of Eternity
 	else if(self.ammo_lava_nails >= 1 && Rog_HasWeapon(self, ROGW_LAVA_NAILGUN) )
 		return ROGW_LAVA_NAILGUN;
-	else if(self.ammo_nails >= 1 && (it & IT_NAILGUN) )
+	else if(self.ammo_standard_nails >= 1 && (it & IT_NAILGUN) )
 		return IT_NAILGUN;
-	else if(self.ammo_shells >= 1 && (it & IT_SHOTGUN) )
+	else if(self.ammo_standard_shells >= 1 && (it & IT_SHOTGUN) )
 		return IT_SHOTGUN;
 //MED
    else if( it & IT_MJOLNIR )
       return IT_MJOLNIR;
 
 /*
-	if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
+	if(self.ammo_standard_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
 		return IT_ROCKET_LAUNCHER;
-	else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
+	else if(self.ammo_standard_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
 		return IT_GRENADE_LAUNCHER;
 
 */
@@ -1902,7 +1902,7 @@ void() W_Attack =
 //MED
    else if (self.weapon == IT_MJOLNIR)
    {
-      if (self.ammo_cells < 30)
+      if (self.ammo_standard_cells < 30)
          player_hammer1();
       else
          player_mjolnir1();
@@ -2075,9 +2075,9 @@ void() CheatCommand =
 		return;
 	}
 
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
+	self.ammo_standard_rockets = 100;
+	self.ammo_standard_nails = 200;
+	self.ammo_standard_shells = 100;
 	self.items = self.items |
 		IT_AXE |
 		IT_SHOTGUN |
@@ -2092,7 +2092,7 @@ void() CheatCommand =
 		IT_PROXIMITY_GUN |
 		IT_KEY1 | IT_KEY2;
 
-	self.ammo_cells = 200;
+	self.ammo_standard_cells = 200;
 	self.items = self.items | IT_LIGHTNING;
 //MED
    self.items = self.items | IT_LASER_CANNON;

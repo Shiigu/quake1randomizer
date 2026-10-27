@@ -2607,72 +2607,72 @@ void() ConvertToWeaponBackpack =
 	dprint(" to ");
 
 	self.items = self.PickupType;
-	self.ammo_shells = 0;
-	self.ammo_nails = 0;
-	self.ammo_rockets = 0;
-	self.ammo_cells = 0;
+	self.ammo_standard_shells = 0;
+	self.ammo_standard_nails = 0;
+	self.ammo_standard_rockets = 0;
+	self.ammo_standard_cells = 0;
 	self.skin = 0;
 	if (self.PickupType == IT_SUPER_SHOTGUN)
 	{
 		self.classname = "item_backpack_supershotgun";
 		self.netname = "Double-barrelled Shotgun";
-		self.ammo_shells = 5;
+		self.ammo_standard_shells = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_DOUBLE_BARRELED_SHOTGUN);
 	}
 	else if (self.PickupType == IT_NAILGUN)
 	{
 		self.classname = "item_backpack_nailgun";
 		self.netname = "Nailgun";
-		self.ammo_nails = 30;
+		self.ammo_standard_nails = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILGUN);
 	}
 	else if (self.PickupType == IT_SUPER_NAILGUN)
 	{
 		self.classname = "item_backpack_supernailgun";
 		self.netname = "Super Nailgun";
-		self.ammo_nails = 30;
+		self.ammo_standard_nails = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN);
 	}
 	else if (self.PickupType == IT_GRENADE_LAUNCHER)
 	{
 		self.classname = "item_backpack_grenadelauncher";
 		self.netname = "Grenade Launcher";
-		self.ammo_rockets = 5;
+		self.ammo_standard_rockets = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER);
 	}
 	else if (self.PickupType == IT_ROCKET_LAUNCHER)
 	{
 		self.classname = "item_backpack_rocketlauncher";
 		self.netname = "Rocket Launcher";
-		self.ammo_rockets = 5;
+		self.ammo_standard_rockets = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER);
 	}
 	else if (self.PickupType == IT_LIGHTNING)
 	{
 		self.classname = "item_backpack_lightning";
 		self.netname = "Thunderbolt";
-		self.ammo_cells = 15;
+		self.ammo_standard_cells = 15;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT);
 	}
 	else if (self.PickupType == IT_LASER_CANNON)
 	{
 		self.classname = "item_backpack_laser_gun";
 		self.netname = "Laser Cannon";
-		self.ammo_cells = 30;
+		self.ammo_standard_cells = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LASER_CANNON);
 	}
 	else if (self.PickupType == IT_PROXIMITY_GUN)
 	{
 		self.classname = "item_backpack_proximity_gun";
 		self.netname = "Proximity Gun";
-		self.ammo_rockets = 6;
+		self.ammo_standard_rockets = 6;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PROXIMITY_GUN);
 	}
 	else if (self.PickupType == IT_MJOLNIR)
 	{
 		self.classname = "item_backpack_mjolnir";
 		self.netname = "Mjolnir";
-		self.ammo_cells = 30;
+		self.ammo_standard_cells = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MJOLNIR);
 	}
 	else
@@ -2811,17 +2811,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_shells";
 		if(self.QualityType == 1)
 		{
-			self.ammo_shells = 20;
+			self.ammo_standard_shells = 20;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_shells = 40;
+			self.ammo_standard_shells = 40;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_shells));
+		dprint(ftos(self.ammo_standard_shells));
 		dprint(")");
 	}
 	else if (self.PickupType == 2) // Nails
@@ -2829,17 +2829,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_spikes";
 		if(self.QualityType == 1)
 		{	
-			self.ammo_nails = 25;
+			self.ammo_standard_nails = 25;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{	
-			self.ammo_nails = 50;
+			self.ammo_standard_nails = 50;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_nails));
+		dprint(ftos(self.ammo_standard_nails));
 		dprint(")");
 	}
 	else if (self.PickupType == 3) // Rockets
@@ -2847,17 +2847,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_rockets";
 		if(self.QualityType == 1)
 		{
-			self.ammo_rockets = 5;
+			self.ammo_standard_rockets = 5;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_rockets = 10;
+			self.ammo_standard_rockets = 10;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_rockets));
+		dprint(ftos(self.ammo_standard_rockets));
 		dprint(")");
 	}
 	else if (self.PickupType == 4) // Cells
@@ -2865,17 +2865,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_cells";
 		if(self.QualityType == 1)
 		{
-			self.ammo_cells = 6;
+			self.ammo_standard_cells = 6;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_cells = 12;
+			self.ammo_standard_cells = 12;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_cells));
+		dprint(ftos(self.ammo_standard_cells));
 		dprint(")");
 	}
 	else if (self.PickupType == 5) // Lava Nails

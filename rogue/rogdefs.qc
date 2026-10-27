@@ -81,11 +81,14 @@ float	ROGW_PLASMA_GUN			= 268435456;
 .float		shieldSoundTime;
 .float		AGping;			// next time the Anti-Grav Belt pings
 
-// Ammo. Rogue keeps the real standard ammo in ammo_shells1/nails1/rockets1/cells1 and only uses ammo_shells/
-// nails/rockets/cells as the (swapped) status bar values, with UpdateAmmoCounts() filling them in. This mod
-// uses ammo_shells/nails/rockets/cells as the real ammo all over the place (and the Gremlins steal from
-// them), so those stay the truth, the alternate ammo above is kept in its own fields, and there is no swap.
-// Translation: Rogue's ammo_X1 -> ammo_X, and UpdateAmmoCounts() calls are dropped.
+// Ammo. Like in Rogue (where these are called ammo_shells1 and so on), the real standard ammo is in
+// ammo_standard_shells/nails/rockets/cells, and the alternate ammo in
+// ammo_lava_nails/multi_rockets/plasma. ammo_shells/nails/rockets/cells (declared in defs.qc, the ones the
+// engine puts on the status bar) are DISPLAY ONLY: UpdateAmmoCounts() fills them in every frame, showing the
+// alternate ammo in the nails, rockets and cells counters while a combo weapon is selected. No game code may
+// read or write them, anything written there is overwritten the next frame.
+// (The engine's own "give" command writes them, so it has no lasting effect: use impulse 9.)
+.float		ammo_standard_shells, ammo_standard_nails, ammo_standard_rockets, ammo_standard_cells;
 
 //
 // elevator fields

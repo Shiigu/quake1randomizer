@@ -561,10 +561,10 @@ void() SetEndlessCastleParms = {
     SetNewParms();
     self.items = IT_SHOTGUN | IT_AXE;
 	self.armorvalue = 0;
-	self.ammo_shells = 25;
-	self.ammo_nails = 0;
-	self.ammo_rockets = 0;
-	self.ammo_cells = 0;
+	self.ammo_standard_shells = 25;
+	self.ammo_standard_nails = 0;
+	self.ammo_standard_rockets = 0;
+	self.ammo_standard_cells = 0;
 	self.weapon = 1;
 	self.armortype = 0;
     localcmd("skill 3\n");

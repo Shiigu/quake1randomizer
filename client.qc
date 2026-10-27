@@ -88,13 +88,13 @@ void() SetChangeParms =
     armor_type = (self.armortype > 0) + (self.armortype > 0.3)
                  + (self.armortype > 0.6);
  
-    if (self.ammo_shells < 25)
+    if (self.ammo_standard_shells < 25)
         shell_bits = 25;
     else
-        shell_bits = floor(self.ammo_shells) & 127;
-    nail_bits = floor(self.ammo_nails) & 255;
-    rocket_bits = floor(self.ammo_rockets) & 127;
-    cell_bits = floor(self.ammo_cells) & 127;
+        shell_bits = floor(self.ammo_standard_shells) & 127;
+    nail_bits = floor(self.ammo_standard_nails) & 255;
+    rocket_bits = floor(self.ammo_standard_rockets) & 127;
+    cell_bits = floor(self.ammo_standard_cells) & 127;
 
 	// Dissolution of Eternity: only the alternate ammo is kept between levels.
 	// The Lava, Multi and Plasma weapons are not, DecodeLevelParms grants them
@@ -163,11 +163,11 @@ void() DecodeLevelParms =
     parm1 = (parm1 - bits) / 256;
  
     bits = parm1 & 127;
-    self.ammo_shells = bits;
+    self.ammo_standard_shells = bits;
     parm1 = (parm1 - bits) / 128;
  
     bits = parm1 & 255;
-    self.ammo_nails = bits;
+    self.ammo_standard_nails = bits;
  
     bits = parm2 & 63;
 	
@@ -203,11 +203,11 @@ void() DecodeLevelParms =
     parm2 = (parm2 - bits) / 4;
  
     bits = parm2 & 127;
-    self.ammo_rockets = bits;
+    self.ammo_standard_rockets = bits;
     parm2 = (parm2 - bits) / 128;
  
     bits = parm2 & 127;
-    self.ammo_cells = bits;
+    self.ammo_standard_cells = bits;
  
     bits = (parm3 & 1023) * 2;
 	if(bits & 128)
@@ -1815,6 +1815,9 @@ void() PlayerPostThink =
 		self.jump_flag = self.velocity_z;
 
 	CheckPowerups ();
+
+	// Dissolution of Eternity: last thing of the frame, so the status bar gets the final ammo of the frame
+	UpdateAmmoCounts (self);
 };
 
 
