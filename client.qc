@@ -9,7 +9,8 @@ void (vector org, entity death_owner) spawn_tdeath;
 void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
-    float rocket_bits, float cell_bits) EncodeParms;
+    float rocket_bits, float cell_bits,
+    float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms;
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
 	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
@@ -40,6 +41,7 @@ void() SetChangeParms =
 {    
     float item_bits, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
+    float lava_nail_bits, multi_rocket_bits, plasma_bits;
 	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
     if (self.health <= 0) 
@@ -93,9 +95,17 @@ void() SetChangeParms =
     nail_bits = floor(self.ammo_nails) & 255;
     rocket_bits = floor(self.ammo_rockets) & 127;
     cell_bits = floor(self.ammo_cells) & 127;
- 
+
+	// Dissolution of Eternity: only the alternate ammo is kept between levels.
+	// The Lava, Multi and Plasma weapons are not, DecodeLevelParms grants them
+	// again from the base weapon plus its alternate ammo.
+    lava_nail_bits = floor(self.ammo_lava_nails) & 255;
+    multi_rocket_bits = floor(self.ammo_multi_rockets) & 127;
+    plasma_bits = floor(self.ammo_plasma) & 127;
+
     EncodeParms(item_bits, health_bits, armor_bits, armor_type,
-                shell_bits, nail_bits, rocket_bits, cell_bits);
+                shell_bits, nail_bits, rocket_bits, cell_bits,
+                lava_nail_bits, multi_rocket_bits, plasma_bits);
 
     parm4 = self.weapon;
 	parm5 = floor(SpawnedWeapons / 2);
@@ -116,12 +126,14 @@ void() SetChangeParms =
 void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
-    float rocket_bits, float cell_bits) EncodeParms =
+    float rocket_bits, float cell_bits,
+    float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms =
 {
     parm1 = armor_bits + 256 * shell_bits + 256 * 128 * nail_bits;
     parm2 = health_bits + 64 * armor_type + 256 * rocket_bits
             + 256 * 128 * cell_bits;
     parm3 = item_bits;
+    parm16 = lava_nail_bits + 256 * multi_rocket_bits + 256 * 128 * plasma_bits;
 }
 
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
@@ -134,7 +146,7 @@ void(float episode1_flags, float episode2_flags, float episode3_flags,
 
 void() SetNewParms =
 {
-    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0);
+    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0, 0, 0, 0);
 };
 
 void() DecodeLevelParms =
@@ -212,7 +224,6 @@ void() DecodeLevelParms =
 	self.items2 = 0; // Armagon powerups are never kept
 
     self.weapon = parm4;
-    W_SetCurrentAmmo ();
 
     SpawnedWeapons = parm5 * 2;
 	EndlessCastleMapCount = parm6;
@@ -236,6 +247,37 @@ void() DecodeLevelParms =
 	EndlessCastleDeadMonsters = parm13;
 	EndlessCastleTotalSecrets = parm14;
 	EndlessCastleFoundSecrets = parm15;
+
+	bits = parm16 & 255;
+	self.ammo_lava_nails = bits;
+	parm16 = (parm16 - bits) / 256;
+
+	bits = parm16 & 127;
+	self.ammo_multi_rockets = bits;
+	parm16 = (parm16 - bits) / 128;
+
+	self.ammo_plasma = parm16 & 127;
+
+	// Dissolution of Eternity combo weapons are granted by the base weapon plus its alternate ammo
+	self.rog_items = 0;
+	if (self.ammo_lava_nails > 0)
+	{
+		if (self.items & IT_NAILGUN)
+			self.rog_items = self.rog_items | RIT_LAVA_NAILGUN;
+		if (self.items & IT_SUPER_NAILGUN)
+			self.rog_items = self.rog_items | RIT_LAVA_SUPER_NAILGUN;
+	}
+	if (self.ammo_multi_rockets > 0)
+	{
+		if (self.items & IT_GRENADE_LAUNCHER)
+			self.rog_items = self.rog_items | RIT_MULTI_GRENADE;
+		if (self.items & IT_ROCKET_LAUNCHER)
+			self.rog_items = self.rog_items | RIT_MULTI_ROCKET;
+	}
+	if (self.ammo_plasma > 0 && (self.items & IT_LIGHTNING))
+		self.rog_items = self.rog_items | RIT_PLASMA_GUN;
+
+	W_SetCurrentAmmo ();	// Reads the alternate ammo, so it has to come after parm16
 };
 
 

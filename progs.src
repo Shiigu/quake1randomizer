@@ -2,6 +2,7 @@
 
 defs.qc
 hipnotic/hipdefs.qc
+rogue/rogdefs.qc
 custom/math.qc
 custom/randomdictionary.qc
 subs.qc
