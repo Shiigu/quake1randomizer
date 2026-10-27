@@ -61,6 +61,15 @@ hipnotic/hipclock.qc
 hipnotic/hiptrig.qc
 hipnotic/hipmisc.qc
 hipnotic/hipwater.qc
+rogue/new_ai.qc
+rogue/wrath.qc
+rogue/lavaman.qc
+rogue/mummy.qc
+rogue/eel.qc
+rogue/s_wrath.qc
+rogue/morph.qc
+rogue/dragon.qc
+rogue/invis_sw.qc
 hipnotic/hipdecoy.qc
 
 custom/replacers.qc

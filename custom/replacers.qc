@@ -1,4 +1,5 @@
 void() precache_everything;
+void() ConvertToMonster;
 // MONSTERS
 void() ConvertToFiend;
 void() ConvertToDog;
@@ -16,6 +17,14 @@ void() ConvertToZombie;
 void() ConvertToCentroid;
 void() ConvertToGremlin;
 void() ConvertToSpikeMine;
+void() ConvertToWrath;
+void() ConvertToMummy;
+void() ConvertToEel;
+void() ConvertToHellSpawn;
+void() ConvertToMultiGrenadeOgre;
+void() ConvertToKnightStatue;
+void() ConvertToDeathKnightStatue;
+void() ConvertToPhantomSwordsman;
 // SPAWN
 void(entity e) ConvertFuncSpawn;
 // PICKUPS
@@ -274,6 +283,83 @@ void() precache_everything =
 	precache_sound ("hipitems/horn.wav");
 	
 	precache_model ("progs/playham.mdl");
+
+	// Dissolution of Eternity
+	precache_model ("progs/wrath.mdl");
+	precache_model ("progs/w_ball.mdl");
+	precache_model ("progs/wrthgib1.mdl");
+	precache_model ("progs/wrthgib2.mdl");
+	precache_model ("progs/wrthgib3.mdl");
+	precache_sound ("wrath/wsee.wav");
+	precache_sound ("wrath/watt.wav");
+	precache_sound ("wrath/wpain.wav");
+	precache_sound ("wrath/wdthc.wav");
+	precache_model ("progs/lavaman.mdl");
+	precache_model ("progs/lavaball.mdl");
+	precache_sound ("misc/power.wav");
+	precache_sound ("boss1/out1.wav");
+	precache_sound ("boss1/sight1.wav");
+	precache_sound ("boss1/throw.wav");
+	precache_sound ("boss1/pain.wav");
+	precache_sound ("boss1/death.wav");
+	precache_model ("progs/mummy.mdl");
+	precache_model ("progs/h_zombie.mdl");
+	precache_model ("progs/zom_gib.mdl");
+	precache_sound ("zombie/z_idle.wav");
+	precache_sound ("zombie/z_idle1.wav");
+	precache_sound ("zombie/z_shot1.wav");
+	precache_sound ("zombie/z_gib.wav");
+	precache_sound ("zombie/z_pain.wav");
+	precache_sound ("zombie/z_pain1.wav");
+	precache_sound ("zombie/z_fall.wav");
+	precache_sound ("zombie/z_miss.wav");
+	precache_sound ("zombie/z_hit.wav");
+	precache_sound ("zombie/idle_w2.wav");
+	precache_model ("progs/eel2.mdl");
+	precache_model ("progs/eelgib.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_sound ("eel/edie3r.wav");
+	precache_sound ("eel/epain3.wav");
+	precache_sound ("eel/eactive1.wav");
+	precache_sound ("eel/eatt1.wav");
+	precache_sound ("eel/eelc5.wav");
+	precache_model ("progs/s_wrath.mdl");
+	precache_model ("progs/s_wrtgb1.mdl");
+	precache_model ("progs/s_wrtgb2.mdl");
+	precache_model ("progs/s_wrtgb3.mdl");
+	precache_sound ("s_wrath/smash.wav");
+	precache_model ("progs/morph_az.mdl");
+	precache_model ("progs/morph_eg.mdl");
+	precache_model ("progs/morph_gr.mdl");
+	precache_model2 ("progs/laser.mdl");
+	precache_sound2 ("enforcer/enfire.wav");
+	precache_sound2 ("guard/death.wav");
+	precache_sound2 ("guard/pain1.wav");
+	precache_sound2 ("guard/see1.wav");
+	precache_sound2 ("blob/mytosis.wav");
+	precache_model ("progs/mervup.mdl");
+	precache_model ("progs/statgib1.mdl");
+	precache_model ("progs/statgib2.mdl");
+	precache_model ("progs/statgib3.mdl");
+	precache_sound ("statue/see.wav");
+	precache_sound ("statue/idle.wav");
+	precache_sound ("statue/pain.wav");
+	precache_sound ("statue/death.wav");
+	precache_model ("progs/sword.mdl");
+	precache_model ("progs/dragon.mdl");
+	precache_model ("progs/fireball.mdl");
+	precache_model ("progs/drggib01.mdl");
+	precache_model ("progs/drggib02.mdl");
+	precache_model ("progs/drggib03.mdl");
+	precache_sound ("dragon/see.wav");
+	precache_sound ("dragon/active.wav");
+	precache_sound ("dragon/attack.wav");
+	precache_sound ("dragon/pain.wav");
+	precache_sound ("dragon/death.wav");
+	precache_model ("progs/plasma.mdl");
+	precache_sound ("plasma/flight.wav");
+	precache_sound ("plasma/explode.wav");
+	precache_sound ("weapons/lhit.wav");
 };
 
 // START MONSTERS
@@ -554,6 +640,10 @@ void() ConvertToDeathKnight =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 250;
 	self.classname = "monster_hell_knight";
+	// Dissolution of Eternity: never inherit the Statue flag or skin from the original monster
+	if (self.spawnflags & SPAWN_STATUE)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_STATUE);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -615,6 +705,10 @@ void() ConvertToKnight =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 75;
 	self.classname = "monster_knight";
+	// Dissolution of Eternity: never inherit the Statue flag or skin from the original monster
+	if (self.spawnflags & SPAWN_STATUE)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_STATUE);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -676,6 +770,10 @@ void() ConvertToOgre =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 200;
 	self.classname = "monster_ogre";
+	// Dissolution of Eternity: never inherit the Multi-Grenade flag or skin from the original monster
+	if (self.spawnflags & OGRE_BOSS)
+		self.spawnflags = self.spawnflags - (self.spawnflags & OGRE_BOSS);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -921,6 +1019,7 @@ void() ConvertToSpawn =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 80;
 	self.classname = "monster_tarbaby";
+	self.skin = 0;		// Dissolution of Eternity: never inherit a Hell Spawn skin from the original monster
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -1200,6 +1299,546 @@ void() ConvertToGremlin =
 	self.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
 	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
+};
+
+// Replaces entity with a Hell Spawn (Dissolution of Eternity): a Spawn that may split in two when it gets hurt
+void() ConvertToHellSpawn =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/tarbaby.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	// Like the Hell Spawn of the original game: a smaller one (skin 1) or a tougher one (skin 2)
+	if (Random(1, 3) == 1)
+	{
+		self.skin = 2;
+		self.health = 100;
+	}
+	else
+	{
+		self.skin = 1;
+		self.health = 60;
+	}
+	self.classname = "monster_tarbaby";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = tbaby_stand1;
+	self.th_walk = tbaby_walk1;
+	self.th_run = tbaby_run1;
+	self.th_missile = tbaby_jump1;
+	self.th_melee = tbaby_jump1;
+	self.th_die = tbaby_die1;
+	self.th_pain = tbaby_mitosis;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_HELL_SPAWN;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Multi-Grenade Ogre (Dissolution of Eternity): an Ogre whose grenades burst into mini-grenades
+void() ConvertToMultiGrenadeOgre =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/ogre.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | OGRE_BOSS;
+	self.skin = 1;
+	self.health = 200;
+	self.classname = "monster_ogre";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = ogre_stand1;
+	self.th_walk = ogre_walk1;
+	self.th_run = ogre_run1;
+	self.th_die = ogre_die;
+	self.th_melee = ogre_melee;
+	self.th_missile = ogre_nail1;
+	self.th_pain = ogre_pain;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MULTI_GRENADE_OGRE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Knight Statue (Dissolution of Eternity): a Knight that stays frozen until it notices a player
+void() ConvertToKnightStatue =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/knight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | SPAWN_STATUE;
+	self.skin = 1;
+	self.health = 75;
+	self.classname = "monster_knight";
+	self.frame = 44;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	// It looks for a player while it is frozen, and knight_wake brings it to life once it finds one
+	self.th_stand = knight_statue1;
+	self.th_walk = knight_statue1;
+	self.th_run = knight_wake;
+	self.th_melee = knight_atk1;
+	self.th_pain = knight_pain;
+	self.th_die = knight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_KNIGHT_STATUE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Death Knight Statue (Dissolution of Eternity): a Death Knight that stays frozen until it notices a player
+void() ConvertToDeathKnightStatue =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/hknight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | SPAWN_STATUE;
+	self.skin = 1;
+	self.health = 250;
+	self.classname = "monster_hell_knight";
+	self.frame = 73;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	// It looks for a player while it is frozen, and hknight_wake brings it to life once it finds one
+	self.th_stand = hknight_statue1;
+	self.th_walk = hknight_statue1;
+	self.th_run = hknight_wake;
+	self.th_melee = hknight_melee;
+	self.th_missile = hknight_magicc1;
+	self.th_pain = hknight_pain;
+	self.th_die = hknight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_DEATH_KNIGHT_STATUE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Phantom Swordsman (Dissolution of Eternity)
+void() ConvertToPhantomSwordsman =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/sword.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 150;
+	self.classname = "monster_sword";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = sword_stand1;
+	self.th_walk = sword_stand1;
+	self.th_run = sword_pause;
+	self.th_melee = sword_atk1;
+	self.th_die = sword_die;
+	self.th_pain = sword_pain;
+	self.delay = 10;			// seconds it waits after first noticing a player before it attacks
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_PHANTOM_SWORDSMAN;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Wrath (Dissolution of Eternity)
+void() ConvertToWrath =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/wrath.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+	if (!(self.flags & FL_FLY))
+		self.flags = self.flags | FL_FLY;
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 400;
+	self.classname = "monster_wrath";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = wrath_stand1;
+	self.th_walk = wrath_walk01;
+	self.th_run = wrath_run01;
+	self.th_missile = wrath_attack;
+	self.th_pain = wrath_pain;
+	self.th_die = wrath_die02;
+	self.yaw_speed = 35;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_WRATH;
+	RegisterEntity(self.EntityDisplayName);
+	flymonster_start ();
+};
+
+// Replaces entity with a Mummy (Dissolution of Eternity)
+void() ConvertToMummy =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	// Just like Zombies, Mummies fall down and get back up, so they can't be tied to a trigger
+	// (to prevent potential soft-locks). Roll again for something else.
+	if (IsTiedToATrigger(self))
+	{
+		self.think = ConvertToMonster;
+		self.nextthink = time;
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/mummy.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	// A Mummy's own spawnflags mean "Lying" and "Stronger", never carry them over from the original monster
+	if (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG))
+		self.spawnflags = self.spawnflags - (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG));
+
+	self.health = 500;
+	self.classname = "monster_mummy";
+	self.frame = $stand1;
+	self.inpain = 0;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = mummy_stand1;
+	self.th_walk = mummy_walk1;
+	self.th_run = mummy_run1;
+	self.th_pain = mummy_pain;
+	self.th_die = mummy_die;
+	self.th_missile = mummy_missile;
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MUMMY;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with an Eel (Dissolution of Eternity)
+void() ConvertToEel =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	// Eels die as soon as they are out of plain water (slime and lava included), so they are only
+	// allowed to spawn in water. Roll again for something else otherwise.
+	if (pointcontents(self.origin) != CONTENT_WATER)
+	{
+		self.think = ConvertToMonster;
+		self.nextthink = time;
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/eel2.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (!(self.flags & FL_SWIM))
+		self.flags = self.flags | FL_SWIM;
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 60;
+	self.classname = "monster_eel";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = eel_stand1;
+	self.th_walk = eel_walk1;
+	self.th_run = eel_run1;
+	self.th_die = eel_death;
+	self.th_pain = eel_pain1;
+	self.th_melee = eel_attack1;
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	// The Eel's pitch wobble (see eel_pitch_change)
+	self.delay = time + random() * 6;
+	self.weapon = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_EEL;
+	RegisterEntity(self.EntityDisplayName);
+	swimmonster_start ();
 };
 
 // Replaces entity with a Spike Mine

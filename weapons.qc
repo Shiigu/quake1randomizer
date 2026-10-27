@@ -2331,4 +2331,280 @@ void() SuperDamageSound =
 	return;
 };
 
+//============================================================================
+// Dissolution of Eternity: Plasma projectile (used by the Dragon, and by the
+// Plasma Gun once it is ported)
+//============================================================================
+void(vector p1, vector p2, entity from, float damage) PlasmaDamage =
+{
+	local entity		e1, e2;
+	local vector		f;
+	
+	f = p2 - p1;
+	normalize (f);
+	f_x = 0 - f_y;
+	f_y = f_x;
+	f_z = 0;
+	f = f*16;
 
+	e1 = e2 = world;
+
+	traceline (p1, p2, FALSE, self);
+	if (trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+		if (self.classname == "player")
+		{
+			if (other.classname == "player")
+				trace_ent.velocity_z = trace_ent.velocity_z + 400;
+		}
+	}
+	e1 = trace_ent;
+
+	traceline (p1 + f, p2 + f, FALSE, self);
+	if (trace_ent != e1 && trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+	}
+	e2 = trace_ent;
+
+	traceline (p1 - f, p2 - f, FALSE, self);
+	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+	}
+};
+
+//================================
+//================================
+void(entity current, float doDamage) PlasmaDischarge =
+{
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+	WriteEntity (MSG_BROADCAST, current);
+	WriteCoord (MSG_BROADCAST, current.origin_x);
+	WriteCoord (MSG_BROADCAST, current.origin_y);
+	WriteCoord (MSG_BROADCAST, current.origin_z);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+
+	sound (self, CHAN_VOICE, "weapons/lhit.wav", 1, ATTN_NORM);
+	if (doDamage == 1)
+        PlasmaDamage (self.origin, current.origin, self, 50);
+};
+
+//================================
+//================================
+void() PlasmaGroundOut = 
+{
+	local entity 	current, start;
+	local float		monstersHit;
+	
+	monstersHit = 0;
+	current = findradius ( self.origin, 320 );
+	start = current;
+	while ( monstersHit < 5 )
+	{
+		if ( current.flags & FL_MONSTER || current.classname == "player")
+		{
+			if ( current != self.owner )
+			{
+				traceline ( self.origin, current.origin, TRUE, world );
+				if (trace_fraction == 1)
+				{
+					monstersHit = monstersHit + 1;
+					PlasmaDischarge ( current, 1 );
+				}
+			}
+		}
+		current = current.chain;
+		if (start == current || !current)
+			return;
+	}
+};
+
+//================================
+//================================
+void() PlasmaTouch = 
+{
+	local float	damg;
+
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	damg = 80 + random()*20;
+	sound (self, CHAN_WEAPON, "plasma/explode.wav", 1, ATTN_NORM);
+	
+	if (other.health)
+	{
+		if (other.classname == "monster_shambler")
+			damg = damg * 0.5;	// mostly immune
+		T_Damage (other, self, self.owner, damg );
+	}
+
+	// don't do radius damage to the other, because all the damage
+	// was done in the impact
+	T_RadiusDamage (self, self.owner, 70, other);
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteByte (MSG_BROADCAST, 244);
+	WriteByte (MSG_BROADCAST, 3);
+
+	PlasmaGroundOut();
+	SUB_Remove();
+};
+
+//================================
+//================================
+void() PlasmaLaunch =
+{
+	self.velocity = normalize(self.velocity);
+	self.velocity = self.velocity * 1250;
+
+	self.nextthink = time + 5;
+	self.think = SUB_Remove;
+};
+
+void(vector org, vector dir) launch_plasma =
+{
+	local entity	missile, mpuff;
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_FLYMISSILE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "plasma";
+	
+// set missile speed	
+	missile.velocity = dir * 0.01;
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = PlasmaTouch;
+	
+	setmodel (missile, "progs/plasma.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, org);
+
+	sound (missile, CHAN_WEAPON, "plasma/flight.wav", 1, ATTN_NORM);
+	if (!deathmatch && !coop)
+		missile.effects = EF_BRIGHTLIGHT;
+	
+// set missile duration
+	missile.think = PlasmaLaunch;
+	missile.nextthink = time + 0.1;
+};
+
+//============================================================================
+// Dissolution of Eternity: Multi-Grenade projectile (used by the Multi-Grenade Ogre, and by the
+// Multi-Grenade Launcher once it is ported)
+//============================================================================
+void() MultiGrenadeTouch;
+
+void() MiniGrenadeExplode =
+{
+	if ( self.owner.classname == "player")
+		T_RadiusDamage (self, self.owner, 90, world);
+	else
+		T_RadiusDamage (self, self.owner, 60, world);
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+    WriteByte (MSG_BROADCAST, 230);
+    WriteByte (MSG_BROADCAST, 5);
+
+	BecomeExplosion ();
+};
+
+//================================
+//================================
+void(float offsetAngle) MiniGrenadeLaunch =
+{
+	local	entity missile, mpuff;
+	local	float	tempRand;
+	
+	missile = spawn ();
+	missile.owner = self.owner;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "MiniGrenade";
+		
+// set missile speed	
+	missile.v_angle = self.v_angle;
+	missile.v_angle_y = missile.v_angle_y + offsetAngle;
+	makevectors (missile.v_angle);
+		
+		missile.velocity = v_forward*100 + v_up*400;
+		tempRand = (crandom()*60) - 30;
+		missile.velocity = missile.velocity + tempRand * v_forward;
+		tempRand = (crandom()*40) - 20;
+		missile.velocity = missile.velocity + tempRand * v_right;
+		tempRand = (crandom()*60) - 30;
+		missile.velocity = missile.velocity + tempRand * v_up;
+
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = MultiGrenadeTouch;
+	
+	setmodel (missile, "progs/mervup.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin);
+
+// set missile duration
+	missile.nextthink = time + 1 + (crandom() * 0.5);
+	missile.think = MiniGrenadeExplode;
+};
+
+//================================
+//================================
+void() MultiGrenadeExplode =
+{
+	MiniGrenadeLaunch(0);
+	MiniGrenadeLaunch(72);
+	MiniGrenadeLaunch(144);
+	MiniGrenadeLaunch(216);
+	MiniGrenadeLaunch(288);
+
+	SUB_Remove();
+};
+
+//================================
+//================================
+void() MultiGrenadeTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+	if (other.takedamage == DAMAGE_AIM)
+	{
+		if (self.classname == "MiniGrenade")
+			MiniGrenadeExplode();
+		else
+		{
+			if (self.owner.classname == "player")
+				GrenadeExplode();
+			else
+				MiniGrenadeExplode();
+		}
+		return;
+	}
+	// bounce sound
+	sound (self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM);	
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
+};

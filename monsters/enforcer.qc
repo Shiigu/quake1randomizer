@@ -89,6 +89,13 @@ void(vector org, vector vec) LaunchLaser =
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
 
+	// Dissolution of Eternity: the Morph's own lasers use the second skin
+	if (self.classname == "monster_morph")
+	{
+		if (!self.owner)
+			newmis.skin = 1;
+	}
+
 	setorigin (newmis, org);
 
 	newmis.velocity = vec * 600;

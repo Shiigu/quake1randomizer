@@ -491,7 +491,11 @@ local float	rsnd;
 	if (self.classname == "monster_ogre")
 		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_knight")
-		sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	{
+		// Statues (skin 1) play their own sound when they wake up
+		if (self.skin == 0)
+			sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	}
 	else if (self.classname == "monster_shambler")
 		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_demon1")
@@ -503,7 +507,10 @@ local float	rsnd;
 	else if (self.classname == "monster_dog")
 		sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_hell_knight")
-		sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	{
+		if (self.skin == 0)
+			sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	}
 	else if (self.classname == "monster_tarbaby")
 		sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_vomit")
@@ -536,6 +543,13 @@ local float	rsnd;
 //MED
    else if (self.classname == "monster_armagon")
       sound (self, CHAN_VOICE, "armagon/sight.wav", 1, 0.1);
+//Dissolution of Eternity
+   else if (self.classname == "monster_eel")
+      sound (self, CHAN_VOICE, "eel/eelc5.wav", 1, ATTN_NORM);
+   else if (self.classname == "monster_wrath")
+      sound (self, CHAN_VOICE, "wrath/wsee.wav", 1, ATTN_NORM);
+   else if (self.classname == "monster_dragon")
+      sound (self, CHAN_VOICE, "dragon/see.wav", 1, ATTN_NORM);
 };
 
 void() FoundTarget =

@@ -20,7 +20,7 @@ To set up the game modes, press the 'M' key, and the Randomization Menu will sho
 
 For conversion, all items are split into five categories. Save for some exceptions in Biased Mode, all convertible entities can only be replaced with one of the same type:
 
-- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath and cruficied Zombies.
+- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath, Armagon, the Dragon and cruficied Zombies.
 - **Pickup**: Includes Health Packs (15 and 25 Health) and Armor Suits (Green and Yellow).
 - **Ammo**: Includes all Ammo Crates.
 - **Powerup**: Includes all Powerups, as well as 100 Health Packs and Red Armor Suits.
@@ -90,10 +90,19 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Ogre|12%|13%|13%|11%|13%|0%|
 |Centroid|3%|5%|7%|8%|10%|15%|
 |Gremlin|8%|9%|11%|10%|8%|0%|
+|Wrath|2%|3%|4%|5%|7%|15%|
+|Mummy|2%|3%|4%|5%|6%|10%|
+|Hell Spawn|1%|2%|3%|4%|5%|8%|
+|Multi-Grenade Ogre|1%|2%|3%|4%|6%|10%|
+|Knight Statue|3%|4%|4%|4%|4%|0%|
+|Death Knight Statue|2%|3%|4%|5%|6%|8%|
+|Phantom Swordsman|2%|3%|4%|5%|5%|8%|
 |Spike Mine|2%|3%|3%|4%|6%|10%|
 
-> Rotfish aren't allowed to spawn outside of water surfaces because they can't move there.
-> Zombies can't spawn on monster spots that are tied to a trigger.
+> Rotfish and Eels aren't allowed to spawn outside of water surfaces because they can't move there.
+> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
+> Hell Spawn, Multi-Grenade Ogres, Knight Statues, Death Knight Statues and Phantom Swordsmen are reskins of other monsters, so they have their own, lower odds.
+> Statues stay frozen (and can't be hurt) until they notice a player. Hell Spawn may split in two when hurt, and Phantom Swordsmen wait a few seconds after noticing a player before they attack.
 
 - For Monsters in the water:
 
@@ -112,10 +121,16 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Rotfish|25%|17%|15%|11%|8%|0%|
 |Centroid|3%|5%|7%|8%|10%|15%|
 |Gremlin|8%|9%|11%|10%|8%|0%|
+|Wrath|2%|3%|4%|5%|7%|15%|
+|Mummy|2%|3%|4%|5%|6%|10%|
+|Eel|5%|7%|8%|9%|9%|12%|
+|Hell Spawn|1%|2%|3%|3%|4%|0%|
+|Multi-Grenade Ogre|1%|2%|3%|4%|5%|10%|
 |Spike Mine|2%|3%|3%|4%|6%|10%|
 
-> Rottweilers and Knights aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
-> Zombies can't spawn on monster spots that are tied to a trigger.
+> Rottweilers, Knights, Knight and Death Knight Statues and Phantom Swordsmen aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
+> Eels only spawn in plain water, not in slime or lava, because they can't survive there.
+> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
 
 #### Pickup replacement chances on Biased Mode
 

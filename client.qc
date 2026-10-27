@@ -1986,6 +1986,22 @@ void(entity targ, entity attacker) ClientObituary =
                deathstring = " was slammed by ";
                deathstring2 = "'s hammer\n";
 				}
+//Dissolution of Eternity
+				if (rnum == ROGW_LAVA_NAILGUN || rnum == ROGW_LAVA_SUPER_NAILGUN)
+				{
+					deathstring = " was burned by ";
+					deathstring2 = "\n";
+				}
+				if (rnum == ROGW_PLASMA_GUN)
+				{
+					deathstring = " was fused by ";
+					deathstring2 = "\n";
+				}
+				if (rnum == ROGW_MULTI_GRENADE || rnum == ROGW_MULTI_ROCKET)
+				{
+					deathstring = " was blasted to bits by ";
+					deathstring2 = "\n";
+				}
             bprint (targ.netname);
 				bprint (deathstring);
 				bprint (attacker.netname);
@@ -2048,7 +2064,9 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_dog")
 					bprint (" was mauled by a Rottweiler\n");
 				if (attacker.classname == "monster_dragon")
-					bprint (" was fried by a Dragon\n");
+					bprint (" was annihilated by the Dragon\n");
+				if (attacker.classname == "monster_dragon_dead")
+					bprint (" was squashed by the Dragon\n");
 				if (attacker.classname == "monster_enforcer")
 					bprint (" was blasted by an Enforcer\n");
 				if (attacker.classname == "monster_fish")
@@ -2085,6 +2103,19 @@ void(entity targ, entity attacker) ClientObituary =
 //MED
             if (attacker.classname == "monster_armagon")
                bprint (" was outgunned by Armagon\n");
+//Dissolution of Eternity
+			if (attacker.classname == "monster_eel")
+				bprint (" was electrified by an Eel\n");
+			if (attacker.classname == "monster_wrath")
+				bprint (" was disintegrated by a Wrath\n");
+			if (attacker.classname == "monster_super_wrath")
+				bprint (" was obliterated by an Overlord\n");
+			if (attacker.classname == "monster_lava_man")
+				bprint (" fries in Hephaestus' fury\n");
+			if (attacker.classname == "monster_morph")
+				bprint (" was crushed by a Guardian\n");
+			if (attacker.classname == "monster_mummy")
+				bprint (" was mummified\n");
 
 				return;
 			}
@@ -2112,6 +2143,11 @@ void(entity targ, entity attacker) ClientObituary =
 			if (attacker.classname == "fireball")
 			{
 				bprint (" ate a lavaball\n");
+				return;
+			}
+			if (attacker.classname == "plasma")
+			{
+				bprint (" was turned to plasma\n");
 				return;
 			}
 			if (attacker.classname == "trigger_changelevel")

@@ -164,7 +164,13 @@ void()	hknight_run8	=[	$run8,		hknight_run1	] {ai_run(13);};
 
 //============================================================================
 
-void()	hknight_pain1	=[	$pain1,		hknight_pain2	] {sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);};
+void()	hknight_pain1	=[	$pain1,		hknight_pain2	]
+{
+	if (self.spawnflags & SPAWN_STATUE)
+		sound (self, CHAN_VOICE, "statue/pain.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
+};
 void()	hknight_pain2	=[	$pain2,		hknight_pain3	] {};
 void()	hknight_pain3	=[	$pain3,		hknight_pain4	] {};
 void()	hknight_pain4	=[	$pain4,		hknight_pain5	] {};
@@ -204,14 +210,26 @@ void() hknight_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_hellkn.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
+		if (self.spawnflags & SPAWN_STATUE)
+		{
+			ThrowGib ("progs/statgib1.mdl", self.health);
+			ThrowGib ("progs/statgib2.mdl", self.health);
+			ThrowGib ("progs/statgib3.mdl", self.health);
+		}
+		else
+		{
+			ThrowGib ("progs/gib1.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health);
+		}
 		return;
 	}
 
 // regular death
-	sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
+	if (self.spawnflags & SPAWN_STATUE)
+		sound (self, CHAN_VOICE, "statue/death.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
 	if (random() > 0.5)
 		hknight_die1 ();
 	else
@@ -352,7 +370,12 @@ void()	hknight_watk22	=[	$w_attack22,	hknight_run1	] {ai_charge(3);};
 void() hk_idle_sound =
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "hknight/idle.wav", 1, ATTN_NORM);
+	{
+		if (self.spawnflags & SPAWN_STATUE)
+			sound (self, CHAN_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
+		else
+			sound (self, CHAN_VOICE, "hknight/idle.wav", 1, ATTN_NORM);
+	}
 };
 
 void(entity attacker, float damage)	hknight_pain =
@@ -360,7 +383,10 @@ void(entity attacker, float damage)	hknight_pain =
 	if (self.pain_finished > time)
 		return;
 
-	sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
+	if (self.spawnflags & SPAWN_STATUE)
+		sound (self, CHAN_VOICE, "statue/pain.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
 
 	if (time - self.pain_finished > 5)
 	{	// allways go into pain frame if it has been a while
@@ -394,7 +420,47 @@ void() hknight_melee =
 	}
 };
 
-/*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
+// Dissolution of Eternity: statues. A trigger wakes them up (use), then they fight like any Death Knight.
+void() hknight_pause =
+{
+	sound ( self, CHAN_VOICE, "statue/see.wav", 1, ATTN_NORM);
+
+	self.takedamage = DAMAGE_AIM;
+	self.th_stand = hknight_stand1;
+	self.th_walk = hknight_walk1;
+	self.th_run = hknight_run1;
+	self.th_melee = hknight_melee;
+	self.th_missile = hknight_magicc1;
+	self.th_pain = hknight_pain;
+	self.th_die = hknight_die;
+	self.use = SUB_Null;
+
+	self.enemy = activator;
+	self.nextthink = time + 0.1;
+	self.think = FoundTarget;
+
+	self.delay = 0;
+};
+
+void() hknight_pause1 =
+{
+	self.takedamage = DAMAGE_NO;
+	self.use = hknight_pause;
+	self.think = hknight_pause1;
+	self.nextthink = time + 0.1;
+};
+
+// The randomizer's Death Knight Statues have no trigger, so they wake up as soon as they notice a player
+// (not ai_stand: it calls th_walk when it runs out of things to do, and th_walk is this very function)
+void() hknight_statue1 = [73, hknight_statue1] { self.takedamage = DAMAGE_NO; FindTarget (TRUE); };
+
+void() hknight_wake =
+{
+	activator = self.enemy;
+	hknight_pause();
+};
+
+/*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush Statue
 */
 void() monster_hell_knight =
 {
@@ -419,7 +485,17 @@ void() monster_hell_knight =
 
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
-	
+	if (self.spawnflags & SPAWN_STATUE)
+	{
+		precache_model ("progs/statgib1.mdl");
+		precache_model ("progs/statgib2.mdl");
+		precache_model ("progs/statgib3.mdl");
+		precache_sound ("statue/see.wav");
+		precache_sound ("statue/idle.wav");
+		precache_sound ("statue/pain.wav");
+		precache_sound ("statue/death.wav");
+	}
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -428,13 +504,37 @@ void() monster_hell_knight =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 250;
 
-	self.th_stand = hknight_stand1;
-	self.th_walk = hknight_walk1;
-	self.th_run = hknight_run1;
-	self.th_melee = hknight_melee;
-	self.th_missile = hknight_magicc1;
-	self.th_pain = hknight_pain;
-	self.th_die = hknight_die;
-	
+
+	// Dissolution of Eternity: a statue stays frozen until its trigger wakes it up
+	if (self.spawnflags & SPAWN_STATUE)
+	{
+		if (self.frame == 0)
+			self.frame = 73;
+		self.skin = 1;
+		if (!self.targetname)
+		{
+			dprint ("statue not targeted\n");
+			dprint (self.classname);
+			dprint (" at ");
+			dprint (vtos(self.origin));
+			dprint ("\n");
+			return;
+		}
+		self.use = hknight_pause;
+		self.th_stand = hknight_pause1;
+		self.th_walk = hknight_pause1;
+		self.th_run = hknight_pause1;
+	}
+	else
+	{
+		self.th_stand = hknight_stand1;
+		self.th_walk = hknight_walk1;
+		self.th_run = hknight_run1;
+		self.th_melee = hknight_melee;
+		self.th_missile = hknight_magicc1;
+		self.th_pain = hknight_pain;
+		self.th_die = hknight_die;
+	}
+
 	walkmonster_start ();
 };
