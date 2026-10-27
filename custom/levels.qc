@@ -4,7 +4,7 @@
 
 float EndlessCastleEpisode1Flags;							// 13 bit integer. MSE is hip1m5, LSE is e1m1. If bit is "1" the level has been part of the cycle.
 float EndlessCastleEpisode2Flags;							// 13 bit integer. MSE is hip2m6, LSE is e2m1. If bit is "1" the level has been part of the cycle.
-float EndlessCastleEpisode3Flags;							// 14 bit integer. MSE is hipdm1, LSE is e3m1. If bit is "1" the level has been part of the cycle.
+float EndlessCastleEpisode3Flags;							// 13 bit integer. MSE is hipdm1, LSE is e3m1. If bit is "1" the level has been part of the cycle.
 float EndlessCastleEpisode4Flags;							// 8 bit integer. MSE is e4m8, LSE is e4m1. If bit is "1" the level has been part of the cycle.
 
 void() PrintCurrentLevelCycle;
@@ -18,6 +18,7 @@ float() GetElapsedTime;
 string() PickNextLevel = {
     if(EndlessCastleMapCount == 0) return "";
     local float rngEpisode, rngLevel, bitFlag, ATTEMPTS, MAX_ATTEMPTS, i;
+	local string pickedLevel;
 	ATTEMPTS = 0;
 	MAX_ATTEMPTS = 30;
 	if(EndlessCastleEpisode1Flags == 8191 && EndlessCastleEpisode2Flags == 8191 && EndlessCastleEpisode3Flags == 16383 && EndlessCastleEpisode4Flags == 255)
@@ -47,9 +48,9 @@ string() PickNextLevel = {
 	while(ATTEMPTS < MAX_ATTEMPTS) {
 		rngEpisode = Random(1, 4);
 		if (rngEpisode == 4) {
-			rngLevel = Random(1, 9);
+			rngLevel = Random(1, 9); // Array index [0; 8]
         } else {
-			rngLevel = Random(1, 14);
+			rngLevel = Random(1, 13); // Array index [0; 12]
         }
 		dprint("Picked Episode ");
 		dprint(ftos(rngEpisode));
@@ -57,22 +58,30 @@ string() PickNextLevel = {
 		dprint(ftos(rngLevel));
 		dprint(".\n");
 		bitFlag = fpow(2, rngLevel - 1);					// Represents the "digit" in the level flags to check if the level had been spawned already
-		if(rngEpisode == 1 && EndlessCastleEpisode1Flags != 8191 && rngLevel < 14)
+		if(rngEpisode == 1 && EndlessCastleEpisode1Flags != 8191)
 		{
 			if(!(EndlessCastleEpisode1Flags & bitFlag))
 			{
-				EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
-				dprint("Level is valid. Setting it as an exit.\n");
-				return ToEpisode1Level(rngLevel - 1);
+				pickedLevel = ToEpisode1Level(rngLevel - 1);
+				if(pickedLevel != mapname)
+				{
+					EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
+					dprint("Level is valid. Setting it as an exit.\n");
+					return pickedLevel;
+				}
 			}
 		}
-		else if(rngEpisode == 2 && EndlessCastleEpisode2Flags != 8191 && rngLevel < 14)
+		else if(rngEpisode == 2 && EndlessCastleEpisode2Flags != 8191)
 		{
 			if(!(EndlessCastleEpisode2Flags & bitFlag))
 			{
-				EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
-				dprint("Level is valid. Setting it as an exit.\n");
-				return ToEpisode2Level(rngLevel - 1);
+				pickedLevel = ToEpisode2Level(rngLevel - 1);
+				if(pickedLevel != mapname)
+				{
+					EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
+					dprint("Level is valid. Setting it as an exit.\n");
+					return pickedLevel;
+				}
 			}
 		}
 		else if(rngEpisode == 3 && EndlessCastleEpisode3Flags != 16383)
@@ -80,11 +89,15 @@ string() PickNextLevel = {
 			// Prevent rolling Shub-Niggurath's Pit among the first three Endless Castle Levels
 			if(!(EndlessCastleEpisode3Flags & bitFlag))
 			{
-				if(EndlessCastleMapCount >= 4 || rngLevel != 8)
+				pickedLevel = ToEpisode3Level(rngLevel - 1);
+				if(EndlessCastleMapCount >= 4 || pickedLevel != "end")
 				{
-					EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
-					dprint("Level is valid. Setting it as an exit.\n");
-					return ToEpisode3Level(rngLevel - 1);
+					if(pickedLevel != mapname)
+					{
+						EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
+						dprint("Level is valid. Setting it as an exit.\n");
+						return pickedLevel;
+					}
 				}
 			}
 		}
@@ -92,9 +105,13 @@ string() PickNextLevel = {
 		{
 			if(!(EndlessCastleEpisode4Flags & bitFlag))
 			{
-				EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
-				dprint("Level is valid. Setting it as an exit.\n");
-				return ToEpisode4Level(rngLevel - 1);
+				pickedLevel = ToEpisode4Level(rngLevel - 1);
+				if(pickedLevel != mapname)
+				{
+					EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
+					dprint("Level is valid. Setting it as an exit.\n");
+					return pickedLevel;
+				}
 			}
 		}
 		ATTEMPTS = ATTEMPTS + 1;
@@ -108,9 +125,13 @@ string() PickNextLevel = {
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode1Flags & bitFlag))
 		{
-			EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
-			dprint("Level is valid. Setting it as an exit.\n");
-			return ToEpisode1Level(i - 1);
+			pickedLevel = ToEpisode1Level(i - 1);
+			if(pickedLevel != mapname)
+			{
+				EndlessCastleEpisode1Flags = EndlessCastleEpisode1Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
+				return pickedLevel;
+			}
 		}
 	}
     dprint("Looking for an unused Episode 2 level.\n");
@@ -121,9 +142,13 @@ string() PickNextLevel = {
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode2Flags & bitFlag))
 		{
-			EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
-			dprint("Level is valid. Setting it as an exit.\n");
-			return ToEpisode2Level(i - 1);
+			pickedLevel = ToEpisode2Level(i - 1);
+			if(pickedLevel != mapname)
+			{
+				EndlessCastleEpisode2Flags = EndlessCastleEpisode2Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
+				return pickedLevel;
+			}
 		}
 	}
     dprint("Looking for an unused Episode 3 level (or end).\n");
@@ -132,13 +157,17 @@ string() PickNextLevel = {
 		dprint(ftos(i));
 		dprint(".\n");
 		bitFlag = fpow(2, i - 1);
-		if(bitFlag != 8)
+		if(EndlessCastleMapCount >= 4 || ToEpisode3Level(i - 1) != "end")
 		{
 			if(!(EndlessCastleEpisode3Flags & bitFlag))
 			{
-				EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
-				dprint("Level is valid. Setting it as an exit.\n");
-				return ToEpisode3Level(i - 1);
+				pickedLevel = ToEpisode3Level(i - 1);
+				if(pickedLevel != mapname)
+				{
+					EndlessCastleEpisode3Flags = EndlessCastleEpisode3Flags | bitFlag;
+					dprint("Level is valid. Setting it as an exit.\n");
+					return pickedLevel;
+				}
 			}
 		}
 	}
@@ -150,16 +179,20 @@ string() PickNextLevel = {
 		bitFlag = fpow(2, i - 1);
 		if(!(EndlessCastleEpisode4Flags & bitFlag))
 		{
-			EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
-			dprint("Level is valid. Setting it as an exit.\n");
-			return ToEpisode4Level(i - 1);
+			pickedLevel = ToEpisode4Level(i - 1);
+			if(pickedLevel != mapname)
+			{
+				EndlessCastleEpisode4Flags = EndlessCastleEpisode4Flags | bitFlag;
+				dprint("Level is valid. Setting it as an exit.\n");
+				return pickedLevel;
+			}
 		}
 	}
 	// But if it can't find any, it gives up, restarts randomization, and sends a specific map.
 	EndlessCastleEpisode1Flags = 0;
 	EndlessCastleEpisode2Flags = 0;
 	EndlessCastleEpisode3Flags = 0;
-	EndlessCastleEpisode4Flags = 0;
+	EndlessCastleEpisode4Flags = 4;	// Mark e4m3 as used to avoid it being rolled again immediately
     dprint("Unsatisfactory randomization. Picking e4m3 instead.\n");
 	return "e4m3";
 };
