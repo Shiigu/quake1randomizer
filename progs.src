@@ -72,6 +72,15 @@ rogue/s_wrath.qc
 rogue/morph.qc
 rogue/dragon.qc
 rogue/invis_sw.qc
+rogue/earthq.qc
+rogue/pendulum.qc
+rogue/buzzsaw.qc
+rogue/newmisc.qc
+rogue/newplats.qc
+rogue/elevatr.qc
+rogue/lightnin.qc
+rogue/ending.qc
+rogue/timemach.qc
 hipnotic/hipdecoy.qc
 
 custom/replacers.qc

@@ -157,6 +157,10 @@ void() DecodeLevelParms =
         if (world.model == "maps/start.bsp")
             SetNewParms ();     // take away all stuff on starting new episode
     }
+
+	// Dissolution of Eternity: the second half starts from scratch
+	if (world.model == "maps/r2m1.bsp" && !deathmatch)
+		SetNewParms ();
  
     bits = parm1 & 255;
     self.armorvalue = bits;
@@ -501,6 +505,13 @@ void() ExitIntermission =
 			WriteString (MSG_ALL, "After the last echoes of Armagon's\ndeath yell fade away, you breathe a\nheavy sigh of relief.  With the loss\nof his magic, Armagon's fortress\nbegins to collapse.  The rift he\ncreated to send his grisly troops\nthrough time slowly closes and seals\nitself forever.  In the chaos that\nensues, a wall collapses, revealing\none remaining time portal.  With your\nchances to escape rapidly growing\nslim, you race for the portal,\nmindless of your destination.  In a\nflash of light, you find yourself\nback at Command HQ, safe and sound." );
 			//WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
 			//intermission_exittime = time + 10000000;  // never allow exit
+			return;
+		}
+		else if (world.model == "maps/r1m7.bsp")
+		{
+			// Dissolution of Eternity
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "Victory! The Overlord's mangled\nremains are the evidence.  His evil\nWrath army?  Cast out to wander\naimlessly throughout time.\n\nAs the Slipgate fog surrounds you,\nthoughts rage into your consciousness:\nHas Quake's oppressive reign ended?\nIs it Salvation, or Damnation, which\nwaits beyond the Vortex?\n\nAnother thought, not quite your own,\nrazors through the haze.  \"Forgiveness\ncan yet be granted; Our Master remains\nto absolve your sins against his Chosen.\nFall down upon your knees-pray for\nQuake's mercy.\"");
 			return;
 		}
 		GotoNextMap();
@@ -1369,6 +1380,23 @@ void() PlayerPreThink =
       earthquake_prethink();
 //      }
 
+	// Dissolution of Eternity: a level-wide earthquake shakes the player (Hipnotic's earthquakes are the ones above)
+	if (earthquake_active)
+	{
+		if ( self.flags & FL_ONGROUND )
+		{
+			self.velocity_x = self.velocity_x +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+			self.velocity_y = self.velocity_y +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+			self.velocity_z = self.velocity_z +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+		}
+	}
+
 	makevectors (self.v_angle);		// is this still used
 
 	CheckRules ();
@@ -1789,6 +1817,10 @@ void() PlayerPostThink =
 
 	if (self.deadflag)
 		return;
+
+	// Dissolution of Eternity: the ending cutscene
+	if (cutscene_running)
+		xpackEnding ();
 
 // do weapon stuff
 
@@ -2214,6 +2246,21 @@ void(entity targ, entity attacker) ClientObituary =
 			if (attacker.classname == "fireball")
 			{
 				bprint (" ate a lavaball\n");
+				return;
+			}
+			if (attacker.classname == "ltrail_start" || attacker.classname == "ltrail_relay")
+			{
+				bprint (" rode the lightning\n");
+				return;
+			}
+			if (attacker.classname == "pendulum")
+			{
+				bprint (" was cleaved in two\n");
+				return;
+			}
+			if (attacker.classname == "buzzsaw")
+			{
+				bprint (" was sliced to pieces\n");
 				return;
 			}
 			if (attacker.classname == "plasma")

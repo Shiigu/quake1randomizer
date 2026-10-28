@@ -587,10 +587,16 @@ void() trigger_hurt =
 //============================================================================
 
 float PUSH_ONCE = 1;
+float PUSH_TOGL = 2;		// Dissolution of Eternity: toggled by its targetname
+float PUSH_ACTIVE = 4;		// Dissolution of Eternity: currently pushing
 
 void() trigger_push_touch =
 {
-	if (other.classname == "grenade")
+	// Dissolution of Eternity: a push field can be switched off
+	if (RogueMap && !(self.spawnflags & PUSH_ACTIVE))
+		return;
+
+	if (other.classname == "grenade" || (RogueMap && (other.classname == "MiniGrenade" || other.classname == "MultiGrenade")))
 		other.velocity = self.speed * self.movedir * 10;
 	else if (other.health > 0)
 	{
@@ -612,8 +618,24 @@ void() trigger_push_touch =
 /*QUAKED trigger_push (.5 .5 .5) ? PUSH_ONCE
 Pushes the player
 */
+void() trigger_push_use =
+{
+	if (self.spawnflags & PUSH_ACTIVE)
+		self.spawnflags = self.spawnflags - PUSH_ACTIVE;
+	else
+		self.spawnflags = self.spawnflags + PUSH_ACTIVE;
+};
+
 void() trigger_push =
 {
+	// Dissolution of Eternity: a push field with PUSH_TOGL starts off and is toggled by its targetname, any other one is always on
+	if (RogueMap)
+	{
+		if (self.spawnflags & PUSH_TOGL)
+			self.use = trigger_push_use;
+		else
+			self.spawnflags = self.spawnflags + PUSH_ACTIVE;
+	}
 	InitTrigger ();
 	precache_sound ("ambience/windfly.wav");
 	self.touch = trigger_push_touch;

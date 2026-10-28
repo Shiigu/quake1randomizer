@@ -140,6 +140,19 @@ float	earthquake_intensity;
 float	cutscene_running;
 float	lavaGunFired;		// set when a Lava Nailgun shot goes off, W_WeaponFrame plays its sound once
 
+// Set by worldspawn on Dissolution of Eternity's own maps. The map entities Rogue changed (trap shooters, push
+// fields, ...) keep their usual behaviour everywhere else, because the same spawnflag bits mean something else there.
+float	RogueMap;
+
+// Rogue's trap_spikeshooter spawnflags (1 and 2, superspike and laser, are the usual ones)
+float	SPAWNFLAG_LAVASPIKE		= 4;
+float	SPAWNFLAG_SUPERLAVA		= 8;
+float	SPAWNFLAG_LAVASKILL		= 16;	// super lava spikes on skill 2 and 3
+float	SPAWNFLAG_FIREBALL		= 32;
+
+void(vector org, vector dir) launch_fireball;		// rogue/dragon.qc
+void() xpackEnding;								// rogue/ending.qc
+
 // TODO when ported: prototypes for void(entity theEntity) UpdateAmmoCounts
 // (weapons.qc) and void(entity ownerEntity) sphere_remove (sphere.qc). FTEQCC
 // errors on a prototype with no body, so they go in with their definitions.

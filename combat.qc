@@ -88,6 +88,9 @@ void(entity targ, entity attacker) Killed =
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
 
+	// Dissolution of Eternity: these hazards gib you
+	if (attacker.classname == "buzzsaw" || attacker.classname == "pendulum")
+		self.health = -99;
 	self.gravity = 1.0;		// Dissolution of Eternity: don't die floating (Anti-Grav Belt)
 	ClientObituary(self, attacker);
 
