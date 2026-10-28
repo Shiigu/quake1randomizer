@@ -11,8 +11,7 @@ void(float item_bits, float health_bits,
     float shell_bits, float nail_bits,
     float rocket_bits, float cell_bits,
     float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms;
-void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags;
+void(float bag_seed, float bag_index, float difficulty_level) EncodeEndlessCastleFlags;
 
 float	modelindex_eyes, modelindex_player, modelindex_hammer;
 
@@ -112,7 +111,7 @@ void() SetChangeParms =
 	parm5 = floor(SpawnedWeapons / 2);
 	parm6 = EndlessCastleMapCount;
 	
-	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleEpisode5Flags, EndlessCastleEpisode6Flags, EndlessCastleDifficultyLevel);
+	EncodeEndlessCastleFlags(EndlessCastleBagSeed, EndlessCastleBagIndex, EndlessCastleDifficultyLevel);
 
 	parm10 = EndlessCastleSeed;
 	parm11 = EndlessCastleElapsedTime;
@@ -137,12 +136,11 @@ void(float item_bits, float health_bits,
     parm16 = lava_nail_bits + 256 * multi_rocket_bits + 256 * 128 * plasma_bits;
 }
 
-void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags =
+void(float bag_seed, float bag_index, float difficulty_level) EncodeEndlessCastleFlags =
 {
-    parm7 = episode1_flags + 256 * episode2_flags + 256 * 128 * episode4_flags;  // 8 bits for episode1_flags + 7 bits for episode2_flags + 8 bits for episode4_flags
-    parm8 = episode3_flags + 256 * episode6_flags;  // 8 bits for episode3_flags + 16 bits for episode6_flags
-    parm9 = (difficulty_level & 7) + 8 * episode5_flags;  // 3 bits for difficulty level + 14 bits for episode5_flags
+    parm7 = bag_seed + 65536 * bag_index;  // 16 bits for the level bag's seed + 7 bits for how many levels were taken from it
+    parm8 = difficulty_level & 7;  // 3 bits for difficulty level
+    // parm9 is free
 };
 
 void() SetNewParms =
@@ -233,24 +231,11 @@ void() DecodeLevelParms =
     SpawnedWeapons = parm5 * 2;
 	EndlessCastleMapCount = parm6;
 	
-	bits = parm7 & 255;
-    EndlessCastleEpisode1Flags = bits;
-    parm7 = (parm7 - bits) / 256;
+	bits = parm7 & 65535;
+    EndlessCastleBagSeed = bits;
+    EndlessCastleBagIndex = (parm7 - bits) / 65536;
 
-    bits = parm7 & 127;
-    EndlessCastleEpisode2Flags = bits;
-    parm7 = (parm7 - bits) / 128;
-
-    EndlessCastleEpisode4Flags = parm7 & 255;
-	
-    bits = parm8 & 255;
-    EndlessCastleEpisode3Flags = bits;
-    EndlessCastleEpisode6Flags = (parm8 - bits) / 256;
-	
-    EndlessCastleDifficultyLevel = parm9 & 7;
-    parm9 = (parm9 - EndlessCastleDifficultyLevel) / 8;
-
-    EndlessCastleEpisode5Flags = parm9 & 16383;
+    EndlessCastleDifficultyLevel = parm8 & 7;
 
 	EndlessCastleSeed = parm10;
 	EndlessCastleElapsedTime = parm11;
