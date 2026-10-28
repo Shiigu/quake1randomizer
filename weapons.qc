@@ -560,6 +560,9 @@ void() W_Precache =
    precache_sound ("hipweap/mjolhit.wav");   // mjolnir
    precache_sound ("hipweap/mjolslap.wav");   // mjolnir
    precache_sound ("hipweap/mjoltink.wav");   // mjolnir
+// Rogue's grapple
+	precache_sound ("weapons/chain1.wav");
+	precache_sound ("pendulum/hit.wav");
 };
 
 float() crandom =
@@ -1478,6 +1481,8 @@ PLAYER WEAPON USE
 // other weapon through .items.
 float(float w) WeaponOwned =
 {
+	if (w == ROGW_GRAPPLE)
+		return (deathmatch && teamplay >= TEAM_CTF);
 	if (Rog_IsRogueWeapon(w))
 		return Rog_HasWeapon(self, w);
 	return (self.items & w);
@@ -1577,7 +1582,7 @@ float(float a, float b, float c) WeaponForSlot =
 };
 
 // Next (direction 1) or previous (direction -1) weapon you own that has ammo, in this order
-float WeaponCycleOrder[16] = { IT_AXE, IT_SHOTGUN, IT_SUPER_SHOTGUN, IT_NAILGUN, ROGW_LAVA_NAILGUN, IT_SUPER_NAILGUN,
+float WeaponCycleOrder[17] = { IT_AXE, ROGW_GRAPPLE, IT_SHOTGUN,IT_SUPER_SHOTGUN, IT_NAILGUN, ROGW_LAVA_NAILGUN, IT_SUPER_NAILGUN,
 	ROGW_LAVA_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, ROGW_MULTI_GRENADE, IT_PROXIMITY_GUN, IT_ROCKET_LAUNCHER,
 	ROGW_MULTI_ROCKET, IT_LIGHTNING, ROGW_PLASMA_GUN, IT_LASER_CANNON, IT_MJOLNIR };
 
@@ -1588,19 +1593,19 @@ void(float direction) CycleWeapon =
 	EnableComboWeapons ( self );
 	self.impulse = 0;
 	start = 0;
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 17; i++)
 	{
 		if (WeaponCycleOrder[i] == self.weapon)
 			start = i;
 	}
 	i = start;
-	for (tries = 0; tries < 16; tries++)
+	for (tries = 0; tries < 17; tries++)
 	{
 		i = i + direction;
-		if (i >= 16)
+		if (i >= 17)
 			i = 0;
 		else if (i < 0)
-			i = 15;
+			i = 16;
 		if (WeaponOwned(WeaponCycleOrder[i]) && !WeaponLacksAmmo(WeaponCycleOrder[i]))
 		{
 			self.weapon = WeaponCycleOrder[i];
@@ -1621,6 +1626,12 @@ void() W_SetCurrentAmmo =
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_axe.mdl";
+		self.weaponframe = 0;
+	}
+	else if (self.weapon == ROGW_GRAPPLE)
+	{
+		self.currentammo = 0;
+		self.weaponmodel = "progs/v_grpple.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == IT_SHOTGUN)
@@ -1790,7 +1801,7 @@ float() W_CheckNoAmmo =
 	if (self.currentammo > 0)
 		return TRUE;
 
-	if (self.weapon == IT_AXE)
+	if (self.weapon == IT_AXE || self.weapon == ROGW_GRAPPLE)
 		return TRUE;
 
 //MED
@@ -1828,6 +1839,8 @@ void()   player_hammer1;
 void()   player_mjolnir1;
 //Dissolution of Eternity
 void()   player_lava_nail1;
+void()   player_grapple1;
+void()   player_grapple3;
 void()   W_FireMultiGrenade;
 void()   W_FireMultiRocket;
 
@@ -1842,6 +1855,8 @@ void() W_Attack =
 	makevectors	(self.v_angle);			// calculate forward angle for velocity
 	self.show_hostile = time + 1;	// wake monsters up
 
+	RuneApplyBlackNoise(self);		// the Rune of Black Magic (strength) makes a noise
+
 	if (self.weapon == IT_AXE)
 	{
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
@@ -1854,19 +1869,27 @@ void() W_Attack =
 			player_axec1 ();
 		else
 			player_axed1 ();
-		self.attack_finished = time + 0.5;
+		self.attack_finished = time + RuneApplyHell(0.5, self);
+	}
+	else if (self.weapon == ROGW_GRAPPLE)
+	{
+		if (!self.hook_out)
+			player_grapple1();
+		else
+			player_grapple3();
+		self.attack_finished = time + 0.1;
 	}
 	else if (self.weapon == IT_SHOTGUN)
 	{
 		player_shot1 ();
 		W_FireShotgun ();
-		self.attack_finished = time + 0.5;
+		self.attack_finished = time + RuneApplyHell(0.5, self);
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
 		player_shot1 ();
 		W_FireSuperShotgun ();
-		self.attack_finished = time + 0.7;
+		self.attack_finished = time + RuneApplyHell(0.7, self);
 	}
 	else if (self.weapon == IT_NAILGUN)
 	{
@@ -1880,18 +1903,18 @@ void() W_Attack =
 	{
 		player_rocket1();
 		W_FireGrenade();
-		self.attack_finished = time + 0.6;
+		self.attack_finished = time + RuneApplyHell(0.6, self);
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
 		player_rocket1();
 		W_FireRocket();
-		self.attack_finished = time + 0.8;
+		self.attack_finished = time + RuneApplyHell(0.8, self);
 	}
 	else if (self.weapon == IT_LIGHTNING)
 	{
 		player_light1();
-		self.attack_finished = time + 0.1;
+		self.attack_finished = time + RuneApplyHell(0.1, self);
 		sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
 	}
 //MED
@@ -1906,14 +1929,14 @@ void() W_Attack =
          player_hammer1();
       else
          player_mjolnir1();
-      self.attack_finished = time + 0.8;
+      self.attack_finished = time + RuneApplyHell(0.8, self);
    }
 //MED
    else if (self.weapon == IT_PROXIMITY_GUN)
    {
       player_rocket1();
       W_FireProximityGrenade();
-      self.attack_finished = time + 0.6;
+      self.attack_finished = time + RuneApplyHell(0.6, self);
    }
 //Dissolution of Eternity
    else if (self.weapon == ROGW_LAVA_NAILGUN || self.weapon == ROGW_LAVA_SUPER_NAILGUN)
@@ -1925,18 +1948,18 @@ void() W_Attack =
    {
       player_rocket1();
       W_FireMultiGrenade();
-      self.attack_finished = time + 0.6;
+      self.attack_finished = time + RuneApplyHell(0.6, self);
    }
    else if (self.weapon == ROGW_MULTI_ROCKET)
    {
       player_rocket1();
       W_FireMultiRocket();
-      self.attack_finished = time + 0.8;
+      self.attack_finished = time + RuneApplyHell(0.8, self);
    }
    else if (self.weapon == ROGW_PLASMA_GUN)
    {
       // player_light1 picks W_FirePlasma instead of W_FireLightning, with the same flash and frames
-      self.attack_finished = time + 1.0;
+      self.attack_finished = time + RuneApplyHell(1.0, self);
       player_light1 ();
    }
 };
@@ -1957,7 +1980,16 @@ void() W_ChangeWeapon =
 //MED
 	if (self.impulse == 1)
 	{
-		fl = IT_AXE;
+		// Capture the Flag: pressing 1 again switches between the Axe and the Grapple
+		if (self.weapon == IT_AXE && deathmatch && teamplay >= TEAM_CTF)
+			fl = ROGW_GRAPPLE;
+		else
+			fl = IT_AXE;
+	}
+	else if (self.impulse == 22)
+	{
+		if (deathmatch && teamplay >= TEAM_CTF)
+			fl = ROGW_GRAPPLE;
 	}
 	else if (self.impulse == 2)
 	{
@@ -2316,6 +2348,16 @@ void() ImpulseCommands =
 		W_ChangeWeapon ();
 	if (self.impulse >= 60 && self.impulse <= 64)	// Dissolution of Eternity
 		W_ChangeWeapon ();
+
+	// Capture the Flag and team play
+	if (self.impulse == 20)
+		TossBackpack ();
+	if (self.impulse == 21)
+		TossWeapon ();
+	if (self.impulse == 22 && deathmatch && teamplay >= TEAM_CTF)
+		W_ChangeWeapon ();
+	if (self.impulse == 23)
+		TeamFlagStatusReport ();
 
 	if (self.impulse == 9)
 		CheatCommand ();

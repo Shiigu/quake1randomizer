@@ -43,9 +43,10 @@ void() SetChangeParms =
     float lava_nail_bits, multi_rocket_bits, plasma_bits;
 	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
-    if (self.health <= 0) 
+    if (self.health <= 0)
     {
         SetNewParms ();
+        parm9 = self.steam;	// Capture the Flag: keep the team of the player
         return;
     }
 
@@ -119,9 +120,14 @@ void() SetChangeParms =
 	parm13 = EndlessCastleDeadMonsters;
 	parm14 = EndlessCastleTotalSecrets;
 	parm15 = EndlessCastleFoundSecrets;
+
+	teamplay = cvar("teamplay");
+	if (deathmatch && teamplay >= TEAM_CTF)		// nothing is carried between levels in CTF
+		SetNewParms ();
+	parm9 = self.steam;		// the team of the player travels between levels in parm9
 };
 
-// Thanks to Tome of Preach of providing a refactor for parms that leaves parm4 to parm16 empty.
+// Thanks to Tomeof Preach of providing a refactor for parms that leaves parm4 to parm16 empty.
 // https://tomeofpreach.wordpress.com/2014/12/28/sending-values-between-levels/
 void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
@@ -140,12 +146,19 @@ void(float bag_seed, float bag_index, float difficulty_level) EncodeEndlessCastl
 {
     parm7 = bag_seed + 65536 * bag_index;  // 16 bits for the level bag's seed + 7 bits for how many levels were taken from it
     parm8 = difficulty_level & 7;  // 3 bits for difficulty level
-    // parm9 is free
+    // parm9 is the team of the player (Capture the Flag), it is set in SetChangeParms and SetNewParms
 };
 
 void() SetNewParms =
 {
-    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0, 0, 0, 0);
+    if (deathmatch && teamplay >= TEAM_CTF)
+    {
+        EncodeParms(0, 50, 50, 1, 25, 0, 0, 0, 0, 0, 0);	// Capture the Flag: the Axe, the Grapple and 50 green armor
+        parm4 = IT_AXE;
+    }
+    else
+        EncodeParms(0, 50, 0, 0, 25, 0, 0, 0, 0, 0, 0);
+    parm9 = -1;		// Capture the Flag: reset the current team selection
 };
 
 void() DecodeLevelParms =
@@ -227,8 +240,11 @@ void() DecodeLevelParms =
 	self.items2 = 0; // Armagon powerups are never kept
 
     self.weapon = parm4;
+    // cute bug, if the grapple was selected, it still would be on level change
+    if (self.weapon == ROGW_GRAPPLE && !(deathmatch && teamplay >= TEAM_CTF))
+        self.weapon = IT_AXE;
 
-    SpawnedWeapons = parm5 * 2;
+    SpawnedWeapons= parm5 * 2;
 	EndlessCastleMapCount = parm6;
 	
 	bits = parm7 & 65535;
@@ -274,6 +290,13 @@ void() DecodeLevelParms =
 		self.rog_items = self.rog_items | RIT_PLASMA_GUN;
 
 	W_SetCurrentAmmo ();	// Reads the alternate ammo, so it has to come after parm16
+
+	// Capture the Flag: keep the team from the previous level
+	if (TeamColorIsLegal(parm9))
+	{
+		self.steam = parm9;
+		TeamSetSkin();
+	}
 };
 
 
@@ -704,8 +727,10 @@ void() respawn =
 		CopyToBodyQue (self);
 		// set default spawn parms
 		SetNewParms ();
-		// respawn		
+		// respawn
 		PutClientInServer ();
+		// set the skin correctly
+		TeamSetSkin();
 	}
 	else
 	{
@@ -732,7 +757,25 @@ void() ClientKill =
 		return;
     IsDeveloper = cvar("developer");
 	if(EndlessCastleMapCount == 0)
-	{ 
+	{
+		if (deathmatch)
+		{
+			if (self.suicide_count > 3)
+			{
+				sprint(self, "You have suicided too much already.\n");
+				return;
+			}
+			self.suicide_count = self.suicide_count + 1;
+		}
+		TeamDropFlagOfPlayer(self);
+
+		if (tag_token_owner == self)
+		{
+			self.health = 0;
+			self.solid = SOLID_NOT;
+			tag_token_drop();
+		}
+
 		bprint (self.netname);
 		bprint (" suicides\n");
 		set_suicide_frame ();
@@ -764,8 +807,10 @@ entity() SelectSpawnPoint =
 	local	entity spot;
 	local	entity thing;
 	local	float  pcount;
-	
-// testinfo_player_start is only found in regioned levels
+	local	entity startspot;
+	local	float  t;
+
+// testinfo_player_startis only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
@@ -781,14 +826,37 @@ entity() SelectSpawnPoint =
 	}
 	else if (deathmatch)
 	{
-		spot = lastspawn;
+		startspot = spot = lastspawn;
+		t = 0;
+		// Capture the Flag: each team spawns at its own info_player_teamN points (not right after dying,
+		// then it is a base respawn), and falls back to the deathmatch ones if the level has none
+		if (!self.ctf_killed && teamplay >= TEAM_CTF)
+		{
+			if (self.steam == TEAM1)
+			{
+				startspot = spot = team1_lastspawn;
+				t = TEAM1;
+			}
+			else if (self.steam == TEAM2)
+			{
+				startspot = spot = team2_lastspawn;
+				t = TEAM2;
+			}
+		}
+
 		while (1)
 		{
-			spot = find(spot, classname, "info_player_deathmatch");
+			if (t == TEAM1)
+				spot = find(spot, classname, "info_player_team1");
+			else if (t == TEAM2)
+				spot = find(spot, classname, "info_player_team2");
+			else
+				spot = find(spot, classname, "info_player_deathmatch");
+
 			if (spot != world)
 			{
-				if (spot == lastspawn)
-					return lastspawn;
+				if (spot == startspot)
+					return startspot;
 				pcount = 0;
 				thing = findradius(spot.origin, 32);
 				while(thing)
@@ -799,10 +867,17 @@ entity() SelectSpawnPoint =
 				}
 				if (pcount == 0)
 				{
-					lastspawn = spot;
+					if (t == TEAM1)
+						team1_lastspawn = spot;
+					else if (t == TEAM2)
+						team2_lastspawn = spot;
+					else
+						lastspawn = spot;
 					return spot;
 				}
 			}
+			else
+				t = 0;		// no team spawn points in this level
 		}
 	}
 
@@ -834,8 +909,7 @@ void() PutClientInServer =
 {
 	startTime = time;
 	local	entity spot;
-	spot = SelectSpawnPoint ();
-    RandomMode = cvar("savedgamecfg");
+    RandomMode= cvar("savedgamecfg");
 	self.classname = "player";
 
 	if (IsRemastered() && skill == 3 && !deathmatch)
@@ -867,9 +941,18 @@ void() PutClientInServer =
 	self.items2 = 0;
 	self.gravity = 1.0;
 
+	// Capture the Flag
+	self.ctf_lastreturnedflag = -10;
+	self.ctf_lastfraggedcarrier = -10;
+	self.ctf_flagsince = -10;
+	self.ctf_lasthurtcarrier = -10;
+
     IsDeveloper = cvar("developer");
 
 	DecodeLevelParms ();
+
+	// the spawn point has to be chosen after DecodeLevelParms because of the team
+	spot = SelectSpawnPoint ();
 
 	if(EndlessCastleMapCount == -1 && IsDeveloper == FALSE)
 	{
@@ -953,6 +1036,10 @@ void() PutClientInServer =
 		spawn_tfog (self.origin + v_forward*20);
 	}
 
+	// Grapple
+	self.on_hook = FALSE;
+	self.hook_out = FALSE;
+
 	spawn_tdeath (self.origin, self);
 };
 
@@ -994,6 +1081,7 @@ potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
 {
+	SpawnRunes();
 };
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
@@ -1103,7 +1191,10 @@ void() CheckRules =
 	{
 		NextLevel ();
 		return;
-	}	
+	}
+
+	// update team scores
+	TeamCheckUpdate();
 };
 
 //============================================================================
@@ -1398,10 +1489,14 @@ void() PlayerPreThink =
 
 	makevectors (self.v_angle);		// is this still used
 
+	// TeamCheckLock performs all the team locking checks (CTF) and the actions they need
+	TeamCheckLock();
+
+	CheckMOTD();
 	CheckRules ();
 	WaterMove ();
 
-	if(PrintedEndlessCastleSplash == 0 && EndlessCastleMapCount > 0)
+	if(PrintedEndlessCastleSplash== 0 && EndlessCastleMapCount > 0)
 	{
 		centerprint (self, "\(\=\= Endless Castle \=\=\)\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
 		PrintedEndlessCastleSplash = 1;
@@ -1489,11 +1584,17 @@ void() PlayerPreThink =
 		}
 	}
 
-   	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR)
+   	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR && self.weapon != ROGW_GRAPPLE)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 	}
+
+	RuneApplyElder(self); // regeneration rune
+
+	// Track the grapple
+	if (self.hook_out)
+		GrappleService();
 };
 	
 /*
@@ -1863,8 +1964,23 @@ void() ClientConnect =
 {
 	bprint (self.netname);
 	bprint (" entered the game\n");
-	
-// a client connecting during an intermission can cause problems
+
+	self.suicide_count = 0;
+	self.ctf_killed = 0;
+
+	SetMOTD();
+
+	// If this is our first connection, parm9 is < 0: choose the team of the player
+	if (parm9 < 0 && teamplay > 0)
+	{
+		if (cvar("gamecfg") & GAMECFG_USE_COLOR)
+			self.steam = self.team; // accept joining players color if legal
+		else
+			self.steam = -50; // always reassign
+		TeamCheckLock();
+	}
+
+// a client connectingduring an intermission can cause problems
 	if (intermission_running)
 		ExitIntermission ();
 };
@@ -1890,6 +2006,14 @@ void() ClientDisconnect =
 	bprint (ftos(self.frags));
 	bprint (" frags\n");
 	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
+
+	if (tag_token_owner == self)
+		tag_token_drop();
+
+	TeamDropFlagOfPlayer(self);
+	self.steam = -50;
+	self.team = 0;
+
 	set_suicide_frame ();
 };
 
@@ -1908,9 +2032,11 @@ void(entity targ, entity attacker) ClientObituary =
 
 	if (targ.classname == "player")
 	{
+		TeamResetCarrier(targ);
+
 		if(FixedSeed <= 0 && !deathmatch && !coop)
 		{
-			if(RandomizeMonsters || RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
+			if(RandomizeMonsters|| RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 			{
 				LogRandomizerResults();
 				bprint("\n\(\=\= List of randomized objects has been printed to console \=\=\)\n\n");
@@ -1966,6 +2092,14 @@ void(entity targ, entity attacker) ClientObituary =
 				}
             	if (targ.weapon == IT_GRENADE_LAUNCHER)
 					bprint (" tries to put the pin back in\n");//JIM
+				// gibbed for changing teams
+				else if (teamplay && (targ.team != targ.steam))
+				{
+					if (cvar("gamecfg") & GAMECFG_ALLOW_CHG)
+						bprint(" changed teams\n");
+					else
+						bprint(" tried to change teams\n");
+				}
             	else if (rnum > 0.4 )
 					bprint (" becomes bored with life\n");
 				else
@@ -1989,7 +2123,13 @@ void(entity targ, entity attacker) ClientObituary =
 			}
          else
 			{
-				attacker.frags = attacker.frags + 1;
+				if (teamplay == TEAM_DMATCH_TAG)
+					dmatch_score (targ, attacker);
+				else
+				{
+					attacker.frags = attacker.frags + 1;
+					TeamAssists(targ, attacker);
+				}
 //MED 01/19/97
             if (empathyused == 1)
                {
@@ -2021,7 +2161,12 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " was ax-murdered by ";
 					deathstring2 = "\n";
 				}
-				if (rnum == IT_SHOTGUN)
+				if (rnum == ROGW_GRAPPLE)
+				{
+					deathstring = " was grappled by ";
+					deathstring2 = "\n";
+				}
+if (rnum == IT_SHOTGUN)
 				{
 					deathstring = " chewed on ";
 					deathstring2 = "'s boomstick\n";

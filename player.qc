@@ -167,6 +167,45 @@ void()	player_axed2 =	[$axattd2, player_axed3	] {self.weaponframe=6;};
 void()	player_axed3 =	[$axattd3, player_axed4	] {self.weaponframe=7;W_FireAxe();};
 void()	player_axed4 =	[$axattd4, player_run	] {self.weaponframe=8;};
 
+//============================================================================
+// Rogue's grapple (rogue/grapple.qc): the hook is thrown, then reeled in while the button is held
+void() player_grapple3;
+void() player_grapple4;
+void() player_grapple5;
+
+void()  player_grapple1 =  [$axattd1, player_grapple2 ]
+	{ self.weaponframe=1; W_FireGrapple(); };
+void()  player_grapple2 =  [$axattd2, player_grapple3 ]
+	{ self.weaponframe=2; };
+void()  player_grapple3 =  [$axattd3, player_grapple3 ]
+	{
+		self.weaponframe=2;
+		if (!self.hook_out) {
+				player_grapple5();
+				return;
+		}
+		if (vlen(self.hook.origin - self.origin) >= 50) {
+			if (self.on_hook) {
+				player_grapple4();
+				return;
+			}
+		}
+	};
+void() player_grapple4 =  [$deathc4, player_grapple4 ]
+	{
+		self.weaponframe=2;
+		if (!self.hook_out) {
+			player_grapple5();
+			return;
+		}
+		if (vlen(self.hook.origin - self.origin) < 50 || !self.on_hook) {
+			player_grapple3();
+			return;
+		}
+	};
+void()  player_grapple5 =  [$axattd4, player_run    ]
+	{self.weaponframe=1;};
+
 
 //============================================================================
 
@@ -620,7 +659,17 @@ void() PlayerDie =
 	self.rog_items = self.rog_items - (self.rog_items & (RIT_SHIELD | RIT_ANTIGRAV));
 
 	if (deathmatch || coop)
+	{
 		DropBackpack();
+		TeamDropFlagOfPlayer(self);
+		DropRune();
+	}
+
+	// Capture the Flag: ctf_killed is 2 if the player was killed for changing teams, then it is a base respawn
+	if (self.ctf_killed == 2)
+		self.ctf_killed = 0;
+	else
+		self.ctf_killed = 1;
 
 	self.weaponmodel="";
 	self.view_ofs = '0 0 -8';

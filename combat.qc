@@ -146,6 +146,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 // check for quad damage powerup on the attacker
 	if (attacker.super_damage_finished > time)
 		damage = damage * 4;
+// rune power up (Black Magic)
+	if (deathmatch)
+		damage = RuneApplyBlack(damage, attacker);
 
 
 //MED
@@ -167,7 +170,10 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
 // save damage based on the target's armor level
 
-	save = ceil(targ.armortype*damage);
+	if (TeamArmorDam(targ, inflictor, attacker, damage))
+		save = ceil(targ.armortype*damage);
+	else
+		save = 0;	// CTF: armor is protected from your team mates
 	if (save >= targ.armorvalue)
 	{
 		save = targ.armorvalue;
@@ -219,8 +225,12 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	}
 
 // team play damage avoidance
-	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
-		return;
+	if (!TeamHealthDam(targ, inflictor, attacker, damage))
+		return;	// same team
+
+// rune power up (Earth Magic)
+	if (deathmatch)
+		take = RuneApplyEarth(take, targ);
 
 // do the damage
 	targ.health = targ.health - take;
