@@ -6,6 +6,7 @@ void(entity e) UnstuckObject;
 float(entity head) IsTouchingTeleporter;
 float(entity head, float distance) IsNearAHarmfulLiquidSurface;
 float(entity head, string classname1, string classname2, string classname3) IsNearOneOf;
+float(entity e, string classname) MatchesClassname;
 float(float playAlertSound) FindTarget;
 float() IsRemastered;
 void(float newCentertime) SetCentertime;
@@ -542,18 +543,20 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 				dprint(classname3);
 			}
 			dprint(".\n");
-			if(classname1 == "item_health") // If looking for Megahealths, ignore health packs that aren't of such type.
+			if(classname1 == "item_health" || classname2 == "item_health" || classname3 == "item_health") // If looking for Megahealths, ignore health packs that aren't of such type.
 			{
 				if(e.nextClassname == "item_health" && e.healamount == 100)
 				{
 					return TRUE;
 				}
 			}
+			else if(e.nextClassname == "item_health" && e.healamount == 100)
+				{
+					return TRUE;
+				}
 			else
 			{
-				if(((classname1 != string_null && classname1 != "" && e.nextClassname == classname1) 
-				|| (classname2 != string_null && classname2 != "" && e.nextClassname == classname2) 
-				|| (classname3 != string_null && classname3 != "" && e.nextClassname == classname3)))
+				if(MatchesClassname(e, classname1) || MatchesClassname(e, classname2) || MatchesClassname(e, classname3))
 				{
 					return TRUE;
 				}
@@ -562,6 +565,22 @@ float(entity head, string classname1, string classname2, string classname3) IsNe
 		e = e.chain;
 	}
 	return FALSE;
+};
+
+// Returns TRUE if the classname parameter isn't NULL or empty, and if the entity's nextClassname is equal to it
+float(entity e, string classname) MatchesClassname =
+{
+	if(classname == string_null)
+		return FALSE;
+	if(classname == "")
+		return FALSE;
+	if(e.nextClassname == string_null)
+		return FALSE;
+	if(e.nextClassname == "")
+		return FALSE;
+	if(e.nextClassname != classname)
+		return FALSE;
+	return TRUE;
 };
 
 // Tries, in six increments, whether there's some Slime or Lava surface (or a comparatively faraway water surface) between the start and the destination
@@ -675,6 +694,12 @@ float(entity mon) IsTiedToATrigger = {
         if (!e.classname)
             continue;
 
+		dprint(mon.classname);
+		dprint(vtos(mon.origin));
+		dprint("'s target is checked against potential trigger, classname ");
+		dprint(e.classname);
+		dprint(". ");
+
         if (e.classname == "trigger_changelevel" ||
             e.classname == "trigger_reactivate" ||
             e.classname == "trigger_multiple" ||
@@ -683,11 +708,11 @@ float(entity mon) IsTiedToATrigger = {
             e.classname == "trigger_secret" ||
             e.classname == "trigger_counter" ||
             e.classname == "trigger_teleport" ||
+            e.classname == "trigger_skill_touch" ||
             e.classname == "trigger_setskill" ||
             e.classname == "trigger_onlyregistered" ||
             e.classname == "trigger_hurt" ||
             e.classname == "trigger_push" ||
-            e.classname == "trigger_monsterjump" ||
             e.classname == "trigger_damagethreshold" ||
             e.classname == "trigger_usekey" ||
             e.classname == "trigger_remove" ||
@@ -695,11 +720,20 @@ float(entity mon) IsTiedToATrigger = {
             e.classname == "trigger_command_use" ||
             e.classname == "trigger_command" ||
             e.classname == "trigger_decoy_use" ||
-            e.classname == "trigger_waterfall")
+            e.classname == "trigger_waterfall" ||
+            e.classname == "func_counter" ||
+            e.classname == "counter" ||
+            e.classname == "func_oncount" ||
+            e.classname == "func_door" ||
+            e.classname == "func_plat" ||
+            e.classname == "func_train_find" ||
+            e.classname == "func_train")
         {
+			dprint("Target is a trigger. Will be prevented from rolling zombies.\n");
             return TRUE;
         }
     }
 
+	dprint("Target is NOT a trigger. Can roll a zombie.\n");
     return FALSE;
 }
