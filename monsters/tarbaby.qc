@@ -228,7 +228,7 @@ void() tbaby_checknew =
 	self.nextthink = self.nextthink + random()*0.5;
 
 	total_monsters = total_monsters + 1;
-
+	EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + 1;
 	WriteByte (MSG_BROADCAST, SVC_UPDATESTAT);
 	WriteByte (MSG_BROADCAST, STAT_TOTALMONSTERS);
 	WriteLong (MSG_BROADCAST, total_monsters);

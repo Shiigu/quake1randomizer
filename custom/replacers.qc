@@ -1192,7 +1192,7 @@ void() ConvertToZombie =
 	self.th_pain = zombie_pain;
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
-	self.th_melee = zombie_missile;
+	self.th_melee = zombie_missile;		// Strangely necessary or it won't attack to enemies next to it
 	self.yaw_speed = 60;
 	self.attack_state = 0;
 	self.state = 0;
@@ -1333,7 +1333,7 @@ void() ConvertToGremlin =
 	walkmonster_start();
 };
 
-// Replaces entity with a Power Shield (Dissolution of Eternity)
+// Replaces entity with a Power Shield
 void() ConvertToPowerShield =
 {
 	dprint("Converted ");
@@ -1357,7 +1357,7 @@ void() ConvertToPowerShield =
 	RegisterEntity(ENTITY_DISPLAY_NAME_POWER_SHIELD);
 };
 
-// Replaces entity with an Anti-Grav Belt (Dissolution of Eternity)
+// Replaces entity with an Anti-Grav Belt
 void() ConvertToAntiGravBelt =
 {
 	dprint("Converted ");
@@ -1381,7 +1381,7 @@ void() ConvertToAntiGravBelt =
 	RegisterEntity(ENTITY_DISPLAY_NAME_ANTI_GRAV_BELT);
 };
 
-// Replaces entity with a Hell Spawn (Dissolution of Eternity): a Spawn that may split in two when it gets hurt
+// Replaces entity with a Hell Spawn
 void() ConvertToHellSpawn =
 {
 	if (deathmatch)
@@ -1454,7 +1454,7 @@ void() ConvertToHellSpawn =
 	walkmonster_start();
 };
 
-// Replaces entity with a Multi-Grenade Ogre (Dissolution of Eternity): an Ogre whose grenades burst into mini-grenades
+// Replaces entity with a Multi-Grenade Ogre
 void() ConvertToMultiGrenadeOgre =
 {
 	if (deathmatch)
@@ -1518,7 +1518,7 @@ void() ConvertToMultiGrenadeOgre =
 	walkmonster_start();
 };
 
-// Replaces entity with a Knight Statue (Dissolution of Eternity): a Knight that stays frozen until it notices a player
+// Replaces entity with a Knight Statue
 void() ConvertToKnightStatue =
 {
 	if (deathmatch)
@@ -1582,7 +1582,7 @@ void() ConvertToKnightStatue =
 	walkmonster_start();
 };
 
-// Replaces entity with a Death Knight Statue (Dissolution of Eternity): a Death Knight that stays frozen until it notices a player
+// Replaces entity with a Death Knight Statue
 void() ConvertToDeathKnightStatue =
 {
 	if (deathmatch)
@@ -1647,7 +1647,7 @@ void() ConvertToDeathKnightStatue =
 	walkmonster_start();
 };
 
-// Replaces entity with a Phantom Swordsman (Dissolution of Eternity)
+// Replaces entity with a Phantom Swordsman
 void() ConvertToPhantomSwordsman =
 {
 	if (deathmatch)
@@ -1695,7 +1695,7 @@ void() ConvertToPhantomSwordsman =
 	self.th_melee = sword_atk1;
 	self.th_die = sword_die;
 	self.th_pain = sword_pain;
-	self.delay = 10;			// seconds it waits after first noticing a player before it attacks
+	self.delay = Random(5000, 30000) / 10000.0;			// by default, Phantom Swordsmen have a wait period, either map dependent or 10 seconds (it's a scare mechanic), so we randomize it for unpredictability
 	self.yaw_speed = 20;
 	self.attack_state = 0;
 	self.state = 0;
@@ -1709,7 +1709,7 @@ void() ConvertToPhantomSwordsman =
 	walkmonster_start();
 };
 
-// Replaces entity with a Wrath (Dissolution of Eternity)
+// Replaces entity with a Wrath
 void() ConvertToWrath =
 {
 	if (deathmatch)
@@ -1755,6 +1755,7 @@ void() ConvertToWrath =
 	self.th_stand = wrath_stand1;
 	self.th_walk = wrath_walk01;
 	self.th_run = wrath_run01;
+	self.th_melee = wrath_attack;		// Strangely necessary or it won't attack to enemies next to it
 	self.th_missile = wrath_attack;
 	self.th_pain = wrath_pain;
 	self.th_die = wrath_die02;
@@ -1771,7 +1772,7 @@ void() ConvertToWrath =
 	flymonster_start ();
 };
 
-// Replaces entity with a Mummy (Dissolution of Eternity)
+// Replaces entity with a Mummy
 void() ConvertToMummy =
 {
 	if (deathmatch)
@@ -1808,7 +1809,6 @@ void() ConvertToMummy =
 		self.flags = self.flags - (self.flags & FL_SWIM);
 	if (self.spawnflags & SPAWN_CRUCIFIED)
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
-	// A Mummy's own spawnflags mean "Lying" and "Stronger", never carry them over from the original monster
 	if (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG))
 		self.spawnflags = self.spawnflags - (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG));
 
@@ -1833,6 +1833,7 @@ void() ConvertToMummy =
 	self.th_pain = mummy_pain;
 	self.th_die = mummy_die;
 	self.th_missile = mummy_missile;
+	self.th_melee = mummy_missile;		// Strangely necessary or it won't attack to enemies next to it
 	self.yaw_speed = 20;
 	self.attack_state = 0;
 	self.state = 0;
@@ -1846,7 +1847,7 @@ void() ConvertToMummy =
 	walkmonster_start();
 };
 
-// Replaces entity with an Eel (Dissolution of Eternity)
+// Replaces entity with an Eel
 void() ConvertToEel =
 {
 	if (deathmatch)
@@ -2696,7 +2697,7 @@ void() ConvertToWeaponBackpack =
 	StartItem ();
 };
 
-// Replaces entity with lava nails (Dissolution of Eternity)
+// Replaces entity with lava nails
 void() ConvertToLavaNails =
 {
 	dprint("Converted ");
@@ -2730,7 +2731,7 @@ void() ConvertToLavaNails =
 	StartItem ();
 };
 
-// Replaces entity with multi rockets (Dissolution of Eternity)
+// Replaces entity with multi rockets
 void() ConvertToMultiRockets =
 {
 	dprint("Converted ");
@@ -2764,7 +2765,7 @@ void() ConvertToMultiRockets =
 	StartItem ();
 };
 
-// Replaces entity with plasma (Dissolution of Eternity)
+// Replaces entity with plasma
 void() ConvertToPlasma =
 {
 	dprint("Converted ");

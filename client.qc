@@ -12,7 +12,7 @@ void(float item_bits, float health_bits,
     float rocket_bits, float cell_bits,
     float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms;
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
+	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
 float	modelindex_eyes, modelindex_player, modelindex_hammer;
 
@@ -39,7 +39,7 @@ void() info_intermission =
 
 void() SetChangeParms =
 {    
-    float item_bits, health_bits, armor_bits, armor_type;
+    float item_bits, kept_items, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
     float lava_nail_bits, multi_rocket_bits, plasma_bits;
 	float hasLaserCannon, hasMjolnir, hasProximityGun;
@@ -54,17 +54,18 @@ void() SetChangeParms =
 	hasMjolnir = self.items & IT_MJOLNIR;
 	hasProximityGun = self.items & IT_PROXIMITY_GUN;
 
-	// keep only bits 2 through 7
-    self.items = self.items & 126;
+	// keep only bits 2 through 7. This works on a copy: .items itself must stay untouched in case this is
+	// called while the player is still playing (a save, for instance), or the Shotgun, keys and powerups would be lost
+    kept_items = self.items & 126;
 
 	if(hasLaserCannon)
-		self.items = self.items | 128;
+		kept_items = kept_items | 128;
 	if(hasMjolnir)
-		self.items = self.items | 256;
+		kept_items = kept_items | 256;
 	if(hasProximityGun)
-		self.items = self.items | 512;
+		kept_items = kept_items | 512;
 
-    item_bits = self.items * 0.5;
+    item_bits = kept_items * 0.5;
 
 	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.max_health = 50;
@@ -111,7 +112,7 @@ void() SetChangeParms =
 	parm5 = floor(SpawnedWeapons / 2);
 	parm6 = EndlessCastleMapCount;
 	
-	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleDifficultyLevel);
+	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleEpisode5Flags, EndlessCastleEpisode6Flags, EndlessCastleDifficultyLevel);
 
 	parm10 = EndlessCastleSeed;
 	parm11 = EndlessCastleElapsedTime;
@@ -137,11 +138,11 @@ void(float item_bits, float health_bits,
 }
 
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags =
+	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags =
 {
-    parm7 = episode1_flags + 8192 * episode4_flags;
-    parm8 = episode2_flags;
-    parm9 = (difficulty_level & 7) + 8 * episode3_flags;  // 3 bits for difficulty level + 14 bits for episode3_flags
+    parm7 = episode1_flags + 256 * episode2_flags + 256 * 128 * episode4_flags;  // 8 bits for episode1_flags + 7 bits for episode2_flags + 8 bits for episode4_flags
+    parm8 = episode3_flags + 256 * episode6_flags;  // 8 bits for episode3_flags + 16 bits for episode6_flags
+    parm9 = (difficulty_level & 7) + 8 * episode5_flags;  // 3 bits for difficulty level + 14 bits for episode5_flags
 };
 
 void() SetNewParms =
@@ -159,7 +160,7 @@ void() DecodeLevelParms =
     }
 
 	// Dissolution of Eternity: the second half starts from scratch
-	if (world.model == "maps/r2m1.bsp" && !deathmatch)
+	if (world.model == "maps/r2m1.bsp" && !deathmatch && parm6 == 0)	// not in the Endless Castle, parm6 is its level count
 		SetNewParms ();
  
     bits = parm1 & 255;
@@ -232,18 +233,24 @@ void() DecodeLevelParms =
     SpawnedWeapons = parm5 * 2;
 	EndlessCastleMapCount = parm6;
 	
-	bits = parm7 & 8191;
+	bits = parm7 & 255;
     EndlessCastleEpisode1Flags = bits;
-    parm7 = (parm7 - bits) / 8192;
+    parm7 = (parm7 - bits) / 256;
+
+    bits = parm7 & 127;
+    EndlessCastleEpisode2Flags = bits;
+    parm7 = (parm7 - bits) / 128;
 
     EndlessCastleEpisode4Flags = parm7 & 255;
 	
-    EndlessCastleEpisode2Flags = parm8 & 8191;
+    bits = parm8 & 255;
+    EndlessCastleEpisode3Flags = bits;
+    EndlessCastleEpisode6Flags = (parm8 - bits) / 256;
 	
     EndlessCastleDifficultyLevel = parm9 & 7;
     parm9 = (parm9 - EndlessCastleDifficultyLevel) / 8;
 
-    EndlessCastleEpisode3Flags = parm9 & 16383;
+    EndlessCastleEpisode5Flags = parm9 & 16383;
 
 	EndlessCastleSeed = parm10;
 	EndlessCastleElapsedTime = parm11;
@@ -2219,7 +2226,8 @@ void(entity targ, entity attacker) ClientObituary =
 				bprint (" was crushed by a Guardian\n");
 			if (attacker.classname == "monster_mummy")
 				bprint (" was mummified\n");
-
+			if (attacker.classname == "monster_sword")
+				bprint (" was slit open by a Phantom Swordsman\n");
 				return;
 			}
 			if (attacker.classname == "explo_box")
