@@ -39,120 +39,175 @@ void() MonsterUnbiasedSpawnFunctions[] = { ConvertToFiend, ConvertToDog, Convert
     ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToZombie };
 
 float ProbabilitiesMonsterToMonsterGround[22];
-float ProbabilitiesMonsterToMonsterGroundEasy[22]              = { 10, 22, 22, 12, 27, 20, 4, 1, 32, 2, 22, 24, 5, 16, 7, 2, 1, 2, 10, 9, 12, 2 };
-float ProbabilitiesMonsterToMonsterGroundNormal[22]            = { 14, 14, 18, 20, 31, 18, 6, 3, 26, 6, 24, 26, 9, 18, 10, 4, 4, 4, 13, 6, 20, 3 };
-float ProbabilitiesMonsterToMonsterGroundHard[22]              = { 16, 12, 16, 22, 16, 20, 8, 5, 22, 8, 26, 26, 13, 22, 11, 5, 6, 6, 8, 8, 22, 3 };
-float ProbabilitiesMonsterToMonsterGroundNightmare[22]         = { 22, 8, 11, 26, 16, 22, 10, 7, 13, 12, 26, 22, 15, 19, 14, 7, 10, 8, 8, 10, 26, 4 };
-float ProbabilitiesMonsterToMonsterGroundSuperNightmare[22]    = { 25, 4, 9, 28, 14, 18, 14, 11, 12, 12, 26, 26, 19, 16, 18, 9, 10, 12, 8, 12, 28, 6 };
-float ProbabilitiesMonsterToMonsterGroundUnfair[22]            = { 29, 0, 0, 24, 0, 22, 44, 43, 0, 30, 40, 0, 31, 0, 38, 18, 28, 0, 0, 16, 24, 10 };
+float ProbabilitiesMonsterToMonsterGroundByTier[] = {
+    //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
+     10,  14,  16,  22,  25,  29,  // Fiend
+     22,  14,  12,   8,   4,   0,  // Rottweiler
+     22,  18,  16,  11,   9,   0,  // Enforcer
+     12,  20,  22,  26,  28,  24,  // Death Knight
+     27,  31,  16,  16,  14,   0,  // Knight
+     20,  18,  20,  22,  18,  22,  // Zombie
+      4,   6,   8,  10,  14,  44,  // Vore
+      1,   3,   5,   7,  11,  43,  // Shambler
+     32,  26,  22,  13,  12,   0,  // Grunt
+      2,   6,   8,  12,  12,  30,  // Spawn
+     22,  24,  26,  26,  26,  40,  // Scrag
+     24,  26,  26,  22,  26,   0,  // Ogre
+      5,   9,  13,  15,  19,  31,  // Centroid
+     16,  18,  22,  19,  16,   0,  // Gremlin
+      7,  10,  11,  14,  18,  38,  // Wrath
+      2,   4,   5,   7,   9,  18,  // Mummy
+      1,   4,   6,  10,  10,  28,  // Hell Spawn
+      2,   4,   6,   8,  12,   0,  // Multi-Grenade Ogre
+     10,  13,   8,   8,   8,   0,  // Knight Statue
+      9,   6,   8,  10,  12,  16,  // Death Knight Statue
+     12,  20,  22,  26,  28,  24,  // Phantom Swordsman
+      2,   3,   3,   4,   6,  10   // Spike Mine
+};
 void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
     ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToSpikeMine };
 string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "trap_spike_mine" };
 
 float ProbabilitiesMonsterToMonsterWater[19];
-float ProbabilitiesMonsterToMonsterWaterEasy[19]               = { 16, 16, 11, 32, 3, 1, 18, 10, 20, 16, 50, 5, 16, 6, 2, 10, 9, 2, 2 };
-float ProbabilitiesMonsterToMonsterWaterNormal[19]             = { 12, 24, 24, 22, 5, 3, 26, 6, 24, 18, 34, 9, 18, 9, 3, 14, 5, 4, 3 };
-float ProbabilitiesMonsterToMonsterWaterHard[19]               = { 8, 26, 28, 16, 8, 5, 22, 8, 28, 18, 30, 13, 22, 11, 5, 31, 7, 6, 3 };
-float ProbabilitiesMonsterToMonsterWaterNightmare[19]          = { 4, 27, 28, 12, 9, 6, 27, 8, 30, 18, 22, 14, 18, 13, 7, 26, 7, 8, 4 };
-float ProbabilitiesMonsterToMonsterWaterSuperNightmare[19]     = { 2, 27, 30, 6, 13, 10, 20, 14, 34, 20, 16, 18, 16, 17, 9, 22, 13, 10, 6 };
-float ProbabilitiesMonsterToMonsterWaterUnfair[19]             = { 0, 0, 10, 20, 35, 34, 0, 0, 70, 0, 0, 20, 0, 24, 12, 0, 0, 0, 210 };
+float ProbabilitiesMonsterToMonsterWaterByTier[] = {
+    //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
+     16,  12,   8,   4,   2,   0,  // Fiend
+     16,  24,  26,  27,  27,   0,  // Enforcer
+     11,  24,  28,  28,  30,  10,  // Death Knight
+     32,  22,  16,  12,   6,  20,  // Zombie
+      3,   5,   8,   9,  13,  35,  // Vore
+      1,   3,   5,   6,  10,  34,  // Shambler
+     18,  26,  22,  27,  20,   0,  // Grunt
+     10,   6,   8,   8,  14,   0,  // Spawn
+     20,  24,  28,  30,  34,  70,  // Scrag
+     16,  18,  18,  18,  20,   0,  // Ogre
+     50,  34,  30,  22,  16,   0,  // Rotfish
+      5,   9,  13,  14,  18,  20,  // Centroid
+     16,  18,  22,  18,  16,   0,  // Gremlin
+      6,   9,  11,  13,  17,  24,  // Wrath
+      2,   3,   5,   7,   9,  12,  // Mummy
+     10,  14,  31,  26,  22,   0,  // Eel
+      9,   5,   7,   7,  13,   0,  // Hell Spawn
+      2,   4,   6,   8,  10,   0,  // Multi-Grenade Ogre
+      2,   3,   3,   4,   6, 210   // Spike Mine
+};
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
                                  ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToSpikeMine };
 string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "trap_spike_mine" };
 
 float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
-float ProbabilityToRemovePickupEasy                 = 0;
-float ProbabilityToRemovePickupNormal               = 0;
-float ProbabilityToRemovePickupHard                 = 0;
-float ProbabilityToRemovePickupNightmare            = 0;
-float ProbabilityToRemovePickupSuperNightmare       = 5;
-float ProbabilityToRemovePickupUnfair               = 10;
+float ProbabilityToRemovePickupByTier[6] = { 0, 0, 0, 0, 5, 10 };
 
 float ProbabilityForLowQualityPickup;                          // "Low quality pickup" being 15 health or Green Armor
-float ProbabilityForLowQualityPickupEasy            = 30;
-float ProbabilityForLowQualityPickupNormal          = 50;            
-float ProbabilityForLowQualityPickupHard            = 65;
-float ProbabilityForLowQualityPickupNightmare       = 75;
-float ProbabilityForLowQualityPickupSuperNightmare  = 85;
-float ProbabilityForLowQualityPickupUnfair          = 100;
+float ProbabilityForLowQualityPickupByTier[6] = { 30, 50, 65, 75, 85, 100 };
 
 float ProbabilitiesAmmoTypes[4];
-float ProbabilitiesAmmoTypesEasy[4]             = { 25, 25, 20, 20 };
-float ProbabilitiesAmmoTypesNormal[4]           = { 32, 31, 16, 16 };
-float ProbabilitiesAmmoTypesHard[4]             = { 38, 38, 13, 8 };
-float ProbabilitiesAmmoTypesNightmare[4]        = { 45, 31, 15, 7 };
-float ProbabilitiesAmmoTypesSuperNightmare[4]   = { 60, 25, 12, 3 };
-float ProbabilitiesAmmoTypesUnfair[4]           = { 80, 10, 5, 5 };
+float ProbabilitiesAmmoTypesByTier[] = {
+    //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
+     25,  32,  38,  45,  60,  80,  // Shells
+     25,  31,  38,  31,  25,  10,  // Nails
+     20,  16,  13,  15,  12,   5,  // Rockets
+     20,  16,   8,   7,   3,   5   // Cells
+};
 void() AmmoTypeConverters[] = { ConvertToShells, ConvertToNails, ConvertToRockets, ConvertToCells };
 string AmmoNetNames[] = { "shells", "nails", "rockets", "cells" };
 
 float ProbabilityForSmallAmmoPack;
-float ProbabilityForSmallAmmoPackEasy               = 50;
-float ProbabilityForSmallAmmoPackNormal             = 65;
-float ProbabilityForSmallAmmoPackHard               = 70;
-float ProbabilityForSmallAmmoPackNightmare          = 75;
-float ProbabilityForSmallAmmoPackSuperNightmare     = 80;
-float ProbabilityForSmallAmmoPackUnfair             = 100;
+float ProbabilityForSmallAmmoPackByTier[6] = { 50, 65, 70, 75, 80, 100 };
 
 // Dissolution of Eternity: the chance (out of 100) for any ammo to turn into one of the alternate ammos (Lava Nails,
 // Multi Rockets or Plasma, all equally likely) instead of a standard one. It is strong ammo for the player, so it is much
 // rarer than any standard ammo, and it gets rarer as the difficulty goes up. Unbiased Mode doesn't play fair, but it
 // keeps it rare too.
 float ProbabilityForAlternateAmmo;
-float ProbabilityForAlternateAmmoEasy                   = 20;
-float ProbabilityForAlternateAmmoNormal                 = 15;
-float ProbabilityForAlternateAmmoHard                   = 10;
-float ProbabilityForAlternateAmmoNightmare              = 8;
-float ProbabilityForAlternateAmmoSuperNightmare         = 5;
-float ProbabilityForAlternateAmmoUnfair                 = 2;
+float ProbabilityForAlternateAmmoByTier[6] = { 20, 15, 10, 8, 5, 2 };
 float ProbabilityForAlternateAmmoUnbiased          = 15;
 void() AlternateAmmoConverters[] = { ConvertToLavaNails, ConvertToMultiRockets, ConvertToPlasma };
 string AlternateAmmoNetNames[] = { "lava nails", "multi rockets", "plasma" };
 
 float ProbabilitiesForPowerupsNearWater[11];
-float ProbabilitiesForPowerupsNearWaterEasy[11]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20, 15, 5 };
-float ProbabilitiesForPowerupsNearWaterNormal[11]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15, 12, 8 };
-float ProbabilitiesForPowerupsNearWaterHard[11]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10, 9, 10 };
-float ProbabilitiesForPowerupsNearWaterNightmare[11]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8, 7, 12 };
-float ProbabilitiesForPowerupsNearWaterSuperNightmare[11]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5, 5, 18 };
-float ProbabilitiesForPowerupsNearWaterUnfair[11]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5, 4, 31 };
+float ProbabilitiesForPowerupsNearWaterByTier[] = {
+    //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
+     20,  18,  17,  15,  12,   5,  // Pentagram of Protection
+     20,  18,  17,  15,  12,   5,  // Quad Damage
+     20,  18,  17,  15,  12,   5,  // Ring of Shadows
+     15,  18,  17,  20,  24,  25,  // Health
+     20,  18,  17,  15,  12,  10,  // Armor
+     10,  15,  20,  25,  35,  25,  // Biosuit
+     20,  18,  17,  15,  12,   8,  // Empathy Shields
+     10,  15,  20,  25,  35,  25,  // Wetsuit
+     20,  15,  10,   8,   5,   5,  // Horn of Conjuring
+     15,  12,   9,   7,   5,   4,  // Power Shield
+      5,   8,  10,  12,  18,  31   // Anti-Grav Belt
+};
 void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
 string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
 float ProbabilitiesForPowerupsNotNearWater[10];
-float ProbabilitiesForPowerupsNotNearWaterEasy[10]           = { 20, 20, 20, 15, 20, 5, 20, 20, 15, 5 };
-float ProbabilitiesForPowerupsNotNearWaterNormal[10]         = { 19, 19, 19, 19, 19, 5, 18, 15, 12, 8 };
-float ProbabilitiesForPowerupsNotNearWaterHard[10]           = { 18, 18, 18, 18, 18, 10, 17, 10, 9, 10 };
-float ProbabilitiesForPowerupsNotNearWaterNightmare[10]      = { 15, 15, 15, 20, 15, 20, 15, 8, 7, 12 };
-float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[10] = { 12, 12, 12, 24, 12, 28, 12, 5, 5, 17 };
-float ProbabilitiesForPowerupsNotNearWaterUnfair[10]         = { 5, 5, 5, 45, 10, 30, 8, 5, 4, 31 };
+float ProbabilitiesForPowerupsNotNearWaterByTier[] = {
+    //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
+     20,  19,  18,  15,  12,   5,  // Pentagram of Protection
+     20,  19,  18,  15,  12,   5,  // Quad Damage
+     20,  19,  18,  15,  12,   5,  // Ring of Shadows
+     15,  19,  18,  20,  24,  45,  // Health
+     20,  19,  18,  15,  12,  10,  // Armor
+      5,   5,  10,  20,  28,  30,  // Weapon
+     20,  18,  17,  15,  12,   8,  // Empathy Shields
+     20,  15,  10,   8,   5,   5,  // Horn of Conjuring
+     15,  12,   9,   7,   5,   4,  // Power Shield
+      5,   8,  10,  12,  17,  31   // Anti-Grav Belt
+};
 
 void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
 string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
 float ProbabilityForWeaponIntoPowerup;
-float ProbabilityForWeaponIntoPowerupEasy           = 3;
-float ProbabilityForWeaponIntoPowerupNormal         = 5;
-float ProbabilityForWeaponIntoPowerupHard           = 8;
-float ProbabilityForWeaponIntoPowerupNightmare      = 10;
-float ProbabilityForWeaponIntoPowerupSuperNightmare = 15;
-float ProbabilityForWeaponIntoPowerupUnfair         = 20;
+float ProbabilityForWeaponIntoPowerupByTier[6] = { 3, 5, 8, 10, 15, 20 };
 
 float ProbabilityForWeaponIntoAmmo;
-float ProbabilityForWeaponIntoAmmoEasy              = 0;
-float ProbabilityForWeaponIntoAmmoNormal            = 0;
-float ProbabilityForWeaponIntoAmmoHard              = 1;
-float ProbabilityForWeaponIntoAmmoNightmare         = 5;
-float ProbabilityForWeaponIntoAmmoSuperNightmare    = 10;
-float ProbabilityForWeaponIntoAmmoUnfair            = 15;
+float ProbabilityForWeaponIntoAmmoByTier[6] = { 0, 0, 1, 5, 10, 15 };
 
 // END PROBABILITY "TABLES"
 
 vector LastOriginThatRestartedWeaponBag; // Only used to remember what was the last position that failed to roll a weapon.
 
+// Tier 0..5 is the column of the *ByTier tables to use: Easy, Normal, Hard, Nightmare, Super Nightmare and Unfair.
+string DifficultyTierNames[] = { "Easy", "Normal", "Hard", "Nightmare", "Super Nightmare", "Unfair" };
+float DIFFICULTY_TIERS = 6;
+
+float(float difficulty) GetDifficultyTier = {
+    if (difficulty < ThresholdForNormal) return 0;
+    if (difficulty < ThresholdForHard) return 1;
+    if (difficulty < ThresholdForNightmare) return 2;
+    if (difficulty < ThresholdForSuperNightmare) return 3;
+    if (difficulty < ThresholdForUnfair) return 4;
+    return 5;
+};
+
+// Copies one column of the *ByTier tables (row i is at [i * DIFFICULTY_TIERS + tier]) into the live tables the converters read.
+void(float tier) LoadDifficultyTables = {
+    local float i;
+    for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
+        ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundByTier[i * DIFFICULTY_TIERS + tier];
+    for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
+        ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterByTier[i * DIFFICULTY_TIERS + tier];
+    for(i = 0; i < ProbabilitiesAmmoTypes.length; i++)
+        ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesByTier[i * DIFFICULTY_TIERS + tier];
+    for(i = 0; i < ProbabilitiesForPowerupsNearWater.length; i++)
+        ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterByTier[i * DIFFICULTY_TIERS + tier];
+    for(i = 0; i < ProbabilitiesForPowerupsNotNearWater.length; i++)
+        ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterByTier[i * DIFFICULTY_TIERS + tier];
+    ProbabilityToRemovePickup = ProbabilityToRemovePickupByTier[tier];
+    ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupByTier[tier];
+    ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackByTier[tier];
+    ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoByTier[tier];
+    ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupByTier[tier];
+    ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoByTier[tier];
+};
+
 void() Randomize = {
-    local float amountOfChoices, i, atLeastOnePrint;
+    local float tier, atLeastOnePrint;
     IsDeveloper = cvar("developer");
     RandomMode = cvar("savedgamecfg");
     UnbiasedMode = (RandomMode & RANDOM_UNBIASED_MODE) > 0;
@@ -180,146 +235,11 @@ void() Randomize = {
         EndlessCastleMapDifficulty = EndlessCastleMapDifficulty - 1;
     }
 
+    tier = GetDifficultyTier(EndlessCastleMapDifficulty);
+    LoadDifficultyTables(tier);
     dprint("Current Randomizer difficulty level is ");
-    if (EndlessCastleMapDifficulty < ThresholdForNormal) {
-        dprint("Easy (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundEasy[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterEasy[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesEasy[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterEasy[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterEasy[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupEasy;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupEasy;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackEasy;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoEasy;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupEasy;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoEasy;
-    } else if (EndlessCastleMapDifficulty < ThresholdForHard) {
-        dprint("Normal (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundNormal[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterNormal[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesNormal[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterNormal[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterNormal[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupNormal;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNormal;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNormal;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNormal;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNormal;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNormal;
-    } else if (EndlessCastleMapDifficulty < ThresholdForNightmare) {
-        dprint("Hard (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundHard[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterHard[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesHard[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterHard[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterHard[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupHard;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupHard;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackHard;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoHard;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupHard;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoHard;
-    } else if (EndlessCastleMapDifficulty < ThresholdForSuperNightmare) {
-        dprint("Nightmare (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundNightmare[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterNightmare[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesNightmare[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterNightmare[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterNightmare[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupNightmare;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNightmare;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNightmare;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNightmare;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNightmare;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNightmare;
-    } else if (EndlessCastleMapDifficulty < ThresholdForUnfair) {
-        dprint("Super Nightmare (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundSuperNightmare[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterSuperNightmare[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesSuperNightmare[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterSuperNightmare[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterSuperNightmare[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupSuperNightmare;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupSuperNightmare;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackSuperNightmare;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoSuperNightmare;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupSuperNightmare;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoSuperNightmare;
-    } else {
-        dprint("Unfair (");
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterGround[i] = ProbabilitiesMonsterToMonsterGroundUnfair[i];
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesMonsterToMonsterWater[i] = ProbabilitiesMonsterToMonsterWaterUnfair[i];
-        amountOfChoices = ProbabilitiesAmmoTypes.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesAmmoTypes[i] = ProbabilitiesAmmoTypesUnfair[i];
-        amountOfChoices = ProbabilitiesForPowerupsNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNearWater[i] = ProbabilitiesForPowerupsNearWaterUnfair[i];
-        amountOfChoices = ProbabilitiesForPowerupsNotNearWater.length;
-        for(i = 0; i < amountOfChoices; i++)
-            ProbabilitiesForPowerupsNotNearWater[i] = ProbabilitiesForPowerupsNotNearWaterUnfair[i];
-        ProbabilityToRemovePickup = ProbabilityToRemovePickupUnfair;
-        ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupUnfair;
-        ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackUnfair;
-        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoUnfair;
-        ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupUnfair;
-        ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoUnfair;
-    }
+    dprint(DifficultyTierNames[tier]);
+    dprint(" (");
     dprint(ftos(EndlessCastleMapDifficulty));
     dprint(").\n");
 
