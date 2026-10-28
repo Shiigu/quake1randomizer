@@ -77,7 +77,7 @@ void(entity targ, entity attacker) Killed =
 	{
 		killed_monsters = killed_monsters + 1;
 		EndlessCastleDeadMonsters = EndlessCastleDeadMonsters + 1;
-		RegisterDeadEntity(self.EntityDisplayName);
+		RegisterDeadEntity(self.EntityID);
 		self.th_stand = SUB_Null;
 		self.th_walk = SUB_Null;
 		self.th_run = SUB_Null;

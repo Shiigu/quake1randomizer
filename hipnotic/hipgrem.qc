@@ -1739,9 +1739,9 @@ void() Gremlin_Split =
    {
       grem.Converted = "1";
       grem.Unstuckable = 1;
-      grem.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
+      grem.EntityID = ENTITY_GREMLIN;
       grem.gorging = TRUE;
-      RegisterEntity(grem.EntityDisplayName);
+      RegisterEntity(grem.EntityID);
       grem.gorging = FALSE;
    }
    self = grem;
