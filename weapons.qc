@@ -2068,7 +2068,9 @@ void() CheatCommand =
 	if (deathmatch || coop)
 		return;
 	
-	if (EndlessCastleMapCount > 0)
+    IsDeveloper = cvar("developer");
+
+	if (EndlessCastleMapCount > 0 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -2150,7 +2152,9 @@ void() QuadCheat =
 	if (deathmatch || coop)
 		return;
 
-	if (EndlessCastleMapCount > 0)
+    IsDeveloper = cvar("developer");
+
+	if (EndlessCastleMapCount > 0 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -2168,7 +2172,9 @@ void() WetsuitCheat =
 	if (deathmatch || coop)
 		return;
 
-	if (EndlessCastleMapCount > 0)
+    IsDeveloper = cvar("developer");
+
+	if (EndlessCastleMapCount > 0 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -2186,7 +2192,9 @@ void() EmpathyShieldsCheat =
 	if (deathmatch || coop)
 		return;
 
-	if (EndlessCastleMapCount > 0)
+    IsDeveloper = cvar("developer");
+
+	if (EndlessCastleMapCount > 0 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
@@ -2247,8 +2255,10 @@ void() Genocide =
 
 	if (deathmatch || coop)
 		return;
+		
+    IsDeveloper = cvar("developer");
 
-	if (EndlessCastleMapCount > 0)
+	if (EndlessCastleMapCount > 0 && IsDeveloper == FALSE)
 	{
 		bprint("Dark forces prevent your manipulation of the Endless Castle.\n");
 		localcmd("map start\n");
