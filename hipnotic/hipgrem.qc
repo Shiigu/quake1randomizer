@@ -103,11 +103,13 @@ float() GremlinAttemptWeaponSteal =
    // we are within range so lets go for it
    //
    victim = self.enemy;
-   best = victim.weapon;
+   // Dissolution of Eternity: a combo weapon is stolen through its base weapon (the Nailgun for the Lava Nailgun)
+   best = ComboBaseWeapon (victim.weapon);
    if (best == IT_AXE || best == IT_SHOTGUN || best == IT_MJOLNIR)
       return FALSE;
    // take that weapon from the entity
    victim.items = victim.items - (victim.items & best);
+   DisableOrphanedComboWeapons (victim);
    // give it to our gremlin
    self.items = self.items | best;
    self.weapon = best;
@@ -115,90 +117,90 @@ float() GremlinAttemptWeaponSteal =
    self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS ) );
    if (best == IT_SUPER_SHOTGUN)
       {
-      amount = victim.ammo_shells;
+      amount = victim.ammo_standard_shells;
       if (amount > 20)
          amount = 20;
-      victim.ammo_shells = victim.ammo_shells - amount;
-      self.ammo_shells = self.ammo_shells + amount;
+      victim.ammo_standard_shells = victim.ammo_standard_shells - amount;
+      self.ammo_standard_shells = self.ammo_standard_shells + amount;
 		self.items = self.items | IT_SHELLS;
-      self.currentammo = self.ammo_shells;
+      self.currentammo = self.ammo_standard_shells;
       sprint (victim, "Gremlin stole your Super Shotgun\n");
       }
    else if (best == IT_NAILGUN)
       {
-      amount = victim.ammo_nails;
+      amount = victim.ammo_standard_nails;
       if (amount > 40)
          amount = 40;
-      victim.ammo_nails = victim.ammo_nails - amount;
-      self.ammo_nails = self.ammo_nails + amount;
+      victim.ammo_standard_nails = victim.ammo_standard_nails - amount;
+      self.ammo_standard_nails = self.ammo_standard_nails + amount;
       self.items = self.items | IT_NAILS;
-      self.currentammo = self.ammo_nails;
+      self.currentammo = self.ammo_standard_nails;
       sprint (victim, "Gremlin stole your Nailgun\n");
       }
    else if (best == IT_SUPER_NAILGUN)
       {
-      amount = victim.ammo_nails;
+      amount = victim.ammo_standard_nails;
       if (amount > 40)
          amount = 40;
-      victim.ammo_nails = victim.ammo_nails - amount;
-      self.ammo_nails = self.ammo_nails + amount;
+      victim.ammo_standard_nails = victim.ammo_standard_nails - amount;
+      self.ammo_standard_nails = self.ammo_standard_nails + amount;
       self.items = self.items | IT_NAILS;
-      self.currentammo = self.ammo_nails;
+      self.currentammo = self.ammo_standard_nails;
       sprint (victim, "Gremlin stole your Super Nailgun\n");
       }
    else if (best == IT_GRENADE_LAUNCHER)
       {
-      amount = victim.ammo_rockets;
+      amount = victim.ammo_standard_rockets;
       if (amount > 5)
          amount = 5;
-      victim.ammo_rockets = victim.ammo_rockets - amount;
-      self.ammo_rockets = self.ammo_rockets + amount;
+      victim.ammo_standard_rockets = victim.ammo_standard_rockets - amount;
+      self.ammo_standard_rockets = self.ammo_standard_rockets + amount;
       self.items = self.items | IT_ROCKETS;
-      self.currentammo = self.ammo_rockets;
+      self.currentammo = self.ammo_standard_rockets;
       sprint (victim, "Gremlin stole your Grenade Launcher\n");
       }
    else if (best == IT_ROCKET_LAUNCHER)
       {
-      amount = victim.ammo_rockets;
+      amount = victim.ammo_standard_rockets;
       if (amount > 5)
          amount = 5;
-      victim.ammo_rockets = victim.ammo_rockets - amount;
-      self.ammo_rockets = self.ammo_rockets + amount;
+      victim.ammo_standard_rockets = victim.ammo_standard_rockets - amount;
+      self.ammo_standard_rockets = self.ammo_standard_rockets + amount;
       self.items = self.items | IT_ROCKETS;
-      self.currentammo = self.ammo_rockets;
+      self.currentammo = self.ammo_standard_rockets;
       sprint (victim, "Gremlin stole your Rocket Launcher\n");
       }
    else if (best == IT_LIGHTNING)
       {
-      amount = victim.ammo_cells;
+      amount = victim.ammo_standard_cells;
       if (amount > 40)
          amount = 40;
-      victim.ammo_cells = victim.ammo_cells - amount;
-      self.ammo_cells = self.ammo_cells + amount;
+      victim.ammo_standard_cells = victim.ammo_standard_cells - amount;
+      self.ammo_standard_cells = self.ammo_standard_cells + amount;
       self.items = self.items | IT_CELLS;
-      self.currentammo = self.ammo_cells;
+      self.currentammo = self.ammo_standard_cells;
       sprint (victim, "Gremlin stole your Lightning Gun\n");
       }
    else if (best == IT_LASER_CANNON)
       {
-      amount = victim.ammo_cells;
+      amount = victim.ammo_standard_cells;
       if (amount > 40)
          amount = 40;
-      victim.ammo_cells = victim.ammo_cells - amount;
-      self.ammo_cells = self.ammo_cells + amount;
+      victim.ammo_standard_cells = victim.ammo_standard_cells - amount;
+      self.ammo_standard_cells = self.ammo_standard_cells + amount;
       self.items = self.items | IT_CELLS;
-      self.currentammo = self.ammo_cells;
+      self.currentammo = self.ammo_standard_cells;
       sprint (victim, "Gremlin stole your Laser Cannon\n");
       }
    else if (best == IT_PROXIMITY_GUN)
       {
-      amount = victim.ammo_rockets;
+      amount = victim.ammo_standard_rockets;
       if (amount > 5)
          amount = 5;
-      victim.ammo_rockets = victim.ammo_rockets - amount;
-      self.ammo_rockets = self.ammo_rockets + amount;
+      victim.ammo_standard_rockets = victim.ammo_standard_rockets - amount;
+      self.ammo_standard_rockets = self.ammo_standard_rockets + amount;
       self.items = self.items | IT_ROCKETS;
-      self.currentammo = self.ammo_rockets;
+      self.currentammo = self.ammo_standard_rockets;
       sprint (victim, "Gremlin stole your Proximity Gun\n");
       }
    tempself = self;
@@ -937,14 +939,14 @@ void() GremlinDropBackpack =
    else
 		item.netname = "";
 
-   item.ammo_shells = self.ammo_shells;
-	item.ammo_nails = self.ammo_nails;
-	item.ammo_rockets = self.ammo_rockets;
-	item.ammo_cells = self.ammo_cells;
-   if (item.ammo_shells < 0) item.ammo_shells = 0;
-   if (item.ammo_nails < 0) item.ammo_nails = 0;
-   if (item.ammo_rockets < 0) item.ammo_rockets = 0;
-   if (item.ammo_cells < 0) item.ammo_cells = 0;
+   item.ammo_standard_shells = self.ammo_standard_shells;
+	item.ammo_standard_nails = self.ammo_standard_nails;
+	item.ammo_standard_rockets = self.ammo_standard_rockets;
+	item.ammo_standard_cells = self.ammo_standard_cells;
+   if (item.ammo_standard_shells < 0) item.ammo_standard_shells = 0;
+   if (item.ammo_standard_nails < 0) item.ammo_standard_nails = 0;
+   if (item.ammo_standard_rockets < 0) item.ammo_standard_rockets = 0;
+   if (item.ammo_standard_cells < 0) item.ammo_standard_cells = 0;
 
 	item.velocity_z = 300;
 	item.velocity_x = -100 + (random() * 200);
@@ -1145,7 +1147,7 @@ void() Gremlin_FireRocket =
 	local	entity missile, mpuff;
    local vector dir;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
    self.effects = self.effects | EF_MUZZLEFLASH;
 
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
@@ -1191,7 +1193,7 @@ void(float ox) Gremlin_FireNailGun =
 {
    local vector dir;
 
-   self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+   self.currentammo = self.ammo_standard_nails = self.ammo_standard_nails - 1;
    self.effects = self.effects | EF_MUZZLEFLASH;
 
    sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
@@ -1214,7 +1216,7 @@ void(float ox) Gremlin_FireLaserGun =
 {
    local vector dir;
 
-   self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+   self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
    self.effects = self.effects | EF_MUZZLEFLASH;
 
    sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
@@ -1237,7 +1239,7 @@ void() Gremlin_FireShotGun =
 {
    local vector dir;
 
-   self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+   self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 1;
    self.effects = self.effects | EF_MUZZLEFLASH;
 
    sound (self, CHAN_WEAPON, "weapons/guncock.wav", 1, ATTN_NORM);
@@ -1261,7 +1263,7 @@ void() Gremlin_FireSuperShotGun =
 {
    local vector dir;
 
-   self.currentammo = self.ammo_shells = self.ammo_shells - 2;
+   self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 2;
    self.effects = self.effects | EF_MUZZLEFLASH;
 
    sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);
@@ -1289,8 +1291,8 @@ void() Gremlin_FireLightningGun =
 // explode if under water
    if (self.watertype <= CONTENT_WATER)
 	{
-		cells = self.ammo_cells;
-		self.ammo_cells = 0;
+		cells = self.ammo_standard_cells;
+		self.ammo_standard_cells = 0;
       discharged = 1;
 		T_RadiusDamage (self, self, 35*cells, world);
       discharged = 0;
@@ -1302,7 +1304,7 @@ void() Gremlin_FireLightningGun =
 
 	ai_face ();
 
-   self.currentammo = self.ammo_cells = self.ammo_cells - 2;
+   self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 2;
    org = self.origin + '0 0 16';
 
 	dir = self.enemy.origin + '0 0 16' - org;
@@ -1339,7 +1341,7 @@ void() GremlinFireProximityGrenade =
    local vector dir;
 
    NumProximityGrenades = NumProximityGrenades + 1;
-   self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+   self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
@@ -1430,7 +1432,7 @@ float() GremlinWeaponAttack =
       {
       gremlin_rocket1();
       OgreFireGrenade();
-      self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+      self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
       SUB_AttackFinished(1);
       }
 	else if (self.weapon == IT_ROCKET_LAUNCHER)

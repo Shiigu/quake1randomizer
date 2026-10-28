@@ -121,6 +121,8 @@ void() light_torch_small_walltorch =
 {
 	precache_model ("progs/flame.mdl");
 	setmodel (self, "progs/flame.mdl");
+	// Dissolution of Eternity: flag 1 is a silent torch
+	if (!(RogueMap && (self.spawnflags & 1)))
 	FireAmbient ();
 	makestatic (self);
 };
@@ -297,6 +299,39 @@ void(vector org, vector vec) LaunchLaser;
 
 void() spikeshooter_use =
 {
+	// Dissolution of Eternity: its maps use more spawnflags (lava spikes, fireballs). Elsewhere they would be misread.
+	if (RogueMap)
+	{
+		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE || !(self.spawnflags))
+		{
+			sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
+			launch_spike (self.origin, self.movedir);
+			newmis.velocity = self.movedir * 500;
+			if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
+				newmis.touch = superspike_touch;
+		}
+		else if (self.spawnflags & SPAWNFLAG_LASER)
+		{
+			sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
+			LaunchLaser (self.origin, self.movedir);
+		}
+		else if (self.spawnflags & SPAWNFLAG_FIREBALL)
+		{
+			launch_fireball (self.origin, self.movedir);
+		}
+		else
+		{
+			sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
+			launch_lava_spike (self.origin, self.movedir);
+			newmis.velocity = self.movedir * 500;
+			if (self.spawnflags & SPAWNFLAG_SUPERLAVA)
+				newmis.touch = superlavaspike_touch;
+			else if ((self.spawnflags & SPAWNFLAG_LAVASKILL) && (skill > 1))
+				newmis.touch = superlavaspike_touch;
+		}
+		return;
+	}
+
 	if (self.spawnflags & SPAWNFLAG_LASER)
 	{
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
@@ -335,6 +370,17 @@ void() trap_spikeshooter =
 		
 		precache_sound2 ("enforcer/enfire.wav");
 		precache_sound2 ("enforcer/enfstop.wav");
+	}
+	else if (RogueMap && (self.spawnflags & (SPAWNFLAG_LAVASPIKE | SPAWNFLAG_SUPERLAVA | SPAWNFLAG_LAVASKILL)))
+	{
+		precache_model2 ("progs/lspike.mdl");
+		precache_sound2 ("lavagun/snail.wav");		// lava nail gun cooldown
+		precache_sound2 ("weapons/rocket1i.wav");
+		precache_sound2 ("weapons/spike2.wav");
+	}
+	else if (RogueMap && (self.spawnflags & SPAWNFLAG_FIREBALL))
+	{
+		precache_model ("progs/fireball.mdl");
 	}
 	else
 		precache_sound ("weapons/spike2.wav");
@@ -445,6 +491,19 @@ void() bubble_bob =
 {
 local float		rnd1, rnd2, rnd3;
 local vector	vtmp1, modi;
+
+	// Dissolution of Eternity: bubbles don't go through walls, and pop 2 seconds after leaving the water
+	if (RogueMap)
+	{
+		rnd1 = pointcontents(self.origin);
+		if (rnd1 == CONTENT_SOLID)
+			SUB_Remove();
+		else if (rnd1 == CONTENT_EMPTY)
+		{
+			if (self.cnt < 16)
+				self.cnt = 16;
+		}
+	}
 
 	self.cnt = self.cnt + 1;
 	if (self.cnt == 4)

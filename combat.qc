@@ -88,8 +88,12 @@ void(entity targ, entity attacker) Killed =
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
 
+	// Dissolution of Eternity: these hazards gib you
+	if (attacker.classname == "buzzsaw" || attacker.classname == "pendulum")
+		self.health = -99;
+	self.gravity = 1.0;		// Dissolution of Eternity: don't die floating (Anti-Grav Belt)
 	ClientObituary(self, attacker);
-	
+
 	self.takedamage = DAMAGE_NO;
 	self.touch = SUB_Null;
 
@@ -121,6 +125,14 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
    if (discharged && targ.wetsuit_finished )
       return;
+
+// Dissolution of Eternity: the Power Shield absorbs part of every hit that comes from the front
+	if (targ.rog_items & RIT_SHIELD)
+	{
+		damage = shield_hit(targ, inflictor, attacker, damage);
+		if (damage == 0)
+			return;
+	}
 //MED moved damage_attacker down a bit
 /*
    dprint("netname = ");
@@ -227,7 +239,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	if ( (self.flags & FL_MONSTER) && attacker != world)
 	{
 	// get mad unless of the same class (except for soldiers)
-      if (self != attacker && attacker != self.enemy && (self.charmer!=attacker))
+      // The Dragon (Dissolution of Eternity) never turns on whoever hurt it
+      if (self != attacker && attacker != self.enemy && (self.charmer!=attacker) && self.classname != "monster_dragon")
 		{
 			if (self.charmed || attacker.charmed || (self.classname != attacker.classname)
          || (self.classname == "monster_army" ) || (self.classname == "monster_armagon" ) )
@@ -249,6 +262,47 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	}
 
 	self = oldself;
+};
+
+/*
+============
+T_EelZap
+
+Dissolution of Eternity: the Eel's electric attack. Hurts everything in the water
+around the inflictor, except other Eels.
+============
+*/
+void(entity inflictor, entity attacker, float damage) T_EelZap =
+{
+	local	float 	points;
+	local	entity	head;
+	local	vector	org;
+
+	head = findradius(inflictor.origin, damage+40);
+
+	while (head)
+	{
+		if (head.takedamage)
+		{
+			org = head.origin + (head.mins + head.maxs)*0.5;
+			points = 0.5*vlen (inflictor.origin - org);
+			if (points < 0)
+				points = 0;
+			points = damage - points;
+			if (head == attacker)
+				points = points * 0.5;
+			if (points > 0)
+			{
+				if (CanDamage (head, inflictor))
+				{	// eels take no damage from this attack
+					if (head.classname != "monster_eel" &&
+						(head.flags & FL_INWATER))
+						T_Damage (head, inflictor, attacker, points);
+				}
+			}
+		}
+		head = head.chain;
+	}
 };
 
 /*

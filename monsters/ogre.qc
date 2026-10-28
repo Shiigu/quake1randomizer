@@ -47,6 +47,9 @@ $frame bdeath7 bdeath8 bdeath9 bdeath10
 
 $frame pull1 pull2 pull3 pull4 pull5 pull6 pull7 pull8 pull9 pull10 pull11
 
+// Dissolution of Eternity: the Multi-Grenade Ogre
+float OGRE_BOSS = 2;
+
 //=============================================================================
 
 
@@ -122,6 +125,15 @@ void() OgreFireGrenade =
 	missile.think = OgreGrenadeExplode;
 
 	setmodel (missile, "progs/grenade.mdl");
+
+	// Dissolution of Eternity: the Multi-Grenade Ogre throws a grenade that bursts into mini-grenades
+	if (self.spawnflags & OGRE_BOSS)
+	{
+		missile.touch = MultiGrenadeTouch;
+		missile.think = MultiGrenadeExplode;
+		missile.classname = "multigrenade";
+		setmodel (missile, "progs/mervup.mdl");
+	}
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin);
 };
@@ -359,7 +371,11 @@ void()	ogre_die1	=[	$death1,	ogre_die2	] {};
 void()	ogre_die2	=[	$death2,	ogre_die3	] {};
 void()	ogre_die3	=[	$death3,	ogre_die4	]
 {self.solid = SOLID_NOT;
-self.ammo_rockets = 2;DropBackpack();};
+if (self.spawnflags & OGRE_BOSS)
+	self.ammo_multi_rockets = 2;
+else
+	self.ammo_standard_rockets = 2;
+DropBackpack();};
 void()	ogre_die4	=[	$death4,	ogre_die5	] {};
 void()	ogre_die5	=[	$death5,	ogre_die6	] {};
 void()	ogre_die6	=[	$death6,	ogre_die7	] {};
@@ -376,7 +392,11 @@ void()	ogre_bdie1	=[	$bdeath1,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	$bdeath2,	ogre_bdie3	] {ai_forward(5);};
 void()	ogre_bdie3	=[	$bdeath3,	ogre_bdie4	]
 {self.solid = SOLID_NOT;
-self.ammo_rockets = 2;DropBackpack();};
+if (self.spawnflags & OGRE_BOSS)
+	self.ammo_multi_rockets = 2;
+else
+	self.ammo_standard_rockets = 2;
+DropBackpack();};
 void()	ogre_bdie4	=[	$bdeath4,	ogre_bdie5	] {ai_forward(1);};
 void()	ogre_bdie5	=[	$bdeath5,	ogre_bdie6	] {ai_forward(3);};
 void()	ogre_bdie6	=[	$bdeath6,	ogre_bdie7	] {ai_forward(7);};
@@ -441,6 +461,9 @@ void() monster_ogre =
 	self.movetype = MOVETYPE_STEP;
 
 	setmodel (self, "progs/ogre.mdl");
+	// Dissolution of Eternity: the Multi-Grenade Ogre only exists when its flag is set on purpose
+	if (self.spawnflags & OGRE_BOSS)
+		self.skin = 1;
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 200;

@@ -185,6 +185,88 @@ void()	tbaby_die2	=[	$exp,		tbaby_run1	]
 
 //=============================================================================
 
+// Dissolution of Eternity: the Hell Spawn split in two when they get hurt
+float TBABY_HELL_SPAWN = 4;			// spawnflag: 60 HP, skin 1
+float TBABY_BIG_HELL_SPAWN = 8;		// spawnflag: 100 HP, skin 2
+
+void() tbaby_mitosis;
+
+void() tbaby_checknew =
+{
+	if (!walkmove(0,0))
+	{
+		SUB_Remove();
+		return;
+	}
+
+	self.enemy = self.enemy;
+	self.th_stand = tbaby_stand1;
+	self.th_walk = tbaby_walk1;
+	self.th_run = tbaby_run1;
+	self.th_missile = tbaby_jump1;
+	self.th_melee = tbaby_jump1;
+	self.th_die = tbaby_die1;
+	self.origin_z = self.origin_z + 1;      // raise off floor a bit
+	droptofloor();
+
+	if (!walkmove(0,0))
+	{
+		self.owner.th_pain = tbaby_mitosis;
+		SUB_Remove();
+		return;
+	}
+
+	self.takedamage = DAMAGE_AIM;
+	self.ideal_yaw = self.angles * '0 1 0';
+	if (!self.yaw_speed)
+		self.yaw_speed = 20;
+	self.view_ofs = '0 0 25';
+	self.use = monster_use;
+	self.flags = self.flags | FL_MONSTER;
+	self.pausetime = 99999999;
+	self.th_stand ();
+	self.nextthink = self.nextthink + random()*0.5;
+
+	total_monsters = total_monsters + 1;
+	EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + 1;
+	WriteByte (MSG_BROADCAST, SVC_UPDATESTAT);
+	WriteByte (MSG_BROADCAST, STAT_TOTALMONSTERS);
+	WriteLong (MSG_BROADCAST, total_monsters);
+};
+
+void() tbaby_mitosis =
+{
+	local entity    newSpawn;
+
+    if ( random() < 0.35 )
+	{
+		newSpawn = spawn();
+		newSpawn.classname = self.classname;
+		newSpawn.movetype = MOVETYPE_STEP;
+		setsize (newSpawn, '-16 -16 -24', '16 16 40');
+		newSpawn.health = 80;
+		if (self.skin == 1)
+			newSpawn.health = 60;
+		else if (self.skin == 2)
+			newSpawn.health = 100;
+
+		newSpawn.owner = self;
+		self.th_pain = SUB_Null;
+
+		setmodel (newSpawn, "progs/tarbaby.mdl");
+		newSpawn.solid = SOLID_SLIDEBOX;
+		newSpawn.skin = self.skin;
+
+		setorigin (newSpawn, self.origin);
+		newSpawn.think = tbaby_checknew;
+		newSpawn.nextthink = time + 0.5;
+
+        sound (newSpawn, CHAN_VOICE, "blob/mytosis.wav", 1, ATTN_NORM);
+	}
+};
+
+//=============================================================================
+
 
 /*QUAKED monster_tarbaby (1 0 0) (-16 -16 -24) (16 16 24) Ambush
 */
@@ -201,7 +283,8 @@ void() monster_tarbaby =
 	precache_sound2 ("blob/hit1.wav");
 	precache_sound2 ("blob/land1.wav");
 	precache_sound2 ("blob/sight1.wav");
-	
+	precache_sound2 ("blob/mytosis.wav");
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -216,7 +299,21 @@ void() monster_tarbaby =
 	self.th_missile = tbaby_jump1;
 	self.th_melee = tbaby_jump1;
 	self.th_die = tbaby_die1;
-	
+
+	// Dissolution of Eternity: the Hell Spawn only exist when their flag is set on purpose
+	if (self.spawnflags & TBABY_BIG_HELL_SPAWN)
+	{
+		self.th_pain = tbaby_mitosis;
+		self.skin = 2;
+		self.health = 100;
+	}
+	else if (self.spawnflags & TBABY_HELL_SPAWN)
+	{
+		self.th_pain = tbaby_mitosis;
+		self.skin = 1;
+		self.health = 60;
+	}
+
 	walkmonster_start ();
 };
 

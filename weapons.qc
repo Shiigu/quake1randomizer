@@ -153,7 +153,7 @@ void(float stat) HIP_FireLaser =
       player_run ();
       return;
       }
-   if (self.ammo_cells < 1)
+   if (self.ammo_standard_cells < 1)
       {
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -173,7 +173,7 @@ void(float stat) HIP_FireLaser =
    aofs = ofs * 0.707;
    if (stat == 0)
       {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+      self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
       org = org + (aofs*v_right);
       org = org - (aofs*v_up);
       HIP_LaunchLaser(org, dir, 0);
@@ -182,7 +182,7 @@ void(float stat) HIP_FireLaser =
       }
    else if (stat == 1)
       {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+      self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
       org = org + (ofs*v_up);
       if (random()<0.1)
          {
@@ -450,8 +450,8 @@ void() HIP_FireMjolnirLightning =
 // explode if under water
 	if (self.waterlevel > 1)
 	{
-		cells = self.ammo_cells;
-		self.ammo_cells = 0;
+		cells = self.ammo_standard_cells;
+		self.ammo_standard_cells = 0;
       discharged = 1;
 		T_RadiusDamage (self, self, 35*cells, world);
       discharged = 0;
@@ -466,7 +466,7 @@ void() HIP_FireMjolnirLightning =
 //   }
 //   self.punchangle_x = 12;
 
-   self.currentammo = self.ammo_cells = self.ammo_cells - 15;
+   self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 15;
 
    HIP_SpawnMjolnirBase();
    };
@@ -487,7 +487,7 @@ void() HIP_FireMjolnir =
 //   ang_y = 0;
    makevectors(self.v_angle);
    traceline (source, source + v_forward*32, FALSE, self);
-   if (trace_fraction == 1.0 && (self.ammo_cells >= 15))
+   if (trace_fraction == 1.0 && (self.ammo_standard_cells >= 15))
       {
       source = source + v_forward*32;
       traceline (source , source - v_up*50, FALSE, self);
@@ -818,7 +818,7 @@ void() W_FireShotgun =
 
 	self.punchangle_x = -2;
 
-	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+	self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 1;
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
 };
@@ -843,7 +843,7 @@ void() W_FireSuperShotgun =
 
 	self.punchangle_x = -4;
 
-	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
+	self.currentammo = self.ammo_standard_shells = self.ammo_standard_shells - 2;
 	dir = aim (self, 100000);
 	FireBullets (14, dir, '0.14 0.08 0');
 };
@@ -923,7 +923,7 @@ void() W_FireRocket =
 {
 	local	entity missile, mpuff;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -1022,7 +1022,7 @@ void() W_FireLightning =
 	local	vector		org;
 	local	float		cells;
 
-	if (self.ammo_cells < 1)
+	if (self.ammo_standard_cells < 1)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1032,8 +1032,8 @@ void() W_FireLightning =
 // explode if under water
 	if (self.waterlevel > 1)
 	{
-		cells = self.ammo_cells;
-		self.ammo_cells = 0;
+		cells = self.ammo_standard_cells;
+		self.ammo_standard_cells = 0;
       //MED 01/05/97 added discharge flag
       discharged = 1;
 		T_RadiusDamage (self, self, 35*cells, world);
@@ -1049,7 +1049,7 @@ void() W_FireLightning =
 	}
 	self.punchangle_x = -2;
 
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	self.currentammo = self.ammo_standard_cells = self.ammo_standard_cells - 1;
 
 	org = self.origin + '0 0 16';
 
@@ -1108,7 +1108,7 @@ void() W_FireGrenade =
 {
 	local	entity missile, mpuff;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
@@ -1263,7 +1263,7 @@ void() W_FireProximityGrenade =
    local entity missile, mpuff;
 
    NumProximityGrenades = NumProximityGrenades + 1;
-   self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+   self.currentammo = self.ammo_standard_rockets = self.ammo_standard_rockets - 1;
 
    sound (self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
 
@@ -1349,7 +1349,7 @@ void() W_FireSuperSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
+	self.currentammo = self.ammo_standard_nails = self.ammo_standard_nails - 2;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16', dir);
 	newmis.touch = superspike_touch;
@@ -1365,13 +1365,13 @@ void(float ox) W_FireSpikes =
 
 	makevectors (self.v_angle);
 
-	if (self.ammo_nails >= 2 && self.weapon == IT_SUPER_NAILGUN)
+	if (self.ammo_standard_nails >= 2 && self.weapon == IT_SUPER_NAILGUN)
 	{
 		W_FireSuperSpikes ();
 		return;
 	}
 
-	if (self.ammo_nails < 1)
+	if (self.ammo_standard_nails < 1)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1380,7 +1380,7 @@ void(float ox) W_FireSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+	self.currentammo = self.ammo_standard_nails = self.ammo_standard_nails - 1;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
 
@@ -1474,11 +1474,148 @@ PLAYER WEAPON USE
 */
 
 //MED 10/18/96 added HIPWEAPONS
+// Dissolution of Eternity: combo weapons (ids from ROGW_BASE up) are owned through .rog_items, every
+// other weapon through .items.
+float(float w) WeaponOwned =
+{
+	if (Rog_IsRogueWeapon(w))
+		return Rog_HasWeapon(self, w);
+	return (self.items & w);
+};
+
+// TRUE if the player doesn't have the ammo to use weapon w (the Axe and Mjolnir don't need any)
+float(float w) WeaponLacksAmmo =
+{
+	if (w == IT_SHOTGUN)
+		return (self.ammo_standard_shells < 1);
+	if (w == IT_SUPER_SHOTGUN)
+		return (self.ammo_standard_shells < 2);
+	if (w == IT_NAILGUN)
+		return (self.ammo_standard_nails < 1);
+	if (w == IT_SUPER_NAILGUN)
+		return (self.ammo_standard_nails < 2);
+	if (w == IT_GRENADE_LAUNCHER || w == IT_ROCKET_LAUNCHER || w == IT_PROXIMITY_GUN)
+		return (self.ammo_standard_rockets < 1);
+	if (w == IT_LIGHTNING || w == IT_LASER_CANNON)
+		return (self.ammo_standard_cells < 1);
+	if (w == ROGW_LAVA_NAILGUN || w == ROGW_LAVA_SUPER_NAILGUN)
+		return (self.ammo_lava_nails < 1);
+	if (w == ROGW_MULTI_GRENADE || w == ROGW_MULTI_ROCKET)
+		return (self.ammo_multi_rockets < 1);
+	if (w == ROGW_PLASMA_GUN)
+		return (self.ammo_plasma < 1);
+	return FALSE;
+};
+
+// The base weapon a combo weapon needs (any other weapon is its own base weapon)
+float(float w) ComboBaseWeapon =
+{
+	if (w == ROGW_LAVA_NAILGUN)
+		return IT_NAILGUN;
+	if (w == ROGW_LAVA_SUPER_NAILGUN)
+		return IT_SUPER_NAILGUN;
+	if (w == ROGW_MULTI_GRENADE)
+		return IT_GRENADE_LAUNCHER;
+	if (w == ROGW_MULTI_ROCKET)
+		return IT_ROCKET_LAUNCHER;
+	if (w == ROGW_PLASMA_GUN)
+		return IT_LIGHTNING;
+	return w;
+};
+
+// A combo weapon is only usable while you own its base weapon, so drop the ones whose base weapon is gone
+// (a Gremlin stole it). EnableComboWeapons gives them back when you get the base weapon again.
+void(entity e) DisableOrphanedComboWeapons =
+{
+	if ((e.rog_items & RIT_LAVA_NAILGUN) && !(e.items & IT_NAILGUN))
+		e.rog_items = e.rog_items - RIT_LAVA_NAILGUN;
+	if ((e.rog_items & RIT_LAVA_SUPER_NAILGUN) && !(e.items & IT_SUPER_NAILGUN))
+		e.rog_items = e.rog_items - RIT_LAVA_SUPER_NAILGUN;
+	if ((e.rog_items & RIT_MULTI_GRENADE) && !(e.items & IT_GRENADE_LAUNCHER))
+		e.rog_items = e.rog_items - RIT_MULTI_GRENADE;
+	if ((e.rog_items & RIT_MULTI_ROCKET) && !(e.items & IT_ROCKET_LAUNCHER))
+		e.rog_items = e.rog_items - RIT_MULTI_ROCKET;
+	if ((e.rog_items & RIT_PLASMA_GUN) && !(e.items & IT_LIGHTNING))
+		e.rog_items = e.rog_items - RIT_PLASMA_GUN;
+};
+
+// Which weapon an impulse selects when its slot holds several (a weapon and its combo versions, ...).
+// Pressing it again moves on to the next one you own that has ammo. If none has ammo it returns the first one
+// you own, so you get the "not enough ammo." message, and 0 if you own none.
+float(float a, float b, float c) WeaponForSlot =
+{
+	local float cur, n, i, w, first;
+
+	cur = 0;
+	if (self.weapon == a)
+		cur = 1;
+	else if (self.weapon == b)
+		cur = 2;
+	else if (self.weapon == c)
+		cur = 3;
+	first = 0;
+	for (n = 1; n <= 3; n++)
+	{
+		i = cur + n;
+		if (i > 3)
+			i = i - 3;
+		if (i == 1)
+			w = a;
+		else if (i == 2)
+			w = b;
+		else
+			w = c;
+		if (w && WeaponOwned(w))
+		{
+			if (!first)
+				first = w;
+			if (!WeaponLacksAmmo(w))
+				return w;
+		}
+	}
+	return first;
+};
+
+// Next (direction 1) or previous (direction -1) weapon you own that has ammo, in this order
+float WeaponCycleOrder[16] = { IT_AXE, IT_SHOTGUN, IT_SUPER_SHOTGUN, IT_NAILGUN, ROGW_LAVA_NAILGUN, IT_SUPER_NAILGUN,
+	ROGW_LAVA_SUPER_NAILGUN, IT_GRENADE_LAUNCHER, ROGW_MULTI_GRENADE, IT_PROXIMITY_GUN, IT_ROCKET_LAUNCHER,
+	ROGW_MULTI_ROCKET, IT_LIGHTNING, ROGW_PLASMA_GUN, IT_LASER_CANNON, IT_MJOLNIR };
+
+void(float direction) CycleWeapon =
+{
+	local float i, start, tries;
+
+	EnableComboWeapons ( self );
+	self.impulse = 0;
+	start = 0;
+	for (i = 0; i < 16; i++)
+	{
+		if (WeaponCycleOrder[i] == self.weapon)
+			start = i;
+	}
+	i = start;
+	for (tries = 0; tries < 16; tries++)
+	{
+		i = i + direction;
+		if (i >= 16)
+			i = 0;
+		else if (i < 0)
+			i = 15;
+		if (WeaponOwned(WeaponCycleOrder[i]) && !WeaponLacksAmmo(WeaponCycleOrder[i]))
+		{
+			self.weapon = WeaponCycleOrder[i];
+			W_SetCurrentAmmo ();
+			return;
+		}
+	}
+};
+
 void() W_SetCurrentAmmo =
 {
 	player_run ();		// get out of any weapon firing states
 
 	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+	self.rog_items = self.rog_items - (self.rog_items & (RIT_LAVA_NAILS | RIT_PLASMA_AMMO | RIT_MULTI_ROCKETS));
 
 	if (self.weapon == IT_AXE)
 	{
@@ -1488,28 +1625,69 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_SHOTGUN)
 	{
-		self.currentammo = self.ammo_shells;
+		self.currentammo = self.ammo_standard_shells;
 		self.weaponmodel = "progs/v_shot.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
-		self.currentammo = self.ammo_shells;
+		self.currentammo = self.ammo_standard_shells;
 		self.weaponmodel = "progs/v_shot2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
+//Dissolution of Eternity
+	else if (self.weapon == ROGW_LAVA_NAILGUN)
+	{
+		self.currentammo = self.ammo_lava_nails;
+		self.weaponmodel = "progs/v_lava.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_NAILS;
+		self.rog_items = self.rog_items | RIT_LAVA_NAILS;
+	}
+	else if (self.weapon == ROGW_LAVA_SUPER_NAILGUN)
+	{
+		self.currentammo = self.ammo_lava_nails;
+		self.weaponmodel = "progs/v_lava2.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_NAILS;
+		self.rog_items = self.rog_items | RIT_LAVA_NAILS;
+	}
+	else if (self.weapon == ROGW_MULTI_GRENADE)
+	{
+		self.currentammo = self.ammo_multi_rockets;
+		self.weaponmodel = "progs/v_multi.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_ROCKETS;
+		self.rog_items = self.rog_items | RIT_MULTI_ROCKETS;
+	}
+	else if (self.weapon == ROGW_MULTI_ROCKET)
+	{
+		self.currentammo = self.ammo_multi_rockets;
+		self.weaponmodel = "progs/v_multi2.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_ROCKETS;
+		self.rog_items = self.rog_items | RIT_MULTI_ROCKETS;
+	}
+	else if (self.weapon == ROGW_PLASMA_GUN)
+	{
+		self.currentammo = self.ammo_plasma;
+		self.weaponmodel = "progs/v_plasma.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_CELLS;
+		self.rog_items = self.rog_items | RIT_PLASMA_AMMO;
+	}
 	else if (self.weapon == IT_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails;
+		self.currentammo = self.ammo_standard_nails;
 		self.weaponmodel = "progs/v_nail.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails;
+		self.currentammo = self.ammo_standard_nails;
 		self.weaponmodel = "progs/v_nail2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
@@ -1517,28 +1695,28 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_LASER_CANNON)
 	{
-		self.currentammo = self.ammo_cells;
+		self.currentammo = self.ammo_standard_cells;
       self.weaponmodel = "progs/v_laserg.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
    else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
-		self.currentammo = self.ammo_rockets;
+		self.currentammo = self.ammo_standard_rockets;
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
-		self.currentammo = self.ammo_rockets;
+		self.currentammo = self.ammo_standard_rockets;
 		self.weaponmodel = "progs/v_rock2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == IT_LIGHTNING)
 	{
-		self.currentammo = self.ammo_cells;
+		self.currentammo = self.ammo_standard_cells;
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
@@ -1546,7 +1724,7 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_MJOLNIR)
 	{
-      self.currentammo = self.ammo_cells;
+      self.currentammo = self.ammo_standard_cells;
       self.weaponmodel = "progs/v_hammer.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
@@ -1554,7 +1732,7 @@ void() W_SetCurrentAmmo =
 //MED
    else if (self.weapon == IT_PROXIMITY_GUN)
 	{
-      self.currentammo = self.ammo_rockets;
+      self.currentammo = self.ammo_standard_rockets;
       self.weaponmodel = "progs/v_prox.mdl";
 		self.weaponframe = 0;
       self.items = self.items | IT_ROCKETS;
@@ -1573,27 +1751,33 @@ float() W_BestWeapon =
 
 	it = self.items;
 
-   if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_LIGHTNING) )
+   if (self.waterlevel <= 1 && self.ammo_standard_cells >= 1 && (it & IT_LIGHTNING) )
       return IT_LIGHTNING;
 //MED
-   else if(self.ammo_cells >= 1 && (it & IT_LASER_CANNON) )
+   else if(self.ammo_standard_cells >= 1 && (it & IT_LASER_CANNON) )
       return IT_LASER_CANNON;
-   else if(self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
+//Dissolution of Eternity
+   else if(self.ammo_lava_nails >= 2 && Rog_HasWeapon(self, ROGW_LAVA_SUPER_NAILGUN) )
+		return ROGW_LAVA_SUPER_NAILGUN;
+   else if(self.ammo_standard_nails >= 2 && (it & IT_SUPER_NAILGUN) )
 		return IT_SUPER_NAILGUN;
-	else if(self.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
+	else if(self.ammo_standard_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
 		return IT_SUPER_SHOTGUN;
-	else if(self.ammo_nails >= 1 && (it & IT_NAILGUN) )
+//Dissolution of Eternity
+	else if(self.ammo_lava_nails >= 1 && Rog_HasWeapon(self, ROGW_LAVA_NAILGUN) )
+		return ROGW_LAVA_NAILGUN;
+	else if(self.ammo_standard_nails >= 1 && (it & IT_NAILGUN) )
 		return IT_NAILGUN;
-	else if(self.ammo_shells >= 1 && (it & IT_SHOTGUN) )
+	else if(self.ammo_standard_shells >= 1 && (it & IT_SHOTGUN) )
 		return IT_SHOTGUN;
 //MED
    else if( it & IT_MJOLNIR )
       return IT_MJOLNIR;
 
 /*
-	if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
+	if(self.ammo_standard_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
 		return IT_ROCKET_LAUNCHER;
-	else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
+	else if(self.ammo_standard_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
 		return IT_GRENADE_LAUNCHER;
 
 */
@@ -1642,6 +1826,10 @@ void()	player_rocket1;
 void()   player_laser1;
 void()   player_hammer1;
 void()   player_mjolnir1;
+//Dissolution of Eternity
+void()   player_lava_nail1;
+void()   W_FireMultiGrenade;
+void()   W_FireMultiRocket;
 
 
 void() W_Attack =
@@ -1714,7 +1902,7 @@ void() W_Attack =
 //MED
    else if (self.weapon == IT_MJOLNIR)
    {
-      if (self.ammo_cells < 30)
+      if (self.ammo_standard_cells < 30)
          player_hammer1();
       else
          player_mjolnir1();
@@ -1727,6 +1915,30 @@ void() W_Attack =
       W_FireProximityGrenade();
       self.attack_finished = time + 0.6;
    }
+//Dissolution of Eternity
+   else if (self.weapon == ROGW_LAVA_NAILGUN || self.weapon == ROGW_LAVA_SUPER_NAILGUN)
+   {
+      lavaGunFired = 1;
+      player_lava_nail1 ();
+   }
+   else if (self.weapon == ROGW_MULTI_GRENADE)
+   {
+      player_rocket1();
+      W_FireMultiGrenade();
+      self.attack_finished = time + 0.6;
+   }
+   else if (self.weapon == ROGW_MULTI_ROCKET)
+   {
+      player_rocket1();
+      W_FireMultiRocket();
+      self.attack_finished = time + 0.8;
+   }
+   else if (self.weapon == ROGW_PLASMA_GUN)
+   {
+      // player_light1 picks W_FirePlasma instead of W_FireLightning, with the same flash and frames
+      self.attack_finished = time + 1.0;
+      player_light1 ();
+   }
 };
 
 /*
@@ -1738,118 +1950,111 @@ W_ChangeWeapon
 //MED 10/18/96 added hipweapons
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl;
-   local float oldimpulse;
+	local	float	fl;
 
-	it = self.items;
-	am = 0;
-
+	EnableComboWeapons ( self );
+	fl = 0;
 //MED
 	if (self.impulse == 1)
 	{
-      fl = IT_AXE;
-   }
+		fl = IT_AXE;
+	}
 	else if (self.impulse == 2)
 	{
 		fl = IT_SHOTGUN;
-		if (self.ammo_shells < 1)
-			am = 1;
 	}
 	else if (self.impulse == 3)
 	{
 		fl = IT_SUPER_SHOTGUN;
-		if (self.ammo_shells < 2)
-			am = 1;
 	}
+	// Dissolution of Eternity: a slot can hold several weapons, pressing it again goes to the next one
 	else if (self.impulse == 4)
 	{
-		fl = IT_NAILGUN;
-		if (self.ammo_nails < 1)
-			am = 1;
+		fl = WeaponForSlot (IT_NAILGUN, ROGW_LAVA_NAILGUN, 0);
 	}
-//MED
 	else if (self.impulse == 5)
 	{
-      fl = IT_SUPER_NAILGUN;
-      if (self.ammo_nails < 2)
-         am = 1;
-
+		fl = WeaponForSlot (IT_SUPER_NAILGUN, ROGW_LAVA_SUPER_NAILGUN, 0);
 	}
-//MED
 	else if (self.impulse == 6)
 	{
-      if (self.weapon == IT_GRENADE_LAUNCHER)
-         {
-         fl = IT_PROXIMITY_GUN;
-         }
-      else
-         {
-         fl = IT_GRENADE_LAUNCHER;
-         }
-		if (self.ammo_rockets < 1)
-			am = 1;
+		fl = WeaponForSlot (IT_GRENADE_LAUNCHER, ROGW_MULTI_GRENADE, IT_PROXIMITY_GUN);
 	}
 	else if (self.impulse == 7)
 	{
-		fl = IT_ROCKET_LAUNCHER;
-		if (self.ammo_rockets < 1)
-			am = 1;
+		fl = WeaponForSlot (IT_ROCKET_LAUNCHER, ROGW_MULTI_ROCKET, 0);
 	}
-//MED
 	else if (self.impulse == 8)
 	{
-      fl = IT_LIGHTNING;
-      if (self.ammo_cells < 1)
-         am = 1;
-   }
-   else if (self.impulse == 225)
-	{
-      fl = IT_LASER_CANNON;
-      if (self.ammo_cells < 1)
-         am = 1;
-   }
-   else if (self.impulse == 226)
-	{
-      fl = IT_MJOLNIR;
-   }
-
+		fl = WeaponForSlot (IT_LIGHTNING, ROGW_PLASMA_GUN, 0);
+	}
+	else if (self.impulse == 60)
+		fl = ROGW_LAVA_NAILGUN;
+	else if (self.impulse == 61)
+		fl = ROGW_LAVA_SUPER_NAILGUN;
+	else if (self.impulse == 62)
+		fl = ROGW_MULTI_GRENADE;
+	else if (self.impulse == 63)
+		fl = ROGW_MULTI_ROCKET;
+	else if (self.impulse == 64)
+		fl = ROGW_PLASMA_GUN;
 //MED
-   oldimpulse = self.impulse;
+	else if (self.impulse == 225)
+	{
+		fl = IT_LASER_CANNON;
+	}
+	else if (self.impulse == 226)
+	{
+		fl = IT_MJOLNIR;
+	}
+
 	self.impulse = 0;
-
-	if (!(self.items & fl))
-      {
-//MED
-      if (fl == IT_GRENADE_LAUNCHER)
-         {
-         fl = IT_PROXIMITY_GUN;
-         if (!(self.items & fl))
-            {
-            sprint (self, "no weapon.\n");
-            return;
-            }
-         if (self.ammo_rockets < 1)
-            am = 1;
-         else
-            am = 0;
-         }
-      else
-         {
-         sprint (self, "no weapon.\n");
-         return;
-         }
-      }
-
-	if (am)
+	if (!fl || !WeaponOwned(fl))
+	{
+		sprint (self, "no weapon.\n");
+		return;
+	}
+	if (WeaponLacksAmmo(fl))
 	{	// don't have the ammo
 		sprint (self, "not enough ammo.\n");
 		return;
 	}
 
+	if (self.weapon != fl)
+	{
+		if (self.weapon == ROGW_LAVA_NAILGUN || self.weapon == ROGW_LAVA_SUPER_NAILGUN)
+		{
+			if (fl == IT_NAILGUN || fl == IT_SUPER_NAILGUN)
+				sprint (self, "Normal Nails\n");
+		}
+		else if (self.weapon == ROGW_MULTI_GRENADE)
+		{
+			if (fl == IT_GRENADE_LAUNCHER)
+				sprint (self, "Normal Grenades\n");
+		}
+		else if (self.weapon == ROGW_MULTI_ROCKET)
+		{
+			if (fl == IT_ROCKET_LAUNCHER)
+				sprint (self, "Normal Rockets\n");
+		}
+		else if (self.weapon == ROGW_PLASMA_GUN)
+		{
+			if (fl == IT_LIGHTNING)
+				sprint (self, "Lightning Gun\n");
+		}
+		else if (fl == ROGW_LAVA_NAILGUN || fl == ROGW_LAVA_SUPER_NAILGUN)
+			sprint (self, "Lava Nails!\n");
+		else if (fl == ROGW_MULTI_GRENADE)
+			sprint (self, "Multi-Grenades!\n");
+		else if (fl == ROGW_MULTI_ROCKET)
+			sprint (self, "Multi-Rockets!\n");
+		else if (fl == ROGW_PLASMA_GUN)
+			sprint (self, "Plasma Gun!\n");
+	}
 //
 // set weapon, set ammo
 //
-   self.weapon = fl;
+	self.weapon = fl;
 	W_SetCurrentAmmo ();
 };
 
@@ -1870,9 +2075,9 @@ void() CheatCommand =
 		return;
 	}
 
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
+	self.ammo_standard_rockets = 100;
+	self.ammo_standard_nails = 200;
+	self.ammo_standard_shells = 100;
 	self.items = self.items |
 		IT_AXE |
 		IT_SHOTGUN |
@@ -1887,13 +2092,18 @@ void() CheatCommand =
 		IT_PROXIMITY_GUN |
 		IT_KEY1 | IT_KEY2;
 
-	self.ammo_cells = 200;
+	self.ammo_standard_cells = 200;
 	self.items = self.items | IT_LIGHTNING;
 //MED
    self.items = self.items | IT_LASER_CANNON;
    self.items = self.items | IT_MJOLNIR;
    self.items = self.items | IT_PROXIMITY_GUN;
 
+	// Dissolution of Eternity
+	self.ammo_lava_nails = 200;
+	self.ammo_multi_rockets = 100;
+	self.ammo_plasma = 100;
+	self.rog_items = self.rog_items | RIT_LAVA_NAILGUN | RIT_LAVA_SUPER_NAILGUN | RIT_MULTI_GRENADE | RIT_MULTI_ROCKET | RIT_PLASMA_GUN;
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
 	W_SetCurrentAmmo ();
@@ -1908,88 +2118,7 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-	local	float	it, am;
-
-	it = self.items;
-	self.impulse = 0;
-
-	while (1)
-	{
-		am = 0;
-
-//MED
-      if (self.weapon == IT_MJOLNIR)
-		{
-			self.weapon = IT_AXE;
-		}
-		else if (self.weapon == IT_AXE)
-		{
-         self.weapon = IT_SHOTGUN;
-         if (self.ammo_shells < 1)
-				am = 1;
-      }
-      else if (self.weapon == IT_SHOTGUN)
-		{
-			self.weapon = IT_SUPER_SHOTGUN;
-			if (self.ammo_shells < 2)
-				am = 1;
-		}
-		else if (self.weapon == IT_SUPER_SHOTGUN)
-		{
-			self.weapon = IT_NAILGUN;
-			if (self.ammo_nails < 1)
-				am = 1;
-		}
-		else if (self.weapon == IT_NAILGUN)
-		{
-			self.weapon = IT_SUPER_NAILGUN;
-			if (self.ammo_nails < 2)
-				am = 1;
-		}
-		else if (self.weapon == IT_SUPER_NAILGUN)
-		{
-         self.weapon = IT_GRENADE_LAUNCHER;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-//MED
-      else if (self.weapon == IT_GRENADE_LAUNCHER)
-		{
-         self.weapon = IT_PROXIMITY_GUN;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-//MED
-      else if (self.weapon == IT_PROXIMITY_GUN)
-		{
-			self.weapon = IT_ROCKET_LAUNCHER;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_ROCKET_LAUNCHER)
-		{
-			self.weapon = IT_LIGHTNING;
-			if (self.ammo_cells < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_LIGHTNING)
-		{
-         self.weapon = IT_LASER_CANNON;
-         if (self.ammo_cells < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_LASER_CANNON)
-		{
-         self.weapon = IT_MJOLNIR;
-		}
-
-		if ( (self.items & self.weapon) && am == 0)
-		{
-			W_SetCurrentAmmo ();
-			return;
-		}
-	}
-
+	CycleWeapon (1);
 };
 
 /*
@@ -2001,87 +2130,7 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
-	local	float	it, am;
-
-	it = self.items;
-	self.impulse = 0;
-
-	while (1)
-	{
-		am = 0;
-
-//MED
-      if (self.weapon == IT_MJOLNIR)
-		{
-         self.weapon = IT_LASER_CANNON;
-         if (self.ammo_cells < 1)
-				am = 1;
-		}
-//MED
-      else if (self.weapon == IT_LASER_CANNON)
-		{
-         self.weapon = IT_LIGHTNING;
-         if (self.ammo_cells < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_LIGHTNING)
-		{
-			self.weapon = IT_ROCKET_LAUNCHER;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_ROCKET_LAUNCHER)
-		{
-         self.weapon = IT_PROXIMITY_GUN;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_PROXIMITY_GUN)
-		{
-			self.weapon = IT_GRENADE_LAUNCHER;
-			if (self.ammo_rockets < 1)
-				am = 1;
-		}
-      else if (self.weapon == IT_GRENADE_LAUNCHER)
-		{
-			self.weapon = IT_SUPER_NAILGUN;
-			if (self.ammo_nails < 2)
-				am = 1;
-		}
-      else if (self.weapon == IT_SUPER_NAILGUN)
-		{
-			self.weapon = IT_NAILGUN;
-			if (self.ammo_nails < 1)
-				am = 1;
-		}
-		else if (self.weapon == IT_NAILGUN)
-		{
-			self.weapon = IT_SUPER_SHOTGUN;
-			if (self.ammo_shells < 2)
-				am = 1;
-		}
-		else if (self.weapon == IT_SUPER_SHOTGUN)
-		{
-			self.weapon = IT_SHOTGUN;
-			if (self.ammo_shells < 1)
-				am = 1;
-		}
-		else if (self.weapon == IT_SHOTGUN)
-		{
-			self.weapon = IT_AXE;
-		}
-		else if (self.weapon == IT_AXE)
-		{
-         self.weapon = IT_MJOLNIR;
-		}
-
-		if ( (it & self.weapon) && am == 0)
-		{
-			W_SetCurrentAmmo ();
-			return;
-		}
-	}
-
+	CycleWeapon (-1);
 };
 
 /*
@@ -2255,6 +2304,8 @@ void() ImpulseCommands =
 
    if (self.impulse >= 225 && self.impulse <= 226)
 		W_ChangeWeapon ();
+	if (self.impulse >= 60 && self.impulse <= 64)	// Dissolution of Eternity
+		W_ChangeWeapon ();
 
 	if (self.impulse == 9)
 		CheatCommand ();
@@ -2300,6 +2351,15 @@ void() W_WeaponFrame =
 	if (time < self.attack_finished)
 		return;
 
+	// Dissolution of Eternity
+	if (lavaGunFired)
+	{
+		if (self.weapon == ROGW_LAVA_NAILGUN || self.weapon == ROGW_LAVA_SUPER_NAILGUN)
+			sound (self, CHAN_WEAPON, "lavagun/snail.wav", 1, ATTN_NORM);
+		lavaGunFired = 0;
+	}
+
+
 	if (self.impulse)
 		ImpulseCommands ();
 
@@ -2331,4 +2391,756 @@ void() SuperDamageSound =
 	return;
 };
 
+//============================================================================
+// Dissolution of Eternity: Plasma projectile (used by the Dragon, and by the
+// Plasma Gun once it is ported)
+//============================================================================
+void(vector p1, vector p2, entity from, float damage) PlasmaDamage =
+{
+	local entity		e1, e2;
+	local vector		f;
+	
+	f = p2 - p1;
+	normalize (f);
+	f_x = 0 - f_y;
+	f_y = f_x;
+	f_z = 0;
+	f = f*16;
 
+	e1 = e2 = world;
+
+	traceline (p1, p2, FALSE, self);
+	if (trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+		if (self.classname == "player")
+		{
+			if (other.classname == "player")
+				trace_ent.velocity_z = trace_ent.velocity_z + 400;
+		}
+	}
+	e1 = trace_ent;
+
+	traceline (p1 + f, p2 + f, FALSE, self);
+	if (trace_ent != e1 && trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+	}
+	e2 = trace_ent;
+
+	traceline (p1 - f, p2 - f, FALSE, self);
+	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
+	{
+		particle (trace_endpos, '0 0 100', 225, damage*4);
+		T_Damage (trace_ent, from, from.owner, damage);
+	}
+};
+
+//================================
+//================================
+void(entity current, float doDamage) PlasmaDischarge =
+{
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+	WriteEntity (MSG_BROADCAST, current);
+	WriteCoord (MSG_BROADCAST, current.origin_x);
+	WriteCoord (MSG_BROADCAST, current.origin_y);
+	WriteCoord (MSG_BROADCAST, current.origin_z);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+
+	sound (self, CHAN_VOICE, "weapons/lhit.wav", 1, ATTN_NORM);
+	if (doDamage == 1)
+        PlasmaDamage (self.origin, current.origin, self, 50);
+};
+
+//================================
+//================================
+void() PlasmaGroundOut = 
+{
+	local entity 	current, start;
+	local float		monstersHit;
+	
+	monstersHit = 0;
+	current = findradius ( self.origin, 320 );
+	start = current;
+	while ( monstersHit < 5 )
+	{
+		if ( current.flags & FL_MONSTER || current.classname == "player")
+		{
+			if ( current != self.owner )
+			{
+				traceline ( self.origin, current.origin, TRUE, world );
+				if (trace_fraction == 1)
+				{
+					monstersHit = monstersHit + 1;
+					PlasmaDischarge ( current, 1 );
+				}
+			}
+		}
+		current = current.chain;
+		if (start == current || !current)
+			return;
+	}
+};
+
+//================================
+//================================
+void() PlasmaTouch = 
+{
+	local float	damg;
+
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	damg = 80 + random()*20;
+	sound (self, CHAN_WEAPON, "plasma/explode.wav", 1, ATTN_NORM);
+	
+	if (other.health)
+	{
+		if (other.classname == "monster_shambler")
+			damg = damg * 0.5;	// mostly immune
+		T_Damage (other, self, self.owner, damg );
+	}
+
+	// don't do radius damage to the other, because all the damage
+	// was done in the impact
+	T_RadiusDamage (self, self.owner, 70, other);
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteByte (MSG_BROADCAST, 244);
+	WriteByte (MSG_BROADCAST, 3);
+
+	PlasmaGroundOut();
+	SUB_Remove();
+};
+
+//================================
+//================================
+void() PlasmaLaunch =
+{
+	self.velocity = normalize(self.velocity);
+	self.velocity = self.velocity * 1250;
+
+	self.nextthink = time + 5;
+	self.think = SUB_Remove;
+};
+
+void(vector org, vector dir) launch_plasma =
+{
+	local entity	missile, mpuff;
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_FLYMISSILE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "plasma";
+	
+// set missile speed	
+	missile.velocity = dir * 0.01;
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = PlasmaTouch;
+	
+	setmodel (missile, "progs/plasma.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, org);
+
+	sound (missile, CHAN_WEAPON, "plasma/flight.wav", 1, ATTN_NORM);
+	if (!deathmatch && !coop)
+		missile.effects = EF_BRIGHTLIGHT;
+	
+// set missile duration
+	missile.think = PlasmaLaunch;
+	missile.nextthink = time + 0.1;
+};
+
+//============================================================================
+// Dissolution of Eternity: Multi-Grenade projectile (used by the Multi-Grenade Ogre, and by the
+// Multi-Grenade Launcher once it is ported)
+//============================================================================
+void() MultiGrenadeTouch;
+
+void() MiniGrenadeExplode =
+{
+	if ( self.owner.classname == "player")
+		T_RadiusDamage (self, self.owner, 90, world);
+	else
+		T_RadiusDamage (self, self.owner, 60, world);
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+    WriteByte (MSG_BROADCAST, 230);
+    WriteByte (MSG_BROADCAST, 5);
+
+	BecomeExplosion ();
+};
+
+//================================
+//================================
+void(float offsetAngle) MiniGrenadeLaunch =
+{
+	local	entity missile, mpuff;
+	local	float	tempRand;
+	
+	missile = spawn ();
+	missile.owner = self.owner;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "MiniGrenade";
+		
+// set missile speed	
+	missile.v_angle = self.v_angle;
+	missile.v_angle_y = missile.v_angle_y + offsetAngle;
+	makevectors (missile.v_angle);
+		
+		missile.velocity = v_forward*100 + v_up*400;
+		tempRand = (crandom()*60) - 30;
+		missile.velocity = missile.velocity + tempRand * v_forward;
+		tempRand = (crandom()*40) - 20;
+		missile.velocity = missile.velocity + tempRand * v_right;
+		tempRand = (crandom()*60) - 30;
+		missile.velocity = missile.velocity + tempRand * v_up;
+
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = MultiGrenadeTouch;
+	
+	setmodel (missile, "progs/mervup.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin);
+
+// set missile duration
+	missile.nextthink = time + 1 + (crandom() * 0.5);
+	missile.think = MiniGrenadeExplode;
+};
+
+//================================
+//================================
+void() MultiGrenadeExplode =
+{
+	MiniGrenadeLaunch(0);
+	MiniGrenadeLaunch(72);
+	MiniGrenadeLaunch(144);
+	MiniGrenadeLaunch(216);
+	MiniGrenadeLaunch(288);
+
+	SUB_Remove();
+};
+
+//================================
+//================================
+void() MultiGrenadeTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+	if (other.takedamage == DAMAGE_AIM)
+	{
+		if (self.classname == "MiniGrenade")
+			MiniGrenadeExplode();
+		else
+		{
+			if (self.owner.classname == "player")
+				GrenadeExplode();
+			else
+				MiniGrenadeExplode();
+		}
+		return;
+	}
+	// bounce sound
+	sound (self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM);	
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
+};
+
+//============================================================================
+// Dissolution of Eternity: the Lava Nailgun and Lava Super Nailgun
+//============================================================================
+void() lavaspike_touch;
+void() superlavaspike_touch;
+
+// =============== Lava Spike Touch Routines
+
+void() lavaspike_touch =
+{
+local float rand;
+local float old_armortype;
+local float old_armorvalue;
+local float old_armormask;
+
+	if (other == self.owner)
+		return;
+
+	if (other.solid == SOLID_TRIGGER)
+		return;	// trigger field, do nothing
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		SUB_Remove();
+		return;
+	}
+	
+// hit something that bleeds
+	if (other.takedamage)
+	{
+		spawn_touchblood (9);
+		if(other.classname == "player")
+		{
+			old_armortype = other.armortype;
+			old_armorvalue = other.armorvalue;
+			old_armormask = other.items & (IT_ARMOR1|IT_ARMOR2|IT_ARMOR3);
+			other.armortype = 0;
+			other.armorvalue = 0;
+			T_Damage (other, self, self.owner, 9);
+			other.armortype = old_armortype;
+			other.armorvalue = old_armorvalue;
+			other.items = other.items | old_armormask;
+		}
+		else		// is a monster
+		{
+			if ( other.classname != "monster_lava_man")
+			{
+				T_Damage (other, self, self.owner, 15);
+			}
+		}
+	}
+	else
+	{
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		
+		if (self.classname == "wizspike")
+			WriteByte (MSG_BROADCAST, TE_WIZSPIKE);
+		else if (self.classname == "knightspike")
+			WriteByte (MSG_BROADCAST, TE_KNIGHTSPIKE);
+		else
+			WriteByte (MSG_BROADCAST, TE_SPIKE);
+		WriteCoord (MSG_BROADCAST, self.origin_x);
+		WriteCoord (MSG_BROADCAST, self.origin_y);
+		WriteCoord (MSG_BROADCAST, self.origin_z);
+	}
+
+	SUB_Remove();
+
+};
+
+void() superlavaspike_touch =
+{
+local float rand;
+local float old_armortype;
+//local float old_armorvalue;
+
+	if (other == self.owner)
+		return;
+
+	if (other.solid == SOLID_TRIGGER)
+		return;	// trigger field, do nothing
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		SUB_Remove();
+		return;
+	}
+	
+// hit something that bleeds
+	if (other.takedamage)
+	{
+		spawn_touchblood (18);
+		
+		// halve the effectiveness of the armor for players..
+		if(other.classname == "player")
+		{
+			// save the old armor values...
+			old_armortype = other.armortype;
+//			old_armorvalue = other.armorvalue;
+			other.armortype = other.armortype * 0.5;
+//			other.armorvalue = 0;
+			T_Damage (other, self, self.owner, 18);
+			
+			// if the damage didn't wipe out the armor, armortype 
+			if(other.armortype != 0)
+			{
+				other.armortype = old_armortype;
+//				other.armorvalue = old_armorvalue;
+			}
+		}
+		else		// is a monster, do 50% more damage
+		{
+			if ( other.classname != "monster_lava_man")
+			{
+				T_Damage (other, self, self.owner, 30);
+			}
+		}
+	}
+	else
+	{
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_SUPERSPIKE);
+		WriteCoord (MSG_BROADCAST, self.origin_x);
+		WriteCoord (MSG_BROADCAST, self.origin_y);
+		WriteCoord (MSG_BROADCAST, self.origin_z);
+	}
+
+	SUB_Remove();
+
+};
+
+/*
+===============
+launch_lava_spike
+
+Used for both the player and the ogre
+===============
+*/
+void(vector org, vector dir) launch_lava_spike =
+{
+	newmis = spawn ();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;
+
+	newmis.angles = vectoangles(dir);
+	
+	newmis.touch = lavaspike_touch;
+	newmis.classname = "lava_spike";
+	newmis.think = SUB_Remove;
+	newmis.nextthink = time + 6;
+	setmodel (newmis, "progs/lspike.mdl");	
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	setorigin (newmis, org);
+
+	newmis.velocity = dir * 1000;
+};
+
+void() W_FireSuperLavaSpikes =
+{
+	local vector	dir;
+	local entity	old;
+	
+	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
+	self.attack_finished = time + 0.2;
+	self.currentammo = self.ammo_lava_nails = self.ammo_lava_nails - 2;
+	
+	dir = aim (self, 1000);
+	launch_lava_spike (self.origin + '0 0 16', dir);
+	newmis.touch = superlavaspike_touch;
+
+//	setmodel (newmis, "progs/lspike.mdl");			
+
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	self.punchangle_x = -2;
+};
+
+void(float ox) W_FireLavaSpikes =
+{
+	local vector	dir;
+	local entity	old;
+	
+	makevectors (self.v_angle);
+	
+	if (self.ammo_lava_nails >= 2 && self.weapon == ROGW_LAVA_SUPER_NAILGUN)
+	{
+		W_FireSuperLavaSpikes ();
+		return;
+	}
+
+	if (self.ammo_lava_nails < 1)
+	{
+		sprint (self, "Out of Lava Nails\n");
+		self.weapon = W_BestWeapon ();
+		W_SetCurrentAmmo ();
+		return;
+	}
+
+	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
+	self.attack_finished = time + 0.2;
+	self.currentammo = self.ammo_lava_nails = self.ammo_lava_nails - 1;
+	
+	dir = aim (self, 1000);
+	launch_lava_spike (self.origin + '0 0 16' + v_right*ox, dir);
+
+	self.punchangle_x = -2;
+};
+
+//============================================================================
+// Dissolution of Eternity: the Multi-Grenade Launcher and the Multi-Rocket Launcher
+//============================================================================
+void() W_FireMultiGrenade =
+{
+	local	entity missile, mpuff;
+	
+	self.currentammo = self.ammo_multi_rockets = self.ammo_multi_rockets - 1;
+	
+	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+
+	self.punchangle_x = -2;
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "MultiGrenade";
+		
+// set missile speed	
+	makevectors (self.v_angle);
+	if (self.v_angle_x)
+		missile.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
+	else
+	{
+		missile.velocity = aim(self, 10000);
+		missile.velocity = missile.velocity * 600;
+		missile.velocity_z = 200;
+	}
+
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = MultiGrenadeTouch;
+	
+// set missile duration
+	missile.nextthink = time + 1;
+	missile.think = MultiGrenadeExplode;
+
+	setmodel (missile, "progs/mervup.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin);
+};
+
+//=============================================================================
+// Multi Rocket Code
+//=============================================================================
+
+//================================
+//================================
+void() MultiRocketExplode = 
+{
+	local float	damg;
+
+//	Stock Single Rocket Damage...
+//	damg = 100 + random()*20;
+
+	damg = 60 + random()*15;
+
+	if (other.health)
+	{
+		if (other.classname == "monster_shambler")
+			damg = damg * 0.5;	// mostly immune
+		if (other.classname == "monster_dragon")
+			damg = damg * 0.5;	// mostly immune
+		T_Damage (other, self, self.owner, damg );
+	}
+
+	// don't do radius damage to the other, because all the damage
+	// was done in the impact
+//	Stock single rocket damage.
+//	T_RadiusDamage (self, self.owner, 120, other);
+
+	T_RadiusDamage (self, self.owner, 75, other);
+
+//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	self.origin = self.origin - 8*normalize(self.velocity);
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+
+	BecomeExplosion ();
+};
+
+//================================
+//================================
+void() MultiRocketTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	MultiRocketExplode ();
+};
+
+
+//================================
+//================================
+void() HomingMissileThink =
+{
+	local vector	dir;
+
+	if (self.enemy.health < 1)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dir = normalize(self.enemy.origin - self.origin);
+	self.velocity = dir * 1000;
+	self.nextthink = time + 0.1;
+	self.think = HomingMissileThink;	
+};
+
+
+//================================
+//================================
+void() HomingMissileAcquire =
+{
+	local vector	oldVelocity;
+	local vector	aimangle;
+
+	if ( self.delay < time )
+	{
+		MultiRocketExplode ();
+		return;
+	}
+
+	oldVelocity = self.velocity;
+	makevectors (self.v_angle);
+	self.velocity = aim (self, 1000);
+	self.velocity = self.velocity * 1000;
+
+	aimangle = self.origin + self.velocity;	
+	traceline ( self.origin, aimangle, FALSE, self );
+	if (trace_fraction < 1)
+	{
+		if (trace_ent.flags & FL_MONSTER)
+		{
+			self.enemy = trace_ent;
+			HomingMissileThink();
+			return;
+		}
+	}
+	
+	self.velocity = oldVelocity;
+	self.v_angle = vectoangles ( self.velocity );
+	self.angles = self.v_angle;
+	self.think = HomingMissileAcquire;
+	self.nextthink = time + 0.2;
+};
+
+//================================
+//================================
+void(float offset, float frameNum) MultiRocketLaunch = 
+{
+	local entity 	missile, mpuff;
+	local vector	aimangle;
+	
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_FLYMISSILE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "MultiRocket";
+	missile.delay = time + 4;
+	missile.frame = frameNum;
+	missile.touch = MultiRocketTouch;
+
+	if (deathmatch || coop)
+		setmodel (missile, "progs/rockup_d.mdl");
+	else
+		setmodel (missile, "progs/rockup.mdl");
+
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
+	
+	if ( coop || deathmatch)
+	{
+		aimangle = self.v_angle;
+		aimangle_y = aimangle_y + (offset * 0.66);
+		makevectors (aimangle);
+		missile.velocity = aim(self, 1000);
+		missile.velocity = missile.velocity * 1000;
+		missile.angles = vectoangles(missile.velocity);
+
+		missile.think = MultiRocketExplode;
+		missile.nextthink = time + 4;
+	}
+	else
+	{
+		makevectors (self.v_angle);
+		missile.velocity = v_forward * 1000 - v_right*offset*8;
+		missile.angles = vectoangles(missile.velocity);
+		missile.v_angle = self.v_angle;	
+
+		aimangle = missile.origin + missile.velocity;
+		traceline ( missile.origin, aimangle, FALSE, self );
+		if (trace_fraction < 1)
+		{
+			if (trace_ent.flags & FL_MONSTER)
+			{
+				missile.enemy = trace_ent;
+				missile.think = HomingMissileThink;
+				return;
+			}
+		}
+
+		missile.think = HomingMissileAcquire;
+		missile.nextthink = time + 0.1;
+	}
+};
+
+//================================
+
+void() W_FireMultiRocket =
+{
+	self.currentammo = self.ammo_multi_rockets = self.ammo_multi_rockets - 1;
+	
+	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
+
+	self.punchangle_x = -2;
+	
+	MultiRocketLaunch ( -10, 2 );
+	MultiRocketLaunch ( -5, 3 );
+	MultiRocketLaunch ( 5, 0 );
+	MultiRocketLaunch ( 10, 1 );
+};
+
+//============================================================================
+// Dissolution of Eternity: the Plasma Gun
+//============================================================================
+void() W_FirePlasma = 
+{
+	local float		cells;
+	local vector 	dir;
+	
+	if (self.ammo_plasma < 1)
+	{
+		self.weapon = W_BestWeapon ();
+		W_SetCurrentAmmo ();
+		return;
+	}
+
+// explode if under water
+	if (self.waterlevel > 1)
+	{
+		cells = self.ammo_plasma;
+		self.ammo_plasma = 0;
+		W_SetCurrentAmmo ();
+		T_RadiusDamage (self, self, 35*cells, world);
+		return;
+	}
+	self.currentammo = self.ammo_plasma = self.ammo_plasma - 1;
+	sound (self, CHAN_WEAPON, "plasma/fire.wav", 0.5, ATTN_NORM);
+	self.punchangle_x = -2;
+
+	makevectors (self.v_angle);
+	dir = aim ( self, 1000 );
+	launch_plasma (self.origin + v_forward*24 + '0 0 16', dir);
+};

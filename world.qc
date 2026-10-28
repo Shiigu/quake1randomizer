@@ -180,6 +180,20 @@ void() main =
 	precache_file ("maps/hip3m4.bsp");
 	precache_file ("maps/hipdm1.bsp");
 	precache_file ("maps/hipend.bsp");
+	precache_file ("maps/r1m1.bsp");
+	precache_file ("maps/r1m2.bsp");
+	precache_file ("maps/r1m3.bsp");
+	precache_file ("maps/r1m4.bsp");
+	precache_file ("maps/r1m5.bsp");
+	precache_file ("maps/r1m6.bsp");
+	precache_file ("maps/r1m7.bsp");
+	precache_file ("maps/r2m1.bsp");
+	precache_file ("maps/r2m2.bsp");
+	precache_file ("maps/r2m3.bsp");
+	precache_file ("maps/r2m4.bsp");
+	precache_file ("maps/r2m5.bsp");
+	precache_file ("maps/r2m6.bsp");
+	precache_file ("maps/r2m7.bsp");
 	precache_file ("maps/zoo.bsp");
 	precache_file ("maps/mark.bsp");
 };
@@ -208,6 +222,25 @@ void() worldspawn =
 	dprint(ftos(FixedSeed));
 	dprint(".\n");
 	PrintedEndlessCastleSplash = -1;
+
+	// Dissolution of Eternity's own maps ("start" is shared by all three games, so it is not one of them)
+	RogueMap = FALSE;
+	if (self.model == "maps/r1m1.bsp" ||
+		self.model == "maps/r1m2.bsp" ||
+		self.model == "maps/r1m3.bsp" ||
+		self.model == "maps/r1m4.bsp" ||
+		self.model == "maps/r1m5.bsp" ||
+		self.model == "maps/r1m6.bsp" ||
+		self.model == "maps/r1m7.bsp" ||
+		self.model == "maps/r2m1.bsp" ||
+		self.model == "maps/r2m2.bsp" ||
+		self.model == "maps/r2m3.bsp" ||
+		self.model == "maps/r2m4.bsp" ||
+		self.model == "maps/r2m5.bsp" ||
+		self.model == "maps/r2m6.bsp" ||
+		self.model == "maps/r2m7.bsp" ||
+		self.model == "maps/r2m8.bsp")
+		RogueMap = TRUE;
 
 	IsSeedCalculated = 0;
 		

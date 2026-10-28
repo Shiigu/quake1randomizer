@@ -510,7 +510,19 @@ void() func_door =
 		self.dmg = 2;
 
 	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+	if (RogueMap)
+	{
+		// Dissolution of Eternity: measure the door along each axis whatever the sign of its movement direction
+		local vector tempvect;
+		tempvect = self.movedir;
+		if (tempvect_x < 0)
+			tempvect_x = 0 - tempvect_x;
+		if (tempvect_y < 0)
+			tempvect_y = 0 - tempvect_y;
+		self.pos2 = self.pos1 + self.movedir*(fabs(tempvect*self.size) - self.lip);
+	}
+	else
+		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
 
 // DOOR_START_OPEN is to allow an entity to be lighted in the closed position
 // but spawn in the open position

@@ -33,33 +33,33 @@ float IndexPermutation[9];
 
 // PROBABILITY "TABLES"
 
-string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_zombie" };
+string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "monster_zombie" };
 void() MonsterUnbiasedSpawnFunctions[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToRotfish, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
-    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToZombie };
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToZombie };
 
-float ProbabilitiesMonsterToMonsterGround[15];
-float ProbabilitiesMonsterToMonsterGroundEasy[15]              = { 5, 11, 11, 9, 11, 10, 2, 1, 16, 1, 11, 12, 3, 8, 2 };
-float ProbabilitiesMonsterToMonsterGroundNormal[15]            = { 7, 7, 9, 10, 12, 9, 3, 2, 13, 3, 12, 13, 5, 9, 3 };
-float ProbabilitiesMonsterToMonsterGroundHard[15]              = { 8, 6, 9, 11, 8, 10, 4, 3, 11, 4, 13, 13, 7, 11, 3 };
-float ProbabilitiesMonsterToMonsterGroundNightmare[15]         = { 10, 4, 7, 13, 8, 11, 5, 4, 8, 6, 13, 11, 8, 10, 4 };
-float ProbabilitiesMonsterToMonsterGroundSuperNightmare[15]    = { 11, 2, 6, 14, 7, 9, 7, 6, 6, 6, 13, 13, 10, 8, 6 };
-float ProbabilitiesMonsterToMonsterGroundUnfair[15]            = { 12, 0, 0, 12, 0, 11, 20, 20, 0, 15, 8, 0, 15, 0, 10 };
+float ProbabilitiesMonsterToMonsterGround[22];
+float ProbabilitiesMonsterToMonsterGroundEasy[22]              = { 10, 22, 22, 12, 27, 20, 4, 1, 32, 2, 22, 24, 5, 16, 7, 2, 1, 2, 10, 9, 12, 2 };
+float ProbabilitiesMonsterToMonsterGroundNormal[22]            = { 14, 14, 18, 20, 31, 18, 6, 3, 26, 6, 24, 26, 9, 18, 10, 4, 4, 4, 13, 6, 20, 3 };
+float ProbabilitiesMonsterToMonsterGroundHard[22]              = { 16, 12, 16, 22, 16, 20, 8, 5, 22, 8, 26, 26, 13, 22, 11, 5, 6, 6, 8, 8, 22, 3 };
+float ProbabilitiesMonsterToMonsterGroundNightmare[22]         = { 22, 8, 11, 26, 16, 22, 10, 7, 13, 12, 26, 22, 15, 19, 14, 7, 10, 8, 8, 10, 26, 4 };
+float ProbabilitiesMonsterToMonsterGroundSuperNightmare[22]    = { 25, 4, 9, 28, 14, 18, 14, 11, 12, 12, 26, 26, 19, 16, 18, 9, 10, 12, 8, 12, 28, 6 };
+float ProbabilitiesMonsterToMonsterGroundUnfair[22]            = { 29, 0, 0, 24, 0, 22, 44, 43, 0, 30, 40, 0, 31, 0, 38, 18, 28, 0, 0, 16, 24, 10 };
 void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
-    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
-string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToSpikeMine };
+string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "trap_spike_mine" };
 
-float ProbabilitiesMonsterToMonsterWater[14];
-float ProbabilitiesMonsterToMonsterWaterEasy[14]               = { 8, 8, 8, 16, 2, 1, 9, 5, 10, 8, 25, 3, 8, 2 };
-float ProbabilitiesMonsterToMonsterWaterNormal[14]             = { 6, 12, 12, 11, 3, 2, 13, 3, 12, 9, 17, 5, 9, 3 };
-float ProbabilitiesMonsterToMonsterWaterHard[14]               = { 4, 14, 14, 8, 4, 3, 11, 4, 14, 9, 15, 7, 11, 3 };
-float ProbabilitiesMonsterToMonsterWaterNightmare[14]          = { 2, 15, 14, 6, 5, 4, 15, 4, 15, 9, 11, 8, 10, 4 };
-float ProbabilitiesMonsterToMonsterWaterSuperNightmare[14]     = { 1, 15, 15, 3, 7, 6, 10, 7, 17, 11, 8, 10, 8, 6 };
-float ProbabilitiesMonsterToMonsterWaterUnfair[14]             = { 0, 0, 5, 10, 25, 25, 0, 0, 35, 0, 0, 15, 0, 10 };
+float ProbabilitiesMonsterToMonsterWater[19];
+float ProbabilitiesMonsterToMonsterWaterEasy[19]               = { 16, 16, 11, 32, 3, 1, 18, 10, 20, 16, 50, 5, 16, 6, 2, 10, 9, 2, 2 };
+float ProbabilitiesMonsterToMonsterWaterNormal[19]             = { 12, 24, 24, 22, 5, 3, 26, 6, 24, 18, 34, 9, 18, 9, 3, 14, 5, 4, 3 };
+float ProbabilitiesMonsterToMonsterWaterHard[19]               = { 8, 26, 28, 16, 8, 5, 22, 8, 28, 18, 30, 13, 22, 11, 5, 31, 7, 6, 3 };
+float ProbabilitiesMonsterToMonsterWaterNightmare[19]          = { 4, 27, 28, 12, 9, 6, 27, 8, 30, 18, 22, 14, 18, 13, 7, 26, 7, 8, 4 };
+float ProbabilitiesMonsterToMonsterWaterSuperNightmare[19]     = { 2, 27, 30, 6, 13, 10, 20, 14, 34, 20, 16, 18, 16, 17, 9, 22, 13, 10, 6 };
+float ProbabilitiesMonsterToMonsterWaterUnfair[19]             = { 0, 0, 10, 20, 35, 34, 0, 0, 70, 0, 0, 20, 0, 24, 12, 0, 0, 0, 210 };
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
-                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine };
-string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "trap_spike_mine" };
+                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToSpikeMine };
+string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "trap_spike_mine" };
 
 float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
 float ProbabilityToRemovePickupEasy                 = 0;
@@ -95,26 +95,41 @@ float ProbabilityForSmallAmmoPackNightmare          = 75;
 float ProbabilityForSmallAmmoPackSuperNightmare     = 80;
 float ProbabilityForSmallAmmoPackUnfair             = 100;
 
-float ProbabilitiesForPowerupsNearWater[9];
-float ProbabilitiesForPowerupsNearWaterEasy[9]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20 };
-float ProbabilitiesForPowerupsNearWaterNormal[9]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15 };
-float ProbabilitiesForPowerupsNearWaterHard[9]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10 };
-float ProbabilitiesForPowerupsNearWaterNightmare[9]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8 };
-float ProbabilitiesForPowerupsNearWaterSuperNightmare[9]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5 };
-float ProbabilitiesForPowerupsNearWaterUnfair[9]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5 };
-void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
-string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring" };
+// Dissolution of Eternity: the chance (out of 100) for any ammo to turn into one of the alternate ammos (Lava Nails,
+// Multi Rockets or Plasma, all equally likely) instead of a standard one. It is strong ammo for the player, so it is much
+// rarer than any standard ammo, and it gets rarer as the difficulty goes up. Unbiased Mode doesn't play fair, but it
+// keeps it rare too.
+float ProbabilityForAlternateAmmo;
+float ProbabilityForAlternateAmmoEasy                   = 20;
+float ProbabilityForAlternateAmmoNormal                 = 15;
+float ProbabilityForAlternateAmmoHard                   = 10;
+float ProbabilityForAlternateAmmoNightmare              = 8;
+float ProbabilityForAlternateAmmoSuperNightmare         = 5;
+float ProbabilityForAlternateAmmoUnfair                 = 2;
+float ProbabilityForAlternateAmmoUnbiased          = 15;
+void() AlternateAmmoConverters[] = { ConvertToLavaNails, ConvertToMultiRockets, ConvertToPlasma };
+string AlternateAmmoNetNames[] = { "lava nails", "multi rockets", "plasma" };
 
-float ProbabilitiesForPowerupsNotNearWater[8];
-float ProbabilitiesForPowerupsNotNearWaterEasy[8]           = { 20, 20, 20, 15, 20, 5, 20, 20 };
-float ProbabilitiesForPowerupsNotNearWaterNormal[8]         = { 19, 19, 19, 19, 19, 5, 18, 15 };
-float ProbabilitiesForPowerupsNotNearWaterHard[8]           = { 18, 18, 18, 18, 18, 10, 17, 10 };
-float ProbabilitiesForPowerupsNotNearWaterNightmare[8]      = { 15, 15, 15, 20, 15, 20, 15, 8 };
-float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[8] = { 12, 12, 12, 24, 12, 28, 12, 5 };
-float ProbabilitiesForPowerupsNotNearWaterUnfair[8]         = { 5, 5, 5, 45, 10, 30, 8, 5 };
+float ProbabilitiesForPowerupsNearWater[11];
+float ProbabilitiesForPowerupsNearWaterEasy[11]              = { 20, 20, 20, 15, 20, 10, 20, 10, 20, 15, 5 };
+float ProbabilitiesForPowerupsNearWaterNormal[11]            = { 18, 18, 18, 18, 18, 15, 18, 15, 15, 12, 8 };
+float ProbabilitiesForPowerupsNearWaterHard[11]              = { 17, 17, 17, 17, 17, 20, 17, 20, 10, 9, 10 };
+float ProbabilitiesForPowerupsNearWaterNightmare[11]         = { 15, 15, 15, 20, 15, 25, 15, 25, 8, 7, 12 };
+float ProbabilitiesForPowerupsNearWaterSuperNightmare[11]    = { 12, 12, 12, 24, 12, 35, 12, 35, 5, 5, 18 };
+float ProbabilitiesForPowerupsNearWaterUnfair[11]            = { 5, 5, 5, 25, 10, 25, 8, 25, 5, 4, 31 };
+void() PowerupsNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
+string PowerupsNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "item_artifact_envirosuit", "item_artifact_empathy_shields", "item_artifact_wetsuit", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
-void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring };
-string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring" };
+float ProbabilitiesForPowerupsNotNearWater[10];
+float ProbabilitiesForPowerupsNotNearWaterEasy[10]           = { 20, 20, 20, 15, 20, 5, 20, 20, 15, 5 };
+float ProbabilitiesForPowerupsNotNearWaterNormal[10]         = { 19, 19, 19, 19, 19, 5, 18, 15, 12, 8 };
+float ProbabilitiesForPowerupsNotNearWaterHard[10]           = { 18, 18, 18, 18, 18, 10, 17, 10, 9, 10 };
+float ProbabilitiesForPowerupsNotNearWaterNightmare[10]      = { 15, 15, 15, 20, 15, 20, 15, 8, 7, 12 };
+float ProbabilitiesForPowerupsNotNearWaterSuperNightmare[10] = { 12, 12, 12, 24, 12, 28, 12, 5, 5, 17 };
+float ProbabilitiesForPowerupsNotNearWaterUnfair[10]         = { 5, 5, 5, 45, 10, 30, 8, 5, 4, 31 };
+
+void() PowerupsNotNearWaterConverters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToWeaponBiased, ConvertToEmpathyShields, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
+string PowerupsNotNearWaterClassnames[] = { "item_artifact_invulnerability", "item_artifact_super_damage", "item_artifact_invisibility", "item_health", "", "", "item_artifact_empathy_shields", "item_hornofconjuring", "item_powerup_shield", "item_powerup_belt" };
 
 float ProbabilityForWeaponIntoPowerup;
 float ProbabilityForWeaponIntoPowerupEasy           = 3;
@@ -186,6 +201,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupEasy;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupEasy;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackEasy;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoEasy;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupEasy;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoEasy;
     } else if (EndlessCastleMapDifficulty < ThresholdForHard) {
@@ -208,6 +224,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupNormal;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNormal;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNormal;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNormal;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNormal;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNormal;
     } else if (EndlessCastleMapDifficulty < ThresholdForNightmare) {
@@ -230,6 +247,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupHard;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupHard;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackHard;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoHard;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupHard;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoHard;
     } else if (EndlessCastleMapDifficulty < ThresholdForSuperNightmare) {
@@ -252,6 +270,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupNightmare;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupNightmare;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackNightmare;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoNightmare;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupNightmare;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoNightmare;
     } else if (EndlessCastleMapDifficulty < ThresholdForUnfair) {
@@ -274,6 +293,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupSuperNightmare;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupSuperNightmare;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackSuperNightmare;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoSuperNightmare;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupSuperNightmare;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoSuperNightmare;
     } else {
@@ -296,6 +316,7 @@ void() Randomize = {
         ProbabilityToRemovePickup = ProbabilityToRemovePickupUnfair;
         ProbabilityForLowQualityPickup = ProbabilityForLowQualityPickupUnfair;
         ProbabilityForSmallAmmoPack = ProbabilityForSmallAmmoPackUnfair;
+        ProbabilityForAlternateAmmo = ProbabilityForAlternateAmmoUnfair;
         ProbabilityForWeaponIntoPowerup = ProbabilityForWeaponIntoPowerupUnfair;
         ProbabilityForWeaponIntoAmmo = ProbabilityForWeaponIntoAmmoUnfair;
     }
@@ -438,8 +459,6 @@ void() ConvertEntities = {
     }
 	temp = find(world, Converted, "");
     i = 0;
-    if(EndlessCastleMapCount > 0 && temp != world)       // This is to avoid the Endless Castle Stats to double the amount of monsters
-        total_monsters = 0;
     dprint("----- Starting ConvertEntities -----\n");
 	while (temp != world && i < MAX_PER_CALL) // As long as it can find any entity that can be converted
 	{
@@ -454,7 +473,7 @@ void() ConvertEntities = {
                 dprint(". ");
                 if(RandomizeMonsters)
                 {
-                    if(temp.classname == "monster_oldone" || temp.classname == "monster_armagon" || temp.classname == "monster_boss" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
+                    if(temp.classname == "monster_oldone" || temp.classname == "monster_armagon" || temp.classname == "monster_boss" || temp.classname == "monster_dragon" || temp.classname == "item_time_machine" || (temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED))
                     {
                         if(temp.classname == "monster_zombie" && temp.spawnflags & SPAWN_CRUCIFIED)
                         {
@@ -470,6 +489,9 @@ void() ConvertEntities = {
                             temp.angles = '0 0 0';
                             temp.avelocity = '0 0 0';
                         }
+                        // This is to compensate the fact the replacement will ALSO increase the monster count
+                        if(temp.flags & FL_MONSTER)
+                            total_monsters = total_monsters - 1;
                         temp.Converted = "0";
                         temp.Unstuckable = 1;
                         temp.think = SUB_Null;
@@ -524,7 +546,8 @@ void() ConvertEntities = {
                         dprint("Ignored due to randomizer settings.\n");
                     }
                 }
-                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon")
+                else if(temp.classname == "item_shells" || temp.classname == "item_spikes" || temp.classname == "item_rockets" || temp.classname == "item_cells" || temp.classname == "item_weapon"
+                || temp.classname == "item_lava_spikes" || temp.classname == "item_multi_rockets" || temp.classname == "item_plasma")
                 {
                     if(RandomizeWeaponsAndAmmo)
                     {
@@ -554,7 +577,8 @@ void() ConvertEntities = {
                 else if(temp.classname == "item_armorInv" || (temp.classname == "item_health" && (temp.spawnflags & H_MEGA)) 
                 || temp.classname == "item_artifact_invulnerability" || temp.classname == "item_artifact_envirosuit"
                 || temp.classname == "item_artifact_invisibility" || temp.classname == "item_artifact_super_damage"
-                || temp.classname == "item_artifact_wetsuit" || temp.classname == "item_hornofconjuring" || temp.classname == "item_artifact_empathy_shields")
+                || temp.classname == "item_artifact_wetsuit" || temp.classname == "item_hornofconjuring" || temp.classname == "item_artifact_empathy_shields"
+                || temp.classname == "item_powerup_shield" || temp.classname == "item_powerup_belt")
                 {
                     if(RandomizePowerups)
                     {
@@ -707,7 +731,7 @@ void() ConvertToMonsterOnGroundUnbiased = {
     else {        
         rng = Random(1, MonsterUnbiasedSpawnFunctions.length);
     }
-    while(MonsterUnbiasedSpawnFunctions[rng] == ConvertToRotfish)
+    while(MonsterUnbiasedSpawnFunctions[rng] == ConvertToRotfish || MonsterUnbiasedSpawnFunctions[rng] == ConvertToEel)
     {
         if(IsTiedToATrigger(self)) {
             rng = Random(1, MonsterUnbiasedSpawnFunctions.length - 1);
@@ -759,46 +783,40 @@ void() ConvertToMonsterOnWaterUnbiased = {
 // Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react) or if they are tied to a trigger (to prevent potential soft-locks).
 // Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnGroundBiased = {
-    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, distanceToPlayer, weight;
 
     amountOfChoices = ProbabilitiesMonsterToMonsterGround.length;
     distanceToPlayer = vlen(self.origin - playerPosition);
-    
-    maxpossiblerng = 0;
-    for(i = 0; i < ProbabilitiesMonsterToMonsterGround.length; i++)
+
+    // The excluded monsters get a weight of 0 below. The tables themselves are never touched.
+    if(IsTiedToATrigger(self))
     {
-        if(MonsterGroundToGroundClassnames[i] == "trap_spike_mine" && distanceToPlayer < 128)
-        {
-            preventSpikeMines = 1;
-            dprint("Monster at ");
-            dprint(vtos(self.origin));
-            dprint(" is too close to the player at ");
-            dprint(vtos(playerPosition));
-            dprint(" to spawn a Spike Mine in.\n");
-        }
-        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie" || MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
-        {
-            if(IsTiedToATrigger(self))
-            {
-                zombieId = i;
-                preventSpikeMines = 1;
-                preventZombies = 1;
-                ProbabilitiesMonsterToMonsterGround[i] = 0;
-                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
-                dprint("Monster at ");
-                dprint(vtos(self.origin));
-                dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
-            }
-        }
-        else
-        {
-            maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterGround[i];
-        }
+        preventSpikeMines = 1;
+        preventZombies = 1;
+        dprint("Monster at ");
+        dprint(vtos(self.origin));
+        dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
     }
-    if(preventSpikeMines)
-        amountOfChoices = ProbabilitiesMonsterToMonsterGround.length - 1;
-    if(preventZombies)
-        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;
+    else if(distanceToPlayer < 128)
+    {
+        preventSpikeMines = 1;
+        dprint("Monster at ");
+        dprint(vtos(self.origin));
+        dprint(" is too close to the player at ");
+        dprint(vtos(playerPosition));
+        dprint(" to spawn a Spike Mine in.\n");
+    }
+
+    maxpossiblerng = 0;
+    for(i = 0; i < amountOfChoices; i++)
+    {
+        weight = ProbabilitiesMonsterToMonsterGround[i];
+        if(preventSpikeMines && MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
+            weight = 0;
+        if(preventZombies && MonsterGroundToGroundClassnames[i] == "monster_zombie")
+            weight = 0;
+        maxpossiblerng = maxpossiblerng + weight;
+    }
     rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
@@ -806,10 +824,15 @@ void() ConvertToMonsterOnGroundBiased = {
     i = 0;
     while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
-        if(ProbabilitiesMonsterToMonsterGround[i] > 0)
+        weight = ProbabilitiesMonsterToMonsterGround[i];
+        if(preventSpikeMines && MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
+            weight = 0;
+        if(preventZombies && MonsterGroundToGroundClassnames[i] == "monster_zombie")
+            weight = 0;
+        if(weight > 0)
         {
             minrng = maxrng + 1;
-            maxrng = maxrng + ProbabilitiesMonsterToMonsterGround[i];
+            maxrng = maxrng + weight;
             if(rng >= minrng && rng <= maxrng)
             {
                 DONE = 1;
@@ -818,8 +841,6 @@ void() ConvertToMonsterOnGroundBiased = {
         }
         i++;
     }
-    if(preventZombies)
-        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
 };
 
@@ -828,45 +849,40 @@ void() ConvertToMonsterOnGroundBiased = {
 // Prevents spawning Spike Mines less than 128 units near the player (to give them a chance to react) or if they are tied to a trigger (to prevent potential soft-locks).
 // Prevents spawning Zombies if they are tied to a trigger (to prevent potential soft-locks).
 void() ConvertToMonsterOnWaterBiased = {
-    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, zombieId, originalZombieProbability, distanceToPlayer;
+    local float rng, maxpossiblerng, minrng, maxrng, DONE, i, amountOfChoices, preventSpikeMines, preventZombies, distanceToPlayer, weight;
 
-    distanceToPlayer = vlen(self.origin - playerPosition);
     amountOfChoices = ProbabilitiesMonsterToMonsterWater.length;
-    
-    maxpossiblerng = 0;
-    for(i = 0; i < ProbabilitiesMonsterToMonsterWater.length; i++)
+    distanceToPlayer = vlen(self.origin - playerPosition);
+
+    // The excluded monsters get a weight of 0 below. The tables themselves are never touched.
+    if(IsTiedToATrigger(self))
     {
-        if(MonsterWaterToWaterClassnames[i] == "trap_spike_mine" && distanceToPlayer < 128)
-        {
-            preventSpikeMines = 1;
-            dprint("Monster at ");
-            dprint(vtos(self.origin));
-            dprint(" is too close to the player at ");
-            dprint(vtos(playerPosition));
-            dprint(" to spawn a Spike Mine in.\n");
-        }
-        else if(MonsterGroundToGroundClassnames[i] == "monster_zombie" || MonsterGroundToGroundClassnames[i] == "trap_spike_mine")
-        {
-            if(IsTiedToATrigger(self))
-            {
-                zombieId = i;
-                preventZombies = 1;
-                preventSpikeMines = 1;
-                originalZombieProbability = ProbabilitiesMonsterToMonsterGround[i];
-                dprint("Monster at ");
-                dprint(vtos(self.origin));
-                dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
-            }
-        }
-        else
-        {
-            maxpossiblerng = maxpossiblerng + ProbabilitiesMonsterToMonsterWater[i];
-        }
+        preventSpikeMines = 1;
+        preventZombies = 1;
+        dprint("Monster at ");
+        dprint(vtos(self.origin));
+        dprint(" is tied to a trigger. It won't spawn a Zombie or a Spike Mine.\n");
     }
-    if(preventSpikeMines)
-        amountOfChoices = ProbabilitiesMonsterToMonsterWater.length - 1;
-    if(preventZombies)
-        ProbabilitiesMonsterToMonsterGround[zombieId] = 0;        
+    else if(distanceToPlayer < 128)
+    {
+        preventSpikeMines = 1;
+        dprint("Monster at ");
+        dprint(vtos(self.origin));
+        dprint(" is too close to the player at ");
+        dprint(vtos(playerPosition));
+        dprint(" to spawn a Spike Mine in.\n");
+    }
+
+    maxpossiblerng = 0;
+    for(i = 0; i < amountOfChoices; i++)
+    {
+        weight = ProbabilitiesMonsterToMonsterWater[i];
+        if(preventSpikeMines && MonsterWaterToWaterClassnames[i] == "trap_spike_mine")
+            weight = 0;
+        if(preventZombies && MonsterWaterToWaterClassnames[i] == "monster_zombie")
+            weight = 0;
+        maxpossiblerng = maxpossiblerng + weight;
+    }
     rng = Random(1, maxpossiblerng);
     minrng = 0;
     maxrng = 0;
@@ -874,10 +890,15 @@ void() ConvertToMonsterOnWaterBiased = {
     i = 0;
     while(!DONE && minrng < maxpossiblerng && i < amountOfChoices)
     {
-        if(ProbabilitiesMonsterToMonsterWater[i] > 0)
+        weight = ProbabilitiesMonsterToMonsterWater[i];
+        if(preventSpikeMines && MonsterWaterToWaterClassnames[i] == "trap_spike_mine")
+            weight = 0;
+        if(preventZombies && MonsterWaterToWaterClassnames[i] == "monster_zombie")
+            weight = 0;
+        if(weight > 0)
         {
             minrng = maxrng + 1;
-            maxrng = maxrng + ProbabilitiesMonsterToMonsterWater[i];
+            maxrng = maxrng + weight;
             if(rng >= minrng && rng <= maxrng)
             {
                 DONE = 1;
@@ -886,8 +907,6 @@ void() ConvertToMonsterOnWaterBiased = {
         }
         i++;
     }
-    if(preventZombies)
-        ProbabilitiesMonsterToMonsterGround[zombieId] = originalZombieProbability;
     self.nextthink = time;
 };
 
@@ -1003,7 +1022,7 @@ void() ConvertMonsterSpawnOnWaterBiased = {
             if(rng >= minrng && rng <= maxrng)
             {
                 DONE = 1;
-                self.spawnfunction = MonsterGroundToGroundConverters[i];
+                self.spawnfunction = MonsterWaterToWaterConverters[i];
                 self.spawnclassname = MonsterWaterToWaterClassnames[i];
             }
         }
@@ -1077,12 +1096,35 @@ void() ConvertToPickupBiased = {
     self.nextthink = time;
 };
 
+// Dissolution of Eternity: turns the entity into one of the alternate ammos (all equally likely).
+void(float packSize) PickAlternateAmmo = {
+    local float AmmoTypeRng;
+    AmmoTypeRng = Random(1, AlternateAmmoConverters.length);
+    self.QualityType = packSize;
+    self.netname = AlternateAmmoNetNames[AmmoTypeRng - 1];
+    if(!HideInBackpacks)
+    {
+        self.think = AlternateAmmoConverters[AmmoTypeRng - 1];
+    }
+    else
+    {
+        self.PickupType = AmmoTypeRng + 4;          // 5, 6 and 7 follow Shells, Nails, Rockets and Cells
+        self.think = ConvertToAmmoBackpack;
+    }
+    self.nextthink = time;
+};
+
 // Converts ammo of one type to another randomly.
 // Even chance for all ammo types and sizes
 void() ConvertToAmmoUnbiased = {
     local float AmmoTypeRng, AmmoSizeRng;
     AmmoTypeRng = Random(1, 4);
     AmmoSizeRng = Random(1, 2);
+    if(Random(1, 100) <= ProbabilityForAlternateAmmoUnbiased)
+    {
+        PickAlternateAmmo(AmmoSizeRng);
+        return;
+    }
     self.QualityType = AmmoSizeRng;
     self.netname = AmmoNetNames[AmmoTypeRng - 1];
     if(!HideInBackpacks)
@@ -1114,6 +1156,11 @@ void() ConvertToAmmoBiased = {
         AmmoPackSize = 1;
     else
         AmmoPackSize = 2;
+    if(ProbabilityForAlternateAmmo > 0 && Random(1, 100) <= ProbabilityForAlternateAmmo)
+    {
+        PickAlternateAmmo(AmmoPackSize);
+        return;
+    }
     amountOfChoices = ProbabilitiesAmmoTypes.length;
     minrng = 0;
     maxrng = 0;
@@ -1155,7 +1202,7 @@ void() ConvertToAmmoBiased = {
 // Equal chance for a Megahealth, Red Armor, Pentagram of Protection, Quad Damage, Ring of Shadows, Biosuit, Empathy Shields, Wetsuit or Horn of Conjuring
 void() ConvertToPowerupUnbiased = {
     local float rng;
-    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring };
+    local void() Converters[] = { ConvertToPentagramOfProtection, ConvertToQuadDamage, ConvertToRingOfShadows, ConvertToHealth, ConvertToArmor, ConvertToBiosuit, ConvertToEmpathyShields, ConvertToWetsuit, ConvertToHornOfConjuring, ConvertToPowerShield, ConvertToAntiGravBelt };
     rng = Random(1, Converters.length);
     if(rng == 4 || rng == 5)
         self.QualityType = 3;

@@ -9,9 +9,10 @@ void (vector org, entity death_owner) spawn_tdeath;
 void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
-    float rocket_bits, float cell_bits) EncodeParms;
+    float rocket_bits, float cell_bits,
+    float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms;
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags;
+	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags;
 
 float	modelindex_eyes, modelindex_player, modelindex_hammer;
 
@@ -38,8 +39,9 @@ void() info_intermission =
 
 void() SetChangeParms =
 {    
-    float item_bits, health_bits, armor_bits, armor_type;
+    float item_bits, kept_items, health_bits, armor_bits, armor_type;
     float shell_bits, nail_bits, rocket_bits, cell_bits;
+    float lava_nail_bits, multi_rocket_bits, plasma_bits;
 	float hasLaserCannon, hasMjolnir, hasProximityGun;
  
     if (self.health <= 0) 
@@ -52,17 +54,18 @@ void() SetChangeParms =
 	hasMjolnir = self.items & IT_MJOLNIR;
 	hasProximityGun = self.items & IT_PROXIMITY_GUN;
 
-	// keep only bits 2 through 7
-    self.items = self.items & 126;
+	// keep only bits 2 through 7. This works on a copy: .items itself must stay untouched in case this is
+	// called while the player is still playing (a save, for instance), or the Shotgun, keys and powerups would be lost
+    kept_items = self.items & 126;
 
 	if(hasLaserCannon)
-		self.items = self.items | 128;
+		kept_items = kept_items | 128;
 	if(hasMjolnir)
-		self.items = self.items | 256;
+		kept_items = kept_items | 256;
 	if(hasProximityGun)
-		self.items = self.items | 512;
+		kept_items = kept_items | 512;
 
-    item_bits = self.items * 0.5;
+    item_bits = kept_items * 0.5;
 
 	if (IsRemastered() && skill == 3 && !deathmatch)
 		self.max_health = 50;
@@ -86,22 +89,30 @@ void() SetChangeParms =
     armor_type = (self.armortype > 0) + (self.armortype > 0.3)
                  + (self.armortype > 0.6);
  
-    if (self.ammo_shells < 25)
+    if (self.ammo_standard_shells < 25)
         shell_bits = 25;
     else
-        shell_bits = floor(self.ammo_shells) & 127;
-    nail_bits = floor(self.ammo_nails) & 255;
-    rocket_bits = floor(self.ammo_rockets) & 127;
-    cell_bits = floor(self.ammo_cells) & 127;
- 
+        shell_bits = floor(self.ammo_standard_shells) & 127;
+    nail_bits = floor(self.ammo_standard_nails) & 255;
+    rocket_bits = floor(self.ammo_standard_rockets) & 127;
+    cell_bits = floor(self.ammo_standard_cells) & 127;
+
+	// Dissolution of Eternity: only the alternate ammo is kept between levels.
+	// The Lava, Multi and Plasma weapons are not, DecodeLevelParms grants them
+	// again from the base weapon plus its alternate ammo.
+    lava_nail_bits = floor(self.ammo_lava_nails) & 255;
+    multi_rocket_bits = floor(self.ammo_multi_rockets) & 127;
+    plasma_bits = floor(self.ammo_plasma) & 127;
+
     EncodeParms(item_bits, health_bits, armor_bits, armor_type,
-                shell_bits, nail_bits, rocket_bits, cell_bits);
+                shell_bits, nail_bits, rocket_bits, cell_bits,
+                lava_nail_bits, multi_rocket_bits, plasma_bits);
 
     parm4 = self.weapon;
 	parm5 = floor(SpawnedWeapons / 2);
 	parm6 = EndlessCastleMapCount;
 	
-	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleDifficultyLevel);
+	EncodeEndlessCastleFlags(EndlessCastleEpisode1Flags, EndlessCastleEpisode2Flags, EndlessCastleEpisode3Flags, EndlessCastleEpisode4Flags, EndlessCastleEpisode5Flags, EndlessCastleEpisode6Flags, EndlessCastleDifficultyLevel);
 
 	parm10 = EndlessCastleSeed;
 	parm11 = EndlessCastleElapsedTime;
@@ -116,25 +127,27 @@ void() SetChangeParms =
 void(float item_bits, float health_bits,
     float armor_bits, float armor_type,
     float shell_bits, float nail_bits,
-    float rocket_bits, float cell_bits) EncodeParms =
+    float rocket_bits, float cell_bits,
+    float lava_nail_bits, float multi_rocket_bits, float plasma_bits) EncodeParms =
 {
     parm1 = armor_bits + 256 * shell_bits + 256 * 128 * nail_bits;
     parm2 = health_bits + 64 * armor_type + 256 * rocket_bits
             + 256 * 128 * cell_bits;
     parm3 = item_bits;
+    parm16 = lava_nail_bits + 256 * multi_rocket_bits + 256 * 128 * plasma_bits;
 }
 
 void(float episode1_flags, float episode2_flags, float episode3_flags, 
-	float episode4_flags, float difficulty_level) EncodeEndlessCastleFlags =
+	float episode4_flags, float episode5_flags, float episode6_flags, float difficulty_level) EncodeEndlessCastleFlags =
 {
-    parm7 = episode1_flags + 8192 * episode4_flags;
-    parm8 = episode2_flags;
-    parm9 = (difficulty_level & 7) + 8 * episode3_flags;  // 3 bits for difficulty level + 14 bits for episode3_flags
+    parm7 = episode1_flags + 256 * episode2_flags + 256 * 128 * episode4_flags;  // 8 bits for episode1_flags + 7 bits for episode2_flags + 8 bits for episode4_flags
+    parm8 = episode3_flags + 256 * episode6_flags;  // 8 bits for episode3_flags + 16 bits for episode6_flags
+    parm9 = (difficulty_level & 7) + 8 * episode5_flags;  // 3 bits for difficulty level + 14 bits for episode5_flags
 };
 
 void() SetNewParms =
 {
-    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0);
+    EncodeParms(0, 50, 0, 0, 25, 0, 0, 0, 0, 0, 0);
 };
 
 void() DecodeLevelParms =
@@ -145,17 +158,21 @@ void() DecodeLevelParms =
         if (world.model == "maps/start.bsp")
             SetNewParms ();     // take away all stuff on starting new episode
     }
+
+	// Dissolution of Eternity: the second half starts from scratch
+	if (world.model == "maps/r2m1.bsp" && !deathmatch && parm6 == 0)	// not in the Endless Castle, parm6 is its level count
+		SetNewParms ();
  
     bits = parm1 & 255;
     self.armorvalue = bits;
     parm1 = (parm1 - bits) / 256;
  
     bits = parm1 & 127;
-    self.ammo_shells = bits;
+    self.ammo_standard_shells = bits;
     parm1 = (parm1 - bits) / 128;
  
     bits = parm1 & 255;
-    self.ammo_nails = bits;
+    self.ammo_standard_nails = bits;
  
     bits = parm2 & 63;
 	
@@ -191,11 +208,11 @@ void() DecodeLevelParms =
     parm2 = (parm2 - bits) / 4;
  
     bits = parm2 & 127;
-    self.ammo_rockets = bits;
+    self.ammo_standard_rockets = bits;
     parm2 = (parm2 - bits) / 128;
  
     bits = parm2 & 127;
-    self.ammo_cells = bits;
+    self.ammo_standard_cells = bits;
  
     bits = (parm3 & 1023) * 2;
 	if(bits & 128)
@@ -212,23 +229,28 @@ void() DecodeLevelParms =
 	self.items2 = 0; // Armagon powerups are never kept
 
     self.weapon = parm4;
-    W_SetCurrentAmmo ();
 
     SpawnedWeapons = parm5 * 2;
 	EndlessCastleMapCount = parm6;
 	
-	bits = parm7 & 8191;
+	bits = parm7 & 255;
     EndlessCastleEpisode1Flags = bits;
-    parm7 = (parm7 - bits) / 8192;
+    parm7 = (parm7 - bits) / 256;
+
+    bits = parm7 & 127;
+    EndlessCastleEpisode2Flags = bits;
+    parm7 = (parm7 - bits) / 128;
 
     EndlessCastleEpisode4Flags = parm7 & 255;
 	
-    EndlessCastleEpisode2Flags = parm8 & 8191;
+    bits = parm8 & 255;
+    EndlessCastleEpisode3Flags = bits;
+    EndlessCastleEpisode6Flags = (parm8 - bits) / 256;
 	
     EndlessCastleDifficultyLevel = parm9 & 7;
     parm9 = (parm9 - EndlessCastleDifficultyLevel) / 8;
 
-    EndlessCastleEpisode3Flags = parm9 & 16383;
+    EndlessCastleEpisode5Flags = parm9 & 16383;
 
 	EndlessCastleSeed = parm10;
 	EndlessCastleElapsedTime = parm11;
@@ -236,6 +258,37 @@ void() DecodeLevelParms =
 	EndlessCastleDeadMonsters = parm13;
 	EndlessCastleTotalSecrets = parm14;
 	EndlessCastleFoundSecrets = parm15;
+
+	bits = parm16 & 255;
+	self.ammo_lava_nails = bits;
+	parm16 = (parm16 - bits) / 256;
+
+	bits = parm16 & 127;
+	self.ammo_multi_rockets = bits;
+	parm16 = (parm16 - bits) / 128;
+
+	self.ammo_plasma = parm16 & 127;
+
+	// Dissolution of Eternity combo weapons are granted by the base weapon plus its alternate ammo
+	self.rog_items = 0;
+	if (self.ammo_lava_nails > 0)
+	{
+		if (self.items & IT_NAILGUN)
+			self.rog_items = self.rog_items | RIT_LAVA_NAILGUN;
+		if (self.items & IT_SUPER_NAILGUN)
+			self.rog_items = self.rog_items | RIT_LAVA_SUPER_NAILGUN;
+	}
+	if (self.ammo_multi_rockets > 0)
+	{
+		if (self.items & IT_GRENADE_LAUNCHER)
+			self.rog_items = self.rog_items | RIT_MULTI_GRENADE;
+		if (self.items & IT_ROCKET_LAUNCHER)
+			self.rog_items = self.rog_items | RIT_MULTI_ROCKET;
+	}
+	if (self.ammo_plasma > 0 && (self.items & IT_LIGHTNING))
+		self.rog_items = self.rog_items | RIT_PLASMA_GUN;
+
+	W_SetCurrentAmmo ();	// Reads the alternate ammo, so it has to come after parm16
 };
 
 
@@ -459,6 +512,13 @@ void() ExitIntermission =
 			WriteString (MSG_ALL, "After the last echoes of Armagon's\ndeath yell fade away, you breathe a\nheavy sigh of relief.  With the loss\nof his magic, Armagon's fortress\nbegins to collapse.  The rift he\ncreated to send his grisly troops\nthrough time slowly closes and seals\nitself forever.  In the chaos that\nensues, a wall collapses, revealing\none remaining time portal.  With your\nchances to escape rapidly growing\nslim, you race for the portal,\nmindless of your destination.  In a\nflash of light, you find yourself\nback at Command HQ, safe and sound." );
 			//WriteString (MSG_ALL, "Congratulations!  You are victorious!\nThe minions of Quake have once again\nfallen before your mighty hand.\nIs this the last you will see of\nQuake's hellions?\n\nOnly time will tell..." );
 			//intermission_exittime = time + 10000000;  // never allow exit
+			return;
+		}
+		else if (world.model == "maps/r1m7.bsp")
+		{
+			// Dissolution of Eternity
+			WriteByte (MSG_ALL, SVC_FINALE);
+			WriteString (MSG_ALL, "Victory! The Overlord's mangled\nremains are the evidence.  His evil\nWrath army?  Cast out to wander\naimlessly throughout time.\n\nAs the Slipgate fog surrounds you,\nthoughts rage into your consciousness:\nHas Quake's oppressive reign ended?\nIs it Salvation, or Damnation, which\nwaits beyond the Vortex?\n\nAnother thought, not quite your own,\nrazors through the haze.  \"Forgiveness\ncan yet be granted; Our Master remains\nto absolve your sins against his Chosen.\nFall down upon your knees-pray for\nQuake's mercy.\"");
 			return;
 		}
 		GotoNextMap();
@@ -814,6 +874,9 @@ void() PutClientInServer =
 	self.wetsuit_finished = 0;
 	//MED
 	self.empathy_finished = 0;
+	//Dissolution of Eternity
+	self.shield_finished = 0;
+	self.antigrav_finished = 0;
 	//MED
 	self.items2 = 0;
 	self.gravity = 1.0;
@@ -1324,6 +1387,23 @@ void() PlayerPreThink =
       earthquake_prethink();
 //      }
 
+	// Dissolution of Eternity: a level-wide earthquake shakes the player (Hipnotic's earthquakes are the ones above)
+	if (earthquake_active)
+	{
+		if ( self.flags & FL_ONGROUND )
+		{
+			self.velocity_x = self.velocity_x +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+			self.velocity_y = self.velocity_y +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+			self.velocity_z = self.velocity_z +
+								(random() * earthquake_intensity * 2) -
+								earthquake_intensity;
+		}
+	}
+
 	makevectors (self.v_angle);		// is this still used
 
 	CheckRules ();
@@ -1404,6 +1484,18 @@ void() PlayerPreThink =
 // teleporters can force a non-moving pause time
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
+
+// Dissolution of Eternity: the Anti-Grav Belt pings every few seconds
+	if (self.rog_items & RIT_ANTIGRAV)
+	{
+		if ( time > self.AGping )
+		{
+			sound ( self, CHAN_AUTO, "belt/use.wav", 0.4, ATTN_NORM);
+			self.AGping = time + 3;
+			if(self.AGping >= (self.antigrav_finished - 3))
+				self.AGping = self.antigrav_finished + 3;
+		}
+	}
 
    	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE && self.weapon != IT_MJOLNIR)
 	{
@@ -1636,6 +1728,59 @@ void() CheckPowerups =
 		else
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
    }
+
+// Dissolution of Eternity: Power Shield
+	if(self.shield_finished)
+	{
+		if ( self.shield_finished < time + 3)
+		{
+			if (self.shield_time == 1)
+			{
+				sprint (self, "Shield failing...\n");
+				sound (self, CHAN_AUTO, "shield/fadeout.wav", 1, ATTN_NORM);
+				self.shield_time = 0;
+			}
+			if (self.shield_time < time)
+			{
+				self.shield_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if ( self.shield_finished < time)
+		{
+			sprint (self, "Shield Lost.\n");
+			self.shield_finished = 0;
+			self.rog_items = self.rog_items - (self.rog_items & RIT_SHIELD);
+		}
+	}
+
+// Dissolution of Eternity: Anti-Grav Belt
+	if(self.antigrav_finished)
+	{
+		if ( self.antigrav_finished < time + 3)
+		{
+			if (self.antigrav_time == 1)
+			{
+				sprint (self, "Antigrav failing...\n");
+				self.antigrav_time = 0;
+				sound (self, CHAN_AUTO, "belt/fadeout.wav", 1, ATTN_NORM);
+			}
+			if (self.antigrav_time < time)
+			{
+				self.antigrav_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if ( self.antigrav_finished < time)
+		{
+			sprint (self, "Antigrav Lost.\n");
+			self.antigrav_finished = 0;
+			self.rog_items = self.rog_items - (self.rog_items & RIT_ANTIGRAV);
+			self.gravity = 1.0;
+		}
+	}
 };
 
 
@@ -1680,6 +1825,10 @@ void() PlayerPostThink =
 	if (self.deadflag)
 		return;
 
+	// Dissolution of Eternity: the ending cutscene
+	if (cutscene_running)
+		xpackEnding ();
+
 // do weapon stuff
 
 	W_WeaponFrame ();
@@ -1705,6 +1854,9 @@ void() PlayerPostThink =
 		self.jump_flag = self.velocity_z;
 
 	CheckPowerups ();
+
+	// Dissolution of Eternity: last thing of the frame, so the status bar gets the final ammo of the frame
+	UpdateAmmoCounts (self);
 };
 
 
@@ -1944,6 +2096,22 @@ void(entity targ, entity attacker) ClientObituary =
                deathstring = " was slammed by ";
                deathstring2 = "'s hammer\n";
 				}
+//Dissolution of Eternity
+				if (rnum == ROGW_LAVA_NAILGUN || rnum == ROGW_LAVA_SUPER_NAILGUN)
+				{
+					deathstring = " was burned by ";
+					deathstring2 = "\n";
+				}
+				if (rnum == ROGW_PLASMA_GUN)
+				{
+					deathstring = " was fused by ";
+					deathstring2 = "\n";
+				}
+				if (rnum == ROGW_MULTI_GRENADE || rnum == ROGW_MULTI_ROCKET)
+				{
+					deathstring = " was blasted to bits by ";
+					deathstring2 = "\n";
+				}
             bprint (targ.netname);
 				bprint (deathstring);
 				bprint (attacker.netname);
@@ -2006,7 +2174,9 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_dog")
 					bprint (" was mauled by a Rottweiler\n");
 				if (attacker.classname == "monster_dragon")
-					bprint (" was fried by a Dragon\n");
+					bprint (" was annihilated by the Dragon\n");
+				if (attacker.classname == "monster_dragon_dead")
+					bprint (" was squashed by the Dragon\n");
 				if (attacker.classname == "monster_enforcer")
 					bprint (" was blasted by an Enforcer\n");
 				if (attacker.classname == "monster_fish")
@@ -2043,7 +2213,21 @@ void(entity targ, entity attacker) ClientObituary =
 //MED
             if (attacker.classname == "monster_armagon")
                bprint (" was outgunned by Armagon\n");
-
+//Dissolution of Eternity
+			if (attacker.classname == "monster_eel")
+				bprint (" was electrified by an Eel\n");
+			if (attacker.classname == "monster_wrath")
+				bprint (" was disintegrated by a Wrath\n");
+			if (attacker.classname == "monster_super_wrath")
+				bprint (" was obliterated by an Overlord\n");
+			if (attacker.classname == "monster_lava_man")
+				bprint (" fries in Hephaestus' fury\n");
+			if (attacker.classname == "monster_morph")
+				bprint (" was crushed by a Guardian\n");
+			if (attacker.classname == "monster_mummy")
+				bprint (" was mummified\n");
+			if (attacker.classname == "monster_sword")
+				bprint (" was slit open by a Phantom Swordsman\n");
 				return;
 			}
 			if (attacker.classname == "explo_box")
@@ -2070,6 +2254,26 @@ void(entity targ, entity attacker) ClientObituary =
 			if (attacker.classname == "fireball")
 			{
 				bprint (" ate a lavaball\n");
+				return;
+			}
+			if (attacker.classname == "ltrail_start" || attacker.classname == "ltrail_relay")
+			{
+				bprint (" rode the lightning\n");
+				return;
+			}
+			if (attacker.classname == "pendulum")
+			{
+				bprint (" was cleaved in two\n");
+				return;
+			}
+			if (attacker.classname == "buzzsaw")
+			{
+				bprint (" was sliced to pieces\n");
+				return;
+			}
+			if (attacker.classname == "plasma")
+			{
+				bprint (" was turned to plasma\n");
 				return;
 			}
 			if (attacker.classname == "trigger_changelevel")

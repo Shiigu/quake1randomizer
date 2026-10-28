@@ -1,4 +1,5 @@
 void() precache_everything;
+void() ConvertToMonster;
 // MONSTERS
 void() ConvertToFiend;
 void() ConvertToDog;
@@ -16,6 +17,14 @@ void() ConvertToZombie;
 void() ConvertToCentroid;
 void() ConvertToGremlin;
 void() ConvertToSpikeMine;
+void() ConvertToWrath;
+void() ConvertToMummy;
+void() ConvertToEel;
+void() ConvertToHellSpawn;
+void() ConvertToMultiGrenadeOgre;
+void() ConvertToKnightStatue;
+void() ConvertToDeathKnightStatue;
+void() ConvertToPhantomSwordsman;
 // SPAWN
 void(entity e) ConvertFuncSpawn;
 // PICKUPS
@@ -26,6 +35,9 @@ void() ConvertToShells;
 void() ConvertToNails;
 void() ConvertToRockets;
 void() ConvertToCells;
+void() ConvertToLavaNails;
+void() ConvertToMultiRockets;
+void() ConvertToPlasma;
 // POWERUPS
 void() ConvertToPentagramOfProtection;
 void() ConvertToBiosuit;
@@ -33,6 +45,8 @@ void() ConvertToRingOfShadows;
 void() ConvertToQuadDamage;
 void() ConvertToEmpathyShields;
 void() ConvertToHornOfConjuring;
+void() ConvertToPowerShield;
+void() ConvertToAntiGravBelt;
 void() ConvertToWetsuit;
 // WEAPONS
 void() ConvertToDoubleBarrelledShotgun;
@@ -274,6 +288,110 @@ void() precache_everything =
 	precache_sound ("hipitems/horn.wav");
 	
 	precache_model ("progs/playham.mdl");
+
+	// Dissolution of Eternity
+	precache_model ("progs/wrath.mdl");
+	precache_model ("progs/w_ball.mdl");
+	precache_model ("progs/wrthgib1.mdl");
+	precache_model ("progs/wrthgib2.mdl");
+	precache_model ("progs/wrthgib3.mdl");
+	precache_sound ("wrath/wsee.wav");
+	precache_sound ("wrath/watt.wav");
+	precache_sound ("wrath/wpain.wav");
+	precache_sound ("wrath/wdthc.wav");
+	precache_model ("progs/lavaman.mdl");
+	precache_model ("progs/lavaball.mdl");
+	precache_sound ("misc/power.wav");
+	precache_sound ("boss1/out1.wav");
+	precache_sound ("boss1/sight1.wav");
+	precache_sound ("boss1/throw.wav");
+	precache_sound ("boss1/pain.wav");
+	precache_sound ("boss1/death.wav");
+	precache_model ("progs/mummy.mdl");
+	precache_model ("progs/h_zombie.mdl");
+	precache_model ("progs/zom_gib.mdl");
+	precache_sound ("zombie/z_idle.wav");
+	precache_sound ("zombie/z_idle1.wav");
+	precache_sound ("zombie/z_shot1.wav");
+	precache_sound ("zombie/z_gib.wav");
+	precache_sound ("zombie/z_pain.wav");
+	precache_sound ("zombie/z_pain1.wav");
+	precache_sound ("zombie/z_fall.wav");
+	precache_sound ("zombie/z_miss.wav");
+	precache_sound ("zombie/z_hit.wav");
+	precache_sound ("zombie/idle_w2.wav");
+	precache_model ("progs/eel2.mdl");
+	precache_model ("progs/eelgib.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_sound ("eel/edie3r.wav");
+	precache_sound ("eel/epain3.wav");
+	precache_sound ("eel/eactive1.wav");
+	precache_sound ("eel/eatt1.wav");
+	precache_sound ("eel/eelc5.wav");
+	precache_model ("progs/s_wrath.mdl");
+	precache_model ("progs/s_wrtgb1.mdl");
+	precache_model ("progs/s_wrtgb2.mdl");
+	precache_model ("progs/s_wrtgb3.mdl");
+	precache_sound ("s_wrath/smash.wav");
+	precache_model ("progs/morph_az.mdl");
+	precache_model ("progs/morph_eg.mdl");
+	precache_model ("progs/morph_gr.mdl");
+	precache_model2 ("progs/laser.mdl");
+	precache_sound2 ("enforcer/enfire.wav");
+	precache_sound2 ("guard/death.wav");
+	precache_sound2 ("guard/pain1.wav");
+	precache_sound2 ("guard/see1.wav");
+	precache_model ("maps/b_lnail0.bsp");
+	precache_model ("maps/b_lnail1.bsp");
+	precache_model ("maps/b_mrock0.bsp");
+	precache_model ("maps/b_mrock1.bsp");
+	precache_model ("maps/b_plas0.bsp");
+	precache_model ("maps/b_plas1.bsp");
+	precache_model ("progs/shield.mdl");
+	precache_model ("progs/p_shield.mdl");
+	precache_sound ("shield/pickup.wav");
+	precache_sound ("shield/hit.wav");
+	precache_sound ("shield/fadeout.wav");
+	precache_sound ("enforcer/enfstop.wav");
+	precache_model ("progs/beltup.mdl");
+	precache_sound ("belt/pickup.wav");
+	precache_sound ("belt/use.wav");
+	precache_sound ("belt/fadeout.wav");
+	precache_model ("progs/v_lava.mdl");
+	precache_model ("progs/v_lava2.mdl");
+	precache_model ("progs/v_multi.mdl");
+	precache_model ("progs/v_multi2.mdl");
+	precache_model ("progs/v_plasma.mdl");
+	precache_model ("progs/lspike.mdl");
+	precache_model ("progs/rockup.mdl");
+	precache_model ("progs/rockup_d.mdl");
+	precache_sound ("lavagun/snail.wav");
+	precache_sound ("plasma/fire.wav");
+	precache_sound ("weapons/bounce.wav");
+	precache_sound2 ("blob/mytosis.wav");
+	precache_model ("progs/mervup.mdl");
+	precache_model ("progs/statgib1.mdl");
+	precache_model ("progs/statgib2.mdl");
+	precache_model ("progs/statgib3.mdl");
+	precache_sound ("statue/see.wav");
+	precache_sound ("statue/idle.wav");
+	precache_sound ("statue/pain.wav");
+	precache_sound ("statue/death.wav");
+	precache_model ("progs/sword.mdl");
+	precache_model ("progs/dragon.mdl");
+	precache_model ("progs/fireball.mdl");
+	precache_model ("progs/drggib01.mdl");
+	precache_model ("progs/drggib02.mdl");
+	precache_model ("progs/drggib03.mdl");
+	precache_sound ("dragon/see.wav");
+	precache_sound ("dragon/active.wav");
+	precache_sound ("dragon/attack.wav");
+	precache_sound ("dragon/pain.wav");
+	precache_sound ("dragon/death.wav");
+	precache_model ("progs/plasma.mdl");
+	precache_sound ("plasma/flight.wav");
+	precache_sound ("plasma/explode.wav");
+	precache_sound ("weapons/lhit.wav");
 };
 
 // START MONSTERS
@@ -554,6 +672,10 @@ void() ConvertToDeathKnight =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 250;
 	self.classname = "monster_hell_knight";
+	// Dissolution of Eternity: never inherit the Statue flag or skin from the original monster
+	if (self.spawnflags & SPAWN_STATUE)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_STATUE);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -615,6 +737,10 @@ void() ConvertToKnight =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 75;
 	self.classname = "monster_knight";
+	// Dissolution of Eternity: never inherit the Statue flag or skin from the original monster
+	if (self.spawnflags & SPAWN_STATUE)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_STATUE);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -676,6 +802,10 @@ void() ConvertToOgre =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 200;
 	self.classname = "monster_ogre";
+	// Dissolution of Eternity: never inherit the Multi-Grenade flag or skin from the original monster
+	if (self.spawnflags & OGRE_BOSS)
+		self.spawnflags = self.spawnflags - (self.spawnflags & OGRE_BOSS);
+	self.skin = 0;
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -921,6 +1051,7 @@ void() ConvertToSpawn =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 	self.health = 80;
 	self.classname = "monster_tarbaby";
+	self.skin = 0;		// Dissolution of Eternity: never inherit a Hell Spawn skin from the original monster
 	self.frame = $stand1;
 	
 	self.touch = SUB_Null;	
@@ -1061,7 +1192,7 @@ void() ConvertToZombie =
 	self.th_pain = zombie_pain;
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
-	self.th_melee = zombie_missile;
+	self.th_melee = zombie_missile;		// Strangely necessary or it won't attack to enemies next to it
 	self.yaw_speed = 60;
 	self.attack_state = 0;
 	self.state = 0;
@@ -1200,6 +1331,595 @@ void() ConvertToGremlin =
 	self.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
 	RegisterEntity(self.EntityDisplayName);
 	walkmonster_start();
+};
+
+// Replaces entity with a Power Shield
+void() ConvertToPowerShield =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = newitems_touch;
+	self.classname = "item_powerup_shield";
+	self.noise = "shield/pickup.wav";
+	setmodel (self, "progs/shield.mdl");
+	self.netname = "Power Shield";
+	self.items = 0;			// newitems_touch hands out .items too, so don't keep the old powerup's bit
+	self.rog_items = RIT_SHIELD;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_POWER_SHIELD);
+};
+
+// Replaces entity with an Anti-Grav Belt
+void() ConvertToAntiGravBelt =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = newitems_touch;
+	self.classname = "item_powerup_belt";
+	self.noise = "belt/pickup.wav";
+	setmodel (self, "progs/beltup.mdl");
+	self.netname = "Anti-Grav Belt";
+	self.items = 0;			// see ConvertToPowerShield
+	self.rog_items = RIT_ANTIGRAV;
+	self.skin = 0;
+	setsize (self, '-16 -16 -24', '16 16 32');
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+	RegisterEntity(ENTITY_DISPLAY_NAME_ANTI_GRAV_BELT);
+};
+
+// Replaces entity with a Hell Spawn
+void() ConvertToHellSpawn =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/tarbaby.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	// Like the Hell Spawn of the original game: a smaller one (skin 1) or a tougher one (skin 2)
+	if (Random(1, 3) == 1)
+	{
+		self.skin = 2;
+		self.health = 100;
+	}
+	else
+	{
+		self.skin = 1;
+		self.health = 60;
+	}
+	self.classname = "monster_tarbaby";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = tbaby_stand1;
+	self.th_walk = tbaby_walk1;
+	self.th_run = tbaby_run1;
+	self.th_missile = tbaby_jump1;
+	self.th_melee = tbaby_jump1;
+	self.th_die = tbaby_die1;
+	self.th_pain = tbaby_mitosis;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_HELL_SPAWN;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Multi-Grenade Ogre
+void() ConvertToMultiGrenadeOgre =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/ogre.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | OGRE_BOSS;
+	self.skin = 1;
+	self.health = 200;
+	self.classname = "monster_ogre";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = ogre_stand1;
+	self.th_walk = ogre_walk1;
+	self.th_run = ogre_run1;
+	self.th_die = ogre_die;
+	self.th_melee = ogre_melee;
+	self.th_missile = ogre_nail1;
+	self.th_pain = ogre_pain;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MULTI_GRENADE_OGRE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Knight Statue
+void() ConvertToKnightStatue =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/knight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | SPAWN_STATUE;
+	self.skin = 1;
+	self.health = 75;
+	self.classname = "monster_knight";
+	self.frame = 44;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	// It looks for a player while it is frozen, and knight_wake brings it to life once it finds one
+	self.th_stand = knight_statue1;
+	self.th_walk = knight_statue1;
+	self.th_run = knight_wake;
+	self.th_melee = knight_atk1;
+	self.th_pain = knight_pain;
+	self.th_die = knight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_KNIGHT_STATUE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Death Knight Statue
+void() ConvertToDeathKnightStatue =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/hknight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.spawnflags = self.spawnflags | SPAWN_STATUE;
+	self.skin = 1;
+	self.health = 250;
+	self.classname = "monster_hell_knight";
+	self.frame = 73;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	// It looks for a player while it is frozen, and hknight_wake brings it to life once it finds one
+	self.th_stand = hknight_statue1;
+	self.th_walk = hknight_statue1;
+	self.th_run = hknight_wake;
+	self.th_melee = hknight_melee;
+	self.th_missile = hknight_magicc1;
+	self.th_pain = hknight_pain;
+	self.th_die = hknight_die;
+	self.yaw_speed = 60;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_DEATH_KNIGHT_STATUE;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Phantom Swordsman
+void() ConvertToPhantomSwordsman =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/sword.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	self.health = 150;
+	self.classname = "monster_sword";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = sword_stand1;
+	self.th_walk = sword_walk1;
+	self.th_run = sword_pause;
+	self.th_melee = sword_atk1;
+	self.th_die = sword_die;
+	self.th_pain = sword_pain;
+	self.delay = Random(5000, 30000) / 10000.0;			// by default, Phantom Swordsmen have a wait period, either map dependent or 10 seconds (it's a scare mechanic), so we randomize it for unpredictability
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_PHANTOM_SWORDSMAN;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with a Wrath
+void() ConvertToWrath =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/wrath.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+	if (!(self.flags & FL_FLY))
+		self.flags = self.flags | FL_FLY;
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 400;
+	self.classname = "monster_wrath";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = wrath_stand1;
+	self.th_walk = wrath_walk01;
+	self.th_run = wrath_run01;
+	self.th_melee = wrath_attack;		// Strangely necessary or it won't attack to enemies next to it
+	self.th_missile = wrath_attack;
+	self.th_pain = wrath_pain;
+	self.th_die = wrath_die02;
+	self.yaw_speed = 35;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_WRATH;
+	RegisterEntity(self.EntityDisplayName);
+	flymonster_start ();
+};
+
+// Replaces entity with a Mummy
+void() ConvertToMummy =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	// Just like Zombies, Mummies fall down and get back up, so they can't be tied to a trigger
+	// (to prevent potential soft-locks). Roll again for something else.
+	if (IsTiedToATrigger(self))
+	{
+		self.think = ConvertToMonster;
+		self.nextthink = time;
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/mummy.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+	if (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG))
+		self.spawnflags = self.spawnflags - (self.spawnflags & (MUMMY_LYING | MUMMY_STRONG));
+
+	self.health = 500;
+	self.classname = "monster_mummy";
+	self.frame = $stand1;
+	self.inpain = 0;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = mummy_stand1;
+	self.th_walk = mummy_walk1;
+	self.th_run = mummy_run1;
+	self.th_pain = mummy_pain;
+	self.th_die = mummy_die;
+	self.th_missile = mummy_missile;
+	self.th_melee = mummy_missile;		// Strangely necessary or it won't attack to enemies next to it
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MUMMY;
+	RegisterEntity(self.EntityDisplayName);
+	walkmonster_start();
+};
+
+// Replaces entity with an Eel
+void() ConvertToEel =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	// Eels die as soon as they are out of plain water (slime and lava included), so they are only
+	// allowed to spawn in water. Roll again for something else otherwise.
+	if (pointcontents(self.origin) != CONTENT_WATER)
+	{
+		self.think = ConvertToMonster;
+		self.nextthink = time;
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/eel2.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (self.flags & FL_ONGROUND)
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (!(self.flags & FL_SWIM))
+		self.flags = self.flags | FL_SWIM;
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 60;
+	self.classname = "monster_eel";
+	self.frame = $stand1;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = eel_stand1;
+	self.th_walk = eel_walk1;
+	self.th_run = eel_run1;
+	self.th_die = eel_death;
+	self.th_pain = eel_pain1;
+	self.th_melee = eel_attack1;
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	// The Eel's pitch wobble (see eel_pitch_change)
+	self.delay = time + random() * 6;
+	self.weapon = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityDisplayName = ENTITY_DISPLAY_NAME_EEL;
+	RegisterEntity(self.EntityDisplayName);
+	swimmonster_start ();
 };
 
 // Replaces entity with a Spike Mine
@@ -1888,72 +2608,72 @@ void() ConvertToWeaponBackpack =
 	dprint(" to ");
 
 	self.items = self.PickupType;
-	self.ammo_shells = 0;
-	self.ammo_nails = 0;
-	self.ammo_rockets = 0;
-	self.ammo_cells = 0;
+	self.ammo_standard_shells = 0;
+	self.ammo_standard_nails = 0;
+	self.ammo_standard_rockets = 0;
+	self.ammo_standard_cells = 0;
 	self.skin = 0;
 	if (self.PickupType == IT_SUPER_SHOTGUN)
 	{
 		self.classname = "item_backpack_supershotgun";
 		self.netname = "Double-barrelled Shotgun";
-		self.ammo_shells = 5;
+		self.ammo_standard_shells = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_DOUBLE_BARRELED_SHOTGUN);
 	}
 	else if (self.PickupType == IT_NAILGUN)
 	{
 		self.classname = "item_backpack_nailgun";
 		self.netname = "Nailgun";
-		self.ammo_nails = 30;
+		self.ammo_standard_nails = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILGUN);
 	}
 	else if (self.PickupType == IT_SUPER_NAILGUN)
 	{
 		self.classname = "item_backpack_supernailgun";
 		self.netname = "Super Nailgun";
-		self.ammo_nails = 30;
+		self.ammo_standard_nails = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN);
 	}
 	else if (self.PickupType == IT_GRENADE_LAUNCHER)
 	{
 		self.classname = "item_backpack_grenadelauncher";
 		self.netname = "Grenade Launcher";
-		self.ammo_rockets = 5;
+		self.ammo_standard_rockets = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER);
 	}
 	else if (self.PickupType == IT_ROCKET_LAUNCHER)
 	{
 		self.classname = "item_backpack_rocketlauncher";
 		self.netname = "Rocket Launcher";
-		self.ammo_rockets = 5;
+		self.ammo_standard_rockets = 5;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER);
 	}
 	else if (self.PickupType == IT_LIGHTNING)
 	{
 		self.classname = "item_backpack_lightning";
 		self.netname = "Thunderbolt";
-		self.ammo_cells = 15;
+		self.ammo_standard_cells = 15;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT);
 	}
 	else if (self.PickupType == IT_LASER_CANNON)
 	{
 		self.classname = "item_backpack_laser_gun";
 		self.netname = "Laser Cannon";
-		self.ammo_cells = 30;
+		self.ammo_standard_cells = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LASER_CANNON);
 	}
 	else if (self.PickupType == IT_PROXIMITY_GUN)
 	{
 		self.classname = "item_backpack_proximity_gun";
 		self.netname = "Proximity Gun";
-		self.ammo_rockets = 6;
+		self.ammo_standard_rockets = 6;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PROXIMITY_GUN);
 	}
 	else if (self.PickupType == IT_MJOLNIR)
 	{
 		self.classname = "item_backpack_mjolnir";
 		self.netname = "Mjolnir";
-		self.ammo_cells = 30;
+		self.ammo_standard_cells = 30;
 		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MJOLNIR);
 	}
 	else
@@ -1977,6 +2697,108 @@ void() ConvertToWeaponBackpack =
 	StartItem ();
 };
 
+// Replaces entity with lava nails
+void() ConvertToLavaNails =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_lava_spikes";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_lnail0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_SMALL);
+		self.aflag = 25;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_lnail1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_BIG);
+		self.aflag = 50;
+	}
+	self.weapon = 5;
+	self.netname = "lava nails";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
+// Replaces entity with multi rockets
+void() ConvertToMultiRockets =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_multi_rockets";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_mrock0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_SMALL);
+		self.aflag = 5;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_mrock1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_BIG);
+		self.aflag = 10;
+	}
+	self.weapon = 6;
+	self.netname = "multi rockets";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
+// Replaces entity with plasma
+void() ConvertToPlasma =
+{
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.touch = ammo_touch;
+	self.classname = "item_plasma";
+	if (self.QualityType == 1)
+	{
+		setmodel (self, "maps/b_plas0.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_SMALL);
+		self.aflag = 6;
+	}
+	else if (self.QualityType == 2)
+	{
+		setmodel (self, "maps/b_plas1.bsp");
+		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_BIG);
+		self.aflag = 12;
+	}
+	self.weapon = 7;
+	self.netname = "plasma";
+	self.skin = 0;
+	setsize (self, '0 0 0', '32 32 56');
+	dprint(self.classname);
+	dprint(" (");
+	dprint(ftos(self.aflag));
+	dprint(")");
+	dprint("\n");
+	self.Converted = "1";
+	StartItem ();
+};
+
 void() ConvertToAmmoBackpack =
 {	
 	dprint("Converted ");
@@ -1990,17 +2812,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_shells";
 		if(self.QualityType == 1)
 		{
-			self.ammo_shells = 20;
+			self.ammo_standard_shells = 20;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_shells = 40;
+			self.ammo_standard_shells = 40;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_shells));
+		dprint(ftos(self.ammo_standard_shells));
 		dprint(")");
 	}
 	else if (self.PickupType == 2) // Nails
@@ -2008,17 +2830,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_spikes";
 		if(self.QualityType == 1)
 		{	
-			self.ammo_nails = 25;
+			self.ammo_standard_nails = 25;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{	
-			self.ammo_nails = 50;
+			self.ammo_standard_nails = 50;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_nails));
+		dprint(ftos(self.ammo_standard_nails));
 		dprint(")");
 	}
 	else if (self.PickupType == 3) // Rockets
@@ -2026,17 +2848,17 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_rockets";
 		if(self.QualityType == 1)
 		{
-			self.ammo_rockets = 5;
+			self.ammo_standard_rockets = 5;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_rockets = 10;
+			self.ammo_standard_rockets = 10;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_rockets));
+		dprint(ftos(self.ammo_standard_rockets));
 		dprint(")");
 	}
 	else if (self.PickupType == 4) // Cells
@@ -2044,17 +2866,71 @@ void() ConvertToAmmoBackpack =
 		self.classname = "item_backpack_cells";
 		if(self.QualityType == 1)
 		{
-			self.ammo_cells = 6;
+			self.ammo_standard_cells = 6;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
-			self.ammo_cells = 12;
+			self.ammo_standard_cells = 12;
 			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
-		dprint(ftos(self.ammo_cells));
+		dprint(ftos(self.ammo_standard_cells));
+		dprint(")");
+	}
+	else if (self.PickupType == 5) // Lava Nails
+	{
+		self.classname = "item_backpack_lava_nails";
+		if(self.QualityType == 1)
+		{
+			self.ammo_lava_nails = 25;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_lava_nails = 50;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_lava_nails));
+		dprint(")");
+	}
+	else if (self.PickupType == 6) // Multi Rockets
+	{
+		self.classname = "item_backpack_multi_rockets";
+		if(self.QualityType == 1)
+		{
+			self.ammo_multi_rockets = 5;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_multi_rockets = 10;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_multi_rockets));
+		dprint(")");
+	}
+	else if (self.PickupType == 7) // Plasma
+	{
+		self.classname = "item_backpack_plasma";
+		if(self.QualityType == 1)
+		{
+			self.ammo_plasma = 6;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_SMALL);
+		}
+		else if(self.QualityType == 2)
+		{
+			self.ammo_plasma = 12;
+			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_BIG);
+		}
+		dprint(self.classname);
+		dprint(" (");
+		dprint(ftos(self.ammo_plasma));
 		dprint(")");
 	}
 	else

@@ -5,20 +5,20 @@
    Distributed (unsupported) on 3.12.97
 */
 //JIM
-float       earthquake;
+float       hipEarthquakeEnd;
 float quakeactive;
 
 void() StopEarthQuake =
    {
-   earthquake = 0;
+   hipEarthquakeEnd = 0;
    };
 
 void( float value ) EarthQuakeTime =
    {
    value = value + time;
-   if ( value > earthquake )
+   if ( value > hipEarthquakeEnd )
       {
-      earthquake = value;
+      hipEarthquakeEnd = value;
       }
    };
 
@@ -33,7 +33,7 @@ void() earthquake_prethink =
 
 void() earthquake_postthink =
 	{
-	if ( earthquake > time )
+	if ( hipEarthquakeEnd > time )
 		{
       if (quakeactive == 0)
          {

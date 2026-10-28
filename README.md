@@ -20,7 +20,7 @@ To set up the game modes, press the 'M' key, and the Randomization Menu will sho
 
 For conversion, all items are split into five categories. Save for some exceptions in Biased Mode, all convertible entities can only be replaced with one of the same type:
 
-- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath and cruficied Zombies.
+- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath, Armagon, the Dragon, Quake's Guardians, the Temporal Energy Converter and cruficied Zombies.
 - **Pickup**: Includes Health Packs (15 and 25 Health) and Armor Suits (Green and Yellow).
 - **Ammo**: Includes all Ammo Crates.
 - **Powerup**: Includes all Powerups, as well as 100 Health Packs and Red Armor Suits.
@@ -36,7 +36,7 @@ All the odds used in this mode are the same as the Endless Castle in Normal Odds
 
 ### Endless Castle Mode
 
-Added in v1.7, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of vanilla Quake levels. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
+Added in v1.7, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of Quake levels from the vanilla, Scourge of Armagon or Dissolution of Eternity campaigns. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
 
 Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
 - Since there are eight levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 48 possible levels, you will only see 43 per sequence.
@@ -72,50 +72,67 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 #### Monster replacement chances on Biased Mode
 
+> The odds in the following tables are rounded to the nearest integer, so they don't exactly sum up to 100%.
+
 - For Monsters in the ground or air:
 
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Fiend|5%|7%|8%|10%|11%|12%|
-|Rottweiler|11%|7%|6%|4%|2%|0%|
-|Enforcer|11%|9%|9%|7%|6%|0%|
-|Hell Knight|9%|10%|11%|13%|14%|12%|
-|Knight|11%|12%|8%|8%|7%|0%|
-|Zombie|10%|9%|10%|11%|9%|11%|
-|Vore|2%|3%|4%|5%|7%|20%|
-|Shambler|1%|2%|3%|4%|6%|20%|
-|Grunt|16%|13%|11%|8%|6%|0%|
-|Spawn|1%|3%|4%|6%|6%|15%|
-|Scrag|11%|12%|13%|13%|13%|10%|
-|Ogre|12%|13%|13%|11%|13%|0%|
-|Centroid|3%|5%|7%|8%|10%|15%|
-|Gremlin|8%|9%|11%|10%|8%|0%|
-|Spike Mine|2%|3%|3%|4%|6%|10%|
+|Fiend|4%|5%|5%|7%|7%|7%|
+|Rottweiler|8%|5%|4%|2%|1%|0%|
+|Enforcer|8%|6%|5%|3%|3%|0%|
+|Hell Knight|4%|7%|7%|8%|8%|6%|
+|Knight|10%|10%|5%|5%|4%|0%|
+|Zombie|8%|6%|7%|7%|5%|5%|
+|Vore|2%|2%|3%|3%|4%|11%|
+|Shambler|<1%|1%|2%|2%|3%|11%|
+|Grunt|12%|9%|7%|4%|4%|0%|
+|Spawn|1%|2%|3%|4%|4%|7%|
+|Scrag|8%|8%|9%|8%|8%|10%|
+|Ogre|9%|9%|9%|7%|8%|0%|
+|Centroid|2%|3%|4%|5%|6%|8%|
+|Gremlin|6%|6%|7%|6%|5%|0%|
+|Wrath|3%|3%|4%|4%|5%|9%|
+|Mummy|1%|1%|2%|2%|3%|4%|
+|Hell Spawn|<1%|1%|2%|3%|3%|7%|
+|Multi-Grenade Ogre|1%|1%|2%|2%|4%|0%|
+|Knight Statue|4%|4%|3%|2%|2%|0%|
+|Death Knight Statue|3%|2%|3%|3%|4%|4%|
+|Phantom Swordsman|4%|7%|7%|8%|8%|6%|
+|Spike Mine|2%|2%|2%|2%|4%|5%|
 
-> Rotfish aren't allowed to spawn outside of water surfaces because they can't move there.
-> Zombies can't spawn on monster spots that are tied to a trigger.
+> Rotfish and Eels aren't allowed to spawn outside of water surfaces because they can't move there.
+> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
+> Hell Spawn, Multi-Grenade Ogres, Knight Statues, Death Knight Statues and Phantom Swordsmen are reskins of other monsters, so they have their own, lower odds.
+> Statues stay frozen (and can't be hurt) until they notice a player. Hell Spawn may split in two when hurt, and Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
 
 - For Monsters in the water:
 
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Fiend|8%|6%|4%|2%|1%|0%|
-|Enforcer|8%|12%|14%|15%|15%|0%|
-|Hell Knight|8%|12%|14%|14%|15%|5%|
-|Zombie|16%|11%|8%|6%|3%|10%|
-|Vore|2%|3%|4%|5%|7%|25%|
-|Shambler|1%|2%|3%|4%|6%|25%|
-|Grunt|9%|13%|11%|15%|10%|0%|
-|Spawn|5%|3%|4%|4%|7%|0%|
-|Scrag|10%|12%|14%|15%|17%|35%|
-|Ogre|8%|9%|9%|9%|11%|0%|
-|Rotfish|25%|17%|15%|11%|8%|0%|
-|Centroid|3%|5%|7%|8%|10%|15%|
-|Gremlin|8%|9%|11%|10%|8%|0%|
-|Spike Mine|2%|3%|3%|4%|6%|10%|
+|Fiend|6%|4%|3%|1%|1%|0%|
+|Enforcer|6%|9%|9%|9%|9%|0%|
+|Hell Knight|4%|9%|9%|10%|10%|4%|
+|Zombie|13%|8%|5%|4%|2%|8%|
+|Vore|1%|2%|3%|3%|4%|14%|
+|Shambler|<1%|1%|2%|2%|3%|14%|
+|Grunt|7%|10%|7%|9%|6%|0%|
+|Spawn|4%|2%|3%|3%|4%|0%|
+|Scrag|8%|9%|9%|10%|11%|29%|
+|Ogre|6%|7%|6%|6%|6%|0%|
+|Rotfish|20%|13%|10%|8%|5%|0%|
+|Centroid|2%|3%|4%|5%|6%|8%|
+|Gremlin|6%|7%|7%|6%|5%|0%|
+|Wrath|2%|3%|4%|4%|6%|10%|
+|Mummy|1%|1%|2%|2%|3%|5%|
+|Eel|4%|5%|10%|9%|7%|0%|
+|Hell Spawn|4%|2%|2%|2%|4%|0%|
+|Multi-Grenade Ogre|1%|2%|2%|3%|3%|0%|
+|Spike Mine|2%|2%|2%|3%|4%|8%|
 
-> Rottweilers and Knights aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
-> Zombies can't spawn on monster spots that are tied to a trigger.
+> Rottweilers, Knights, Knight and Death Knight Statues and Phantom Swordsmen aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
+> Eels only spawn in plain water, not in slime or lava, because they can't survive there.
+> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
 
 #### Pickup replacement chances on Biased Mode
 
@@ -164,6 +181,14 @@ Exclusive to Endless Castle Mode, there's a chance that the Pickup will be remov
 |Small|50%|65%|70%|75%|80%|100%|
 |Big|50%|35%|30%|25%|20%|0%|
 
+- Alternate ammo (Dissolution of Eternity). Before the ammo type is rolled, an ammo pack has this chance to become Lava Nails (25/50), Multi Rockets (5/10) or Plasma (6/12) instead, all equally likely and with the crate sizes above:
+
+|-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
+|----|----|----|----|----|----|----|
+|Alternate ammo|8%|6%|4%|3%|2%|0%|
+
+> It is strong ammo for the player, so it is far rarer than any standard ammo. Unbiased Mode keeps it at 10%.
+
 Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
@@ -172,32 +197,38 @@ Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be re
 
 #### Powerup replacement chances on Biased Mode
 
+> The odds in the following tables are rounded to the nearest integer, so they don't exactly sum up to 100%.
+
 - If there's a liquid body within 512 units of distance
 
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Pentagram of Protection|20%|18%|17%|15%|12%|5%|
-|Quad Damage|20%|18%|17%|15%|12%|5%|
-|Ring of Shadows|20%|18%|17%|15%|12%|5%|
-|100 Health Pack|15%|18%|17%|20%|24%|25%|
-|Red Armor Suit|20%|18%|17%|15%|12%|10%|
-|Biosuit|10%|15%|20%|25%|35%|25%|
-|Empathy Shields|20%|18%|17%|15%|12%|8%|
-|Wetsuit|10%|15%|20%|25%|35%|25%|
-|Horn of Conjuring|20%|15%|10%|8%|5%|5%|
+|Pentagram of Protection|11%|10%|10%|9%|7%|3%|
+|Quad Damage|11%|10%|10%|9%|7%|3%|
+|Ring of Shadows|11%|10%|10%|9%|7%|3%|
+|100 Health Pack|9%|10%|10%|12%|13%|17%|
+|Red Armor Suit|11%|10%|10%|9%|7%|7%|
+|Biosuit|6%|9%|12%|14%|19%|17%|
+|Empathy Shields|11%|10%|10%|9%|7%|5%|
+|Wetsuit|6%|9%|12%|14%|19%|17%|
+|Horn of Conjuring|11%|9%|6%|5%|3%|3%|
+|Power Shield|9%|7%|5%|4%|3%|3%|
+|Anti-Grav Belt|3%|5%|6%|7%|10%|21%|
 
 - If there's no liquid body within 512 units of distance
 
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Pentagram of Protection|20%|19%|18%|15%|12%|5%|
-|Quad Damage|20%|19%|18%|15%|12%|5%|
-|Ring of Shadows|20%|19%|18%|15%|12%|5%|
-|100 Health Pack|15%|19%|18%|20%|24%|45%|
-|Red Armor Suit|20%|19%|18%|15%|12%|10%|
-|A weapon|5%|5%|10%|20%|28%|30%|
-|Empathy Shields|20%|18%|17%|15%|12%|8%|
-|Horn of Conjuring|20%|15%|10%|8%|5%|5%|
+|Pentagram of Protection|12%|12%|12%|11%|9%|3%|
+|Quad Damage|12%|12%|12%|11%|9%|3%|
+|Ring of Shadows|12%|12%|12%|11%|9%|3%|
+|100 Health Pack|9%|12%|12%|14%|17%|30%|
+|Red Armor Suit|12%|12%|12%|11%|9%|7%|
+|A weapon|3%|3%|7%|14%|20%|20%|
+|Empathy Shields|12%|12%|12%|11%|9%|5%|
+|Horn of Conjuring|12%|10%|7%|6%|4%|3%|
+|Power Shield|9%|8%|6%|5%|4%|3%|
+|Anti-Grav Belt|3%|5%|7%|8%|12%|21%|
 
 Exclusive to Endless Castle Mode, there's a chance that the Powerup will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
@@ -247,7 +278,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Weapon will be remov
 
 ### Unbiased Mode
 
-Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type, with the exclusive exception that Rotfish can't spawn outside of water surfaces because they wouldn't be able to move, and Zombies cannot spawn tied to a trigger to avoid potential softlocks.
+Here, the Randomizer just does not care on whether the randomization is fair or not. All convertible objects have the same chance to replace another of the same type, with the exclusive exception that Rotfish and Eels can't spawn outside of water surfaces because they wouldn't be able to move, and Zombies cannot spawn tied to a trigger to avoid potential softlocks.
 
 Have fun!
 
@@ -263,6 +294,6 @@ This mode is disabled by default. Here, all the weapons and ammo pickups are "di
 
 The mod works as intended, but there are still a bunch of things in the mod that can be done better, which are as follows:
 - Give more 'fair' odds for the Biased mode.
-- Create forks of this mod in which it can fully work for Dissolution of Eternity.
+- Create forks of this mod in which it can fully work for Dimension of the Machine and Dawn of the Machine. 
 - Have the mod use its own, custom cvar instead of `savedgamecfg`.
 - Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 1500 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
