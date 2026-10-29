@@ -1498,7 +1498,7 @@ void() PlayerPreThink =
 
 	if(PrintedEndlessCastleSplash== 0 && EndlessCastleMapCount > 0)
 	{
-		centerprint (self, "\(\=\= Endless Castle \=\=\)\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
+		centerprint (self, "=== Endless Castle ===\n\n", world.message, "\n\nWelcome to Level ", ftos(EndlessCastleMapCount), ".\nDifficulty Level is ", ftos(EndlessCastleMapDifficulty), ".");
 		PrintedEndlessCastleSplash = 1;
 	}
 	//JIM
@@ -2039,7 +2039,7 @@ void(entity targ, entity attacker) ClientObituary =
 			if(RandomizeMonsters|| RandomizeWeaponsAndAmmo || RandomizeHealthAndArmor || RandomizePowerups)
 			{
 				LogRandomizerResults();
-				bprint("\n\(\=\= List of randomized objects has been printed to console \=\=\)\n\n");
+				bprint("\n=== List of randomized objects has been printed to console ===\n\n");
 			}
 		}
 
