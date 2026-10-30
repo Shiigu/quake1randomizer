@@ -446,9 +446,21 @@ Any object touching this will be transported to the corresponding info_teleport_
 
 If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
 */
+float	CTF_ONLY = 4;	// trigger_teleport spawnflag
+
 void() trigger_teleport =
 {
 	local vector o;
+
+	// Capture the Flag only teleporters
+	if (self.spawnflags & CTF_ONLY)
+	{
+		if (teamplay < TEAM_CTF || teamplay > TEAM_CTF_ALT)
+		{
+			remove (self);
+			return;
+		}
+	}
 
 	InitTrigger ();
 	self.touch = teleport_touch;

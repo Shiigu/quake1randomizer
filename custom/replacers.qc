@@ -19,6 +19,7 @@ void() ConvertToGremlin;
 void() ConvertToSpikeMine;
 void() ConvertToWrath;
 void() ConvertToMummy;
+void() ConvertToGuardian;
 void() ConvertToEel;
 void() ConvertToHellSpawn;
 void() ConvertToMultiGrenadeOgre;
@@ -451,8 +452,8 @@ void() ConvertToFiend =
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_FIEND;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_FIEND;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -512,8 +513,8 @@ void() ConvertToDog =
 	dprint(self.classname);
 	dprint("\n");
 	self.Converted = "1";
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ROTTWEILER;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_ROTTWEILER;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -573,8 +574,8 @@ void() ConvertToEnforcer =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ENFORCER;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_ENFORCER;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -637,8 +638,8 @@ void() ConvertToRotfish =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ROTFISH;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_ROTFISH;
+	RegisterEntity(self.EntityID);
 	swimmonster_start ();
 };
 
@@ -703,8 +704,8 @@ void() ConvertToDeathKnight =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_DEATH_KNIGHT;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_DEATH_KNIGHT;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -767,8 +768,8 @@ void() ConvertToKnight =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_KNIGHT;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_KNIGHT;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -833,8 +834,8 @@ void() ConvertToOgre =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_OGRE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_OGRE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -894,8 +895,8 @@ void() ConvertToVore =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_VORE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_VORE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -955,8 +956,8 @@ void() ConvertToShambler =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SHAMBLER;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_SHAMBLER;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1016,8 +1017,8 @@ void() ConvertToGrunt =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_GRUNT;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_GRUNT;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1078,8 +1079,8 @@ void() ConvertToSpawn =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SPAWN;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_SPAWN;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1141,8 +1142,8 @@ void() ConvertToScrag =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SCRAG;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_SCRAG;
+	RegisterEntity(self.EntityID);
 	flymonster_start ();
 };
 
@@ -1201,8 +1202,8 @@ void() ConvertToZombie =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_ZOMBIE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_ZOMBIE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1263,8 +1264,8 @@ void() ConvertToCentroid =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_CENTROID;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_CENTROID;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1328,8 +1329,8 @@ void() ConvertToGremlin =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_GREMLIN;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_GREMLIN;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1354,7 +1355,7 @@ void() ConvertToPowerShield =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_POWER_SHIELD);
+	RegisterEntity(ENTITY_POWER_SHIELD);
 };
 
 // Replaces entity with an Anti-Grav Belt
@@ -1378,7 +1379,7 @@ void() ConvertToAntiGravBelt =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_ANTI_GRAV_BELT);
+	RegisterEntity(ENTITY_ANTI_GRAV_BELT);
 };
 
 // Replaces entity with a Hell Spawn
@@ -1449,8 +1450,8 @@ void() ConvertToHellSpawn =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_HELL_SPAWN;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_HELL_SPAWN;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1513,8 +1514,8 @@ void() ConvertToMultiGrenadeOgre =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MULTI_GRENADE_OGRE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_MULTI_GRENADE_OGRE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1577,8 +1578,8 @@ void() ConvertToKnightStatue =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_KNIGHT_STATUE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_KNIGHT_STATUE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1642,8 +1643,8 @@ void() ConvertToDeathKnightStatue =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_DEATH_KNIGHT_STATUE;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_DEATH_KNIGHT_STATUE;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1704,8 +1705,8 @@ void() ConvertToPhantomSwordsman =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_PHANTOM_SWORDSMAN;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_PHANTOM_SWORDSMAN;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1767,8 +1768,8 @@ void() ConvertToWrath =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_WRATH;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_WRATH;
+	RegisterEntity(self.EntityID);
 	flymonster_start ();
 };
 
@@ -1842,8 +1843,84 @@ void() ConvertToMummy =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_MUMMY;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_MUMMY;
+	RegisterEntity(self.EntityID);
+	walkmonster_start();
+};
+
+// Replaces entity with a Guardian (a Morph). It is always the 200 health kind, standing where the monster was as if the
+// map had placed it there: it doesn't rise from the floor and it can't summon more Guardians.
+void() ConvertToGuardian =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	// Aztec, Egyptian or Greek, all with the same body
+	local float look;
+	look = Random(1, 3);
+	if (look == 1)
+		setmodel (self, "progs/morph_az.mdl");
+	else if (look == 2)
+		setmodel (self, "progs/morph_eg.mdl");
+	else
+		setmodel (self, "progs/morph_gr.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 200;
+	self.classname = "monster_morph";
+	self.frame = $mfstand1;
+	self.skin = 1;						// The one a Guardian wears once it is up (the others are for rising and dying)
+
+	// morph_teleport gives up once it has spawned its quota, so this keeps it from ever summoning
+	self.childrenSpawned = 1000;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = morph_stand1;
+	self.th_walk = morph_walk1;
+	self.th_run = morph_run1;
+	self.th_melee = morph_attack;
+	self.th_missile = morph_fire1;
+	self.th_pain = morph_pain;
+	self.th_die = morph_die;
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityID = ENTITY_GUARDIAN;
+	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };
 
@@ -1917,8 +1994,8 @@ void() ConvertToEel =
 	dprint("\n");
 	self.Converted = "1";
 
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_EEL;
-	RegisterEntity(self.EntityDisplayName);
+	self.EntityID = ENTITY_EEL;
+	RegisterEntity(self.EntityID);
 	swimmonster_start ();
 };
 
@@ -1993,9 +2070,9 @@ void() ConvertToSpikeMine =
 
 	self.nextthink = time + 0.2;
 	self.deathtype = "";
-	self.EntityDisplayName = ENTITY_DISPLAY_NAME_SPIKE_MINE;
+	self.EntityID = ENTITY_SPIKE_MINE;
 	self.Converted = "1";
-	RegisterEntity(self.EntityDisplayName);
+	RegisterEntity(self.EntityID);
 };
 
 // END MONSTERS
@@ -2029,7 +2106,7 @@ void() ConvertToHealth =
 		self.noise = "items/r_item1.wav";
 		self.healamount = 15;
 		self.healtype = 0;
-		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_15);
+		RegisterEntity(ENTITY_HEALTH_15);
 	}
 	else if (self.QualityType == 2)
 	{		
@@ -2037,7 +2114,7 @@ void() ConvertToHealth =
 		self.noise = "items/health1.wav";
 		self.healamount = 25;
 		self.healtype = 1;
-		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_25);
+		RegisterEntity(ENTITY_HEALTH_25);
 	}
 	else if (self.QualityType == 3)
 	{
@@ -2045,7 +2122,7 @@ void() ConvertToHealth =
 		self.noise = "items/r_item2.wav";
 		self.healamount = 100;
 		self.healtype = 2;
-		RegisterEntity(ENTITY_DISPLAY_NAME_HEALTH_100);
+		RegisterEntity(ENTITY_HEALTH_100);
 	}
 	setsize (self, '0 0 0', '32 32 56');
 	dprint(self.classname);
@@ -2072,17 +2149,17 @@ void() ConvertToArmor =
     if(self.QualityType == 1)
     {
     	self.classname = "item_armor1";
-		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_100);
+		RegisterEntity(ENTITY_ARMOR_100);
     }
     else if (self.QualityType == 2)
     {
     	self.classname = "item_armor2";
-		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_150);
+		RegisterEntity(ENTITY_ARMOR_150);
     }
     else if (self.QualityType == 3)
     {
     	self.classname = "item_armorInv";
-		RegisterEntity(ENTITY_DISPLAY_NAME_ARMOR_200);
+		RegisterEntity(ENTITY_ARMOR_200);
     }
 	setsize (self, '-16 -16 0', '16 16 56');
 	dprint(self.classname);
@@ -2109,13 +2186,13 @@ void() ConvertToShells =
 	{
 		setmodel (self, "maps/b_shell0.bsp");
 		self.aflag = 20;
-		RegisterEntity(ENTITY_DISPLAY_NAME_SHELLS_SMALL);
+		RegisterEntity(ENTITY_SHELLS_SMALL);
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_shell1.bsp");
 		self.aflag = 40;
-		RegisterEntity(ENTITY_DISPLAY_NAME_SHELLS_BIG);
+		RegisterEntity(ENTITY_SHELLS_BIG);
 	}
 	self.weapon = 1;
 	self.netname = "shells";
@@ -2143,13 +2220,13 @@ void() ConvertToNails =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_nail0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_NAILS_SMALL);
+		RegisterEntity(ENTITY_NAILS_SMALL);
 		self.aflag = 25;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_nail1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_NAILS_BIG);
+		RegisterEntity(ENTITY_NAILS_BIG);
 		self.aflag = 50;
 	}
 	self.weapon = 2;
@@ -2178,13 +2255,13 @@ void() ConvertToRockets =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_rock0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_ROCKETS_SMALL);
+		RegisterEntity(ENTITY_ROCKETS_SMALL);
 		self.aflag = 5;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_rock1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_ROCKETS_BIG);
+		RegisterEntity(ENTITY_ROCKETS_BIG);
 		self.aflag = 10;
 	}
 	self.weapon = 3;
@@ -2213,13 +2290,13 @@ void() ConvertToCells =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_batt0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_CELLS_SMALL);
+		RegisterEntity(ENTITY_CELLS_SMALL);
 		self.aflag = 6;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_batt1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_CELLS_BIG);
+		RegisterEntity(ENTITY_CELLS_BIG);
 		self.aflag = 12;
 	}
 	self.weapon = 4;
@@ -2258,7 +2335,7 @@ void() ConvertToPentagramOfProtection =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_PENTAGRAM_OF_PROTECTION);
+	RegisterEntity(ENTITY_PENTAGRAM_OF_PROTECTION);
 };
 
 // Converts entity into a Biosuit
@@ -2280,7 +2357,7 @@ void() ConvertToBiosuit =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_BIOSUIT);
+	RegisterEntity(ENTITY_BIOSUIT);
 };
 
 // Converts entity into a Ring of Shadows
@@ -2302,7 +2379,7 @@ void() ConvertToRingOfShadows =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_RING_OF_SHADOWS);
+	RegisterEntity(ENTITY_RING_OF_SHADOWS);
 };
 
 // Converts entity into a Quad Damage
@@ -2324,7 +2401,7 @@ void() ConvertToQuadDamage =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_QUAD_DAMAGE);
+	RegisterEntity(ENTITY_QUAD_DAMAGE);
 };
 
 // Converts entity into Empathy Shields
@@ -2348,7 +2425,7 @@ void() ConvertToEmpathyShields =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_EMPATHY_SHIELDS);
+	RegisterEntity(ENTITY_EMPATHY_SHIELDS);
 };
 
 // Converts entity into a Wetsuit
@@ -2372,7 +2449,7 @@ void() ConvertToWetsuit =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_WETSUIT);
+	RegisterEntity(ENTITY_WETSUIT);
 };
 
 // Converts entity into a Horn of Conjuring
@@ -2395,7 +2472,7 @@ void() ConvertToHornOfConjuring =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_HORN_OF_CONJURING);
+	RegisterEntity(ENTITY_HORN_OF_CONJURING);
 };
 
 // END POWERUPS
@@ -2420,7 +2497,7 @@ void() ConvertToDoubleBarrelledShotgun =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_DOUBLE_BARRELED_SHOTGUN);
+	RegisterEntity(ENTITY_DOUBLE_BARRELED_SHOTGUN);
 };
 
 // Converts entity into a Nailgun
@@ -2441,7 +2518,7 @@ void() ConvertToNailgun =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_NAILGUN);
+	RegisterEntity(ENTITY_NAILGUN);
 };
 
 // Converts entity into a Super Nailgun
@@ -2462,7 +2539,7 @@ void() ConvertToSuperNailgun =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_SUPER_NAILGUN);
+	RegisterEntity(ENTITY_SUPER_NAILGUN);
 };
 
 // Converts entity into a Grenade Launcher
@@ -2483,7 +2560,7 @@ void() ConvertToGrenadeLauncher =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_GRENADE_LAUNCHER);
+	RegisterEntity(ENTITY_GRENADE_LAUNCHER);
 };
 
 // Converts entity into a Rocket Launcher
@@ -2504,7 +2581,7 @@ void() ConvertToRocketLauncher =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_ROCKET_LAUNCHER);
+	RegisterEntity(ENTITY_ROCKET_LAUNCHER);
 };
 
 // Converts entity into a Thunderbolt
@@ -2525,7 +2602,7 @@ void() ConvertToThunderbolt =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_THUNDERBOLT);
+	RegisterEntity(ENTITY_THUNDERBOLT);
 };
 
 // Converts entity into a Laser Cannon
@@ -2548,7 +2625,7 @@ void() ConvertToLaserCannon =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_LASER_CANNON);
+	RegisterEntity(ENTITY_LASER_CANNON);
 };
 
 // Converts entity into a Proximity Gun
@@ -2571,7 +2648,7 @@ void() ConvertToProximityGun =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_PROXIMITY_GUN);
+	RegisterEntity(ENTITY_PROXIMITY_GUN);
 };
 
 // Converts entity into a Mjolnir
@@ -2594,7 +2671,7 @@ void() ConvertToMjolnir =
 	dprint("\n");
 	self.Converted = "1";
 	StartItem ();
-	RegisterEntity(ENTITY_DISPLAY_NAME_MJOLNIR);
+	RegisterEntity(ENTITY_MJOLNIR);
 };
 
 // END WEAPONS
@@ -2618,63 +2695,63 @@ void() ConvertToWeaponBackpack =
 		self.classname = "item_backpack_supershotgun";
 		self.netname = "Double-barrelled Shotgun";
 		self.ammo_standard_shells = 5;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_DOUBLE_BARRELED_SHOTGUN);
+		RegisterEntity(ENTITY_BACKPACK_DOUBLE_BARRELED_SHOTGUN);
 	}
 	else if (self.PickupType == IT_NAILGUN)
 	{
 		self.classname = "item_backpack_nailgun";
 		self.netname = "Nailgun";
 		self.ammo_standard_nails = 30;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILGUN);
+		RegisterEntity(ENTITY_BACKPACK_NAILGUN);
 	}
 	else if (self.PickupType == IT_SUPER_NAILGUN)
 	{
 		self.classname = "item_backpack_supernailgun";
 		self.netname = "Super Nailgun";
 		self.ammo_standard_nails = 30;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SUPER_NAILGUN);
+		RegisterEntity(ENTITY_BACKPACK_SUPER_NAILGUN);
 	}
 	else if (self.PickupType == IT_GRENADE_LAUNCHER)
 	{
 		self.classname = "item_backpack_grenadelauncher";
 		self.netname = "Grenade Launcher";
 		self.ammo_standard_rockets = 5;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_GRENADE_LAUNCHER);
+		RegisterEntity(ENTITY_BACKPACK_GRENADE_LAUNCHER);
 	}
 	else if (self.PickupType == IT_ROCKET_LAUNCHER)
 	{
 		self.classname = "item_backpack_rocketlauncher";
 		self.netname = "Rocket Launcher";
 		self.ammo_standard_rockets = 5;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKET_LAUNCHER);
+		RegisterEntity(ENTITY_BACKPACK_ROCKET_LAUNCHER);
 	}
 	else if (self.PickupType == IT_LIGHTNING)
 	{
 		self.classname = "item_backpack_lightning";
 		self.netname = "Thunderbolt";
 		self.ammo_standard_cells = 15;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_THUNDERBOLT);
+		RegisterEntity(ENTITY_BACKPACK_THUNDERBOLT);
 	}
 	else if (self.PickupType == IT_LASER_CANNON)
 	{
 		self.classname = "item_backpack_laser_gun";
 		self.netname = "Laser Cannon";
 		self.ammo_standard_cells = 30;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LASER_CANNON);
+		RegisterEntity(ENTITY_BACKPACK_LASER_CANNON);
 	}
 	else if (self.PickupType == IT_PROXIMITY_GUN)
 	{
 		self.classname = "item_backpack_proximity_gun";
 		self.netname = "Proximity Gun";
 		self.ammo_standard_rockets = 6;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PROXIMITY_GUN);
+		RegisterEntity(ENTITY_BACKPACK_PROXIMITY_GUN);
 	}
 	else if (self.PickupType == IT_MJOLNIR)
 	{
 		self.classname = "item_backpack_mjolnir";
 		self.netname = "Mjolnir";
 		self.ammo_standard_cells = 30;
-		RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MJOLNIR);
+		RegisterEntity(ENTITY_BACKPACK_MJOLNIR);
 	}
 	else
 	{
@@ -2709,13 +2786,13 @@ void() ConvertToLavaNails =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_lnail0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_SMALL);
+		RegisterEntity(ENTITY_LAVA_NAILS_SMALL);
 		self.aflag = 25;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_lnail1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_LAVA_NAILS_BIG);
+		RegisterEntity(ENTITY_LAVA_NAILS_BIG);
 		self.aflag = 50;
 	}
 	self.weapon = 5;
@@ -2743,13 +2820,13 @@ void() ConvertToMultiRockets =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_mrock0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_SMALL);
+		RegisterEntity(ENTITY_MULTI_ROCKETS_SMALL);
 		self.aflag = 5;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_mrock1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_MULTI_ROCKETS_BIG);
+		RegisterEntity(ENTITY_MULTI_ROCKETS_BIG);
 		self.aflag = 10;
 	}
 	self.weapon = 6;
@@ -2777,13 +2854,13 @@ void() ConvertToPlasma =
 	if (self.QualityType == 1)
 	{
 		setmodel (self, "maps/b_plas0.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_SMALL);
+		RegisterEntity(ENTITY_PLASMA_SMALL);
 		self.aflag = 6;
 	}
 	else if (self.QualityType == 2)
 	{
 		setmodel (self, "maps/b_plas1.bsp");
-		RegisterEntity(ENTITY_DISPLAY_NAME_PLASMA_BIG);
+		RegisterEntity(ENTITY_PLASMA_BIG);
 		self.aflag = 12;
 	}
 	self.weapon = 7;
@@ -2813,12 +2890,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_standard_shells = 20;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_SHELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_standard_shells = 40;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_SHELLS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_SHELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2831,12 +2908,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{	
 			self.ammo_standard_nails = 25;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_NAILS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{	
 			self.ammo_standard_nails = 50;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_NAILS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_NAILS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2849,12 +2926,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_standard_rockets = 5;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_ROCKETS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_standard_rockets = 10;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_ROCKETS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_ROCKETS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2867,12 +2944,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_standard_cells = 6;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_CELLS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_standard_cells = 12;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_CELLS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_CELLS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2885,12 +2962,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_lava_nails = 25;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_LAVA_NAILS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_lava_nails = 50;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_LAVA_NAILS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_LAVA_NAILS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2903,12 +2980,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_multi_rockets = 5;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_MULTI_ROCKETS_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_multi_rockets = 10;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_MULTI_ROCKETS_BIG);
+			RegisterEntity(ENTITY_BACKPACK_MULTI_ROCKETS_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");
@@ -2921,12 +2998,12 @@ void() ConvertToAmmoBackpack =
 		if(self.QualityType == 1)
 		{
 			self.ammo_plasma = 6;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_SMALL);
+			RegisterEntity(ENTITY_BACKPACK_PLASMA_SMALL);
 		}
 		else if(self.QualityType == 2)
 		{
 			self.ammo_plasma = 12;
-			RegisterEntity(ENTITY_DISPLAY_NAME_BACKPACK_PLASMA_BIG);
+			RegisterEntity(ENTITY_BACKPACK_PLASMA_BIG);
 		}
 		dprint(self.classname);
 		dprint(" (");

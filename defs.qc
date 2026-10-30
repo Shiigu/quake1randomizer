@@ -729,7 +729,7 @@ float SpawnedWeapons;  							// For Biased mode. Includes which weapons have be
 
 .string nextClassname;							// Contains the class in which the object will be transformed.
 												// Only used for objects that have proximity checks.
-.string EntityDisplayName;						// Currently only used for monsters. Used to log killed/total amount in the map.
+.float EntityID;						// Currently only used for monsters. Used to log killed/total amount in the map.
 .float Unstuckable;								// When TRUE, the entity passes unstuck checks.
 
 // Menu values used by other portions of the mod

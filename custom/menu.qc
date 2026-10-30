@@ -56,7 +56,7 @@ void() EnterRandomMenu = {
 
 void() MainMenu = {
     local string modTitle, randomMode, backpackMode, option1, option2, fixedOptions;
-    modTitle = "\(\=\= Quake Randomizer Mod \=\=\)\n\n";
+    modTitle = "=== Quake Randomizer Mod ===\n\n";
     if(UnbiasedMode)
     {
         randomMode = "Current Randomizer Mode is Unbiased\n";
@@ -87,18 +87,18 @@ void() UnbiasedMenu = {
     if(EndlessCastleMapCount == 0)
     {
         if(UnbiasedMode)
-            centerprint (Client, "\(\=\= Biased Mode \=\=\)\n\n", "When enabled, the game will randomize\n everything in a way it finds fair.\n\n", "Do you want to set the\nRandomizer to Biased?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Biased Mode ===\n\n", "When enabled, the game will randomize\n everything in a way it finds fair.\n\n", "Do you want to set the\nRandomizer to Biased?\n\n", "[1] Yes\n[2] No");
         else
-            centerprint (Client, "\(\=\= Unbiased Mode \=\=\)\n\n", "WARNING\n\n", "When enabled, the game will randomize\neverything without regard on whether\nthe map becomes unbeatable!\n\n", "Do you really want to set\nthe Randomizer to Unbiased?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Unbiased Mode ===\n\n", "WARNING\n\n", "When enabled, the game will randomize\neverything without regard on whether\nthe map becomes unbeatable!\n\n", "Do you really want to set\nthe Randomizer to Unbiased?\n\n", "[1] Yes\n[2] No");
         CurrentMenu = UNBIASED_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
         if(UnbiasedMode)
-            centerprint (Client, "\(\=\= Biased Mode \=\=\)\n\n", "When enabled, the game will randomize\n everything in a way it finds fair.\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Biased Mode ===\n\n", "When enabled, the game will randomize\n everything in a way it finds fair.\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         else
-            centerprint (Client, "\(\=\= Unbiased Mode \=\=\)\n\n", "When enabled, the game will randomize\neverything without regard on whether\nthe map becomes unbeatable!\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Unbiased Mode ===\n\n", "When enabled, the game will randomize\neverything without regard on whether\nthe map becomes unbeatable!\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 };
@@ -107,18 +107,18 @@ void() BackpacksMenu = {
     if(EndlessCastleMapCount == 0)
     {
         if(HideInBackpacks)
-            centerprint (Client, "\(\=\= Backpack Mode \=\=\)\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "Do you want to\ndisable Backpack Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Backpack Mode ===\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "Do you want to\ndisable Backpack Mode?\n\n", "[1] Yes\n[2] No");
         else
-            centerprint (Client, "\(\=\= Backpack Mode \=\=\)\n\n", "WARNING\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "Do you really want to\nenable Backpack Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Backpack Mode ===\n\n", "WARNING\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "Do you really want to\nenable Backpack Mode?\n\n", "[1] Yes\n[2] No");
         CurrentMenu = BACKPACKS_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
         if(HideInBackpacks)
-            centerprint (Client, "\(\=\= Backpack Mode \=\=\)\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Backpack Mode ===\n\n", "When disabled, the game will show weapons\nand ammo crates as it does by default.\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         else
-            centerprint (Client, "\(\=\= Backpack Mode \=\=\)\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Backpack Mode ===\n\n", "When enabled, the game will hide weapons\nand ammo crates inside backpacks. You\nwon't know what you get until you\npick the backpack up!\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 };
@@ -127,15 +127,15 @@ void() EndlessCastleMenu = {
     if(EndlessCastleMapCount == 0)
     {
         if(seedIsFixed)
-            centerprint (Client, "\(\=\= Endless Castle Mode \=\=\)\n\n", "WARNING\n\n", "This mode sends you to an endless,\nrandom sequence of Quake levels.\n\nThis can't be disabled until you die\nor restart.\n\nAre you up to it?\n(NOTE: Seed will be made dynamic\nas long as this mode is enabled)\n\n[1] Enter Endless Castle\n[2] Return to Main Menu");
+            centerprint (Client, "=== Endless Castle Mode ===\n\n", "WARNING\n\n", "This mode sends you to an endless,\nrandom sequence of Quake levels.\n\nThis can't be disabled until you die\nor restart.\n\nAre you up to it?\n(NOTE: Seed will be made dynamic\nas long as this mode is enabled)\n\n[1] Enter Endless Castle\n[2] Return to Main Menu");
         else
-            centerprint (Client, "\(\=\= Endless Castle Mode \=\=\)\n\n", "WARNING\n\n", "This mode sends you to an endless,\nrandom sequence of Quake levels.\n\nThis can't be disabled until you die\nor restart.\n\nAre you up to it?\n\n[1] Enter Endless Castle\n[2] Return to Main Menu");
+            centerprint (Client, "=== Endless Castle Mode ===\n\n", "WARNING\n\n", "This mode sends you to an endless,\nrandom sequence of Quake levels.\n\nThis can't be disabled until you die\nor restart.\n\nAre you up to it?\n\n[1] Enter Endless Castle\n[2] Return to Main Menu");
         CurrentMenu = ENDLESS_CASTLE_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
-        centerprint (Client, "\(\=\= Endless Castle Mode  \=\=\)\n\nYou are currently at Level ", ftos(EndlessCastleMapCount), ".\n\nDifficulty level: ", GetCurrentDifficultyString(), ".\n(Map difficulty level: ", ftos(EndlessCastleMapDifficulty), ")\n\n[1] Print Current Stats\n[2] Return to Main Menu");
+        centerprint (Client, "=== Endless Castle Mode  ===\n\nYou are currently at Level ", ftos(EndlessCastleMapCount), ".\n\nDifficulty level: ", GetCurrentDifficultyString(), ".\n(Map difficulty level: ", ftos(EndlessCastleMapDifficulty), ")\n\n[1] Print Current Stats\n[2] Return to Main Menu");
         CurrentMenu = ENDLESS_CASTLE_PROGRESS_MENU;
     }
 };
@@ -143,9 +143,9 @@ void() EndlessCastleMenu = {
 void() EndlessCastleDifficultyMenu = {
     InSkillSelect = 1;
     if(FinalEndlessCastleLevel == 0)
-        centerprint (Client, "\(\=\= Endless Castle Mode \=\=\)\n\n", "DIFFICULTY SELECTION\n\n", "Please pick the difficulty\nlevel for the next Endless Castle\n\n[1] Easy\n[2] Normal\n[3] Hard\n[4] Nightmare\n[5] Super Nightmare\n[6] Unfair\n[7] Return to Main Menu");
+        centerprint (Client, "=== Endless Castle Mode ===\n\n", "DIFFICULTY SELECTION\n\n", "Please pick the difficulty\nlevel for the next Endless Castle\n\n[1] Easy\n[2] Normal\n[3] Hard\n[4] Nightmare\n[5] Super Nightmare\n[6] Unfair\n[7] Return to Main Menu");
     else
-        centerprint (Client, "\(\=\= Endless Castle Mode \=\=\)\n\n", "DIFFICULTY SELECTION\n\n", "Please pick the difficulty\nlevel for the next Endless Castle\n\n[1] Easy\n[2] Normal\n[3] Hard\n[4] Nightmare\n[5] Super Nightmare\n[6] Unfair\n[7] Cancel selection");
+        centerprint (Client, "=== Endless Castle Mode ===\n\n", "DIFFICULTY SELECTION\n\n", "Please pick the difficulty\nlevel for the next Endless Castle\n\n[1] Easy\n[2] Normal\n[3] Hard\n[4] Nightmare\n[5] Super Nightmare\n[6] Unfair\n[7] Cancel selection");
     CurrentMenu = SKILL_SELECT_MENU;
     InputCapturer.nextthink = time + CaptureTime;
 };
@@ -159,7 +159,7 @@ void() EndedEndlessCastleMenu = {
     InputCapturer.think = ExitRandomMenu;
     InputCapturer.nextthink = time + CaptureTime;
     Client = self;
-    centerprint (Client, "\(\=\= Brave Warrior's Obituary \=\=\)\n\nYour trek through the Endless Castle\nhas ended at level ", ftos(FinalEndlessCastleLevel), "\n\nDifficulty level: ", GetBaseDifficultyString(),".\n\nYour performance has been\nprinted to the console.\n\n[1] Restart Endless Castle\n[2] Return to Introduction");
+    centerprint (Client, "=== Brave Warrior's Obituary ===\n\nYour trek through the Endless Castle\nhas ended at level ", ftos(FinalEndlessCastleLevel), "\n\nDifficulty level: ", GetBaseDifficultyString(),".\n\nYour performance has been\nprinted to the console.\n\n[1] Restart Endless Castle\n[2] Return to Introduction");
     CurrentMenu = FINISHED_ENDLESS_CASTLE_MENU;
 };
 
@@ -167,18 +167,18 @@ void() RemasteredOrClassicNightmareMenu = {
     if(EndlessCastleMapCount == 0)
     {
         if(IsRemastered())
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "Do you want to change\nto Classic Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Nightmare Settings ===\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "Do you want to change\nto Classic Nightmare Mode?\n\n", "[1] Yes\n[2] No");
         else
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "Do you want to change\nto Remastered Nightmare Mode?\n\n", "[1] Yes\n[2] No");
+            centerprint (Client, "=== Nightmare Settings ===\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "Do you want to change\nto Remastered Nightmare Mode?\n\n", "[1] Yes\n[2] No");
         CurrentMenu = NIGHTMARE_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
         if(IsRemastered())
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Nightmare Settings ===\n\n", "Settings are set to\nRemastered Mode\n\n(50 Maximum Health and\nMonsters fire normally).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         else
-            centerprint (Client, "\(\=\= Nightmare Settings \=\=\)\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
+            centerprint (Client, "=== Nightmare Settings ===\n\n", "Settings are set to\nClassic Mode\n\n(100 Maximum Health and\nMonsters fire very quickly).\n\n", "(This can't be changed until\nEndless Castle is over)\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 }
@@ -186,20 +186,20 @@ void() RemasteredOrClassicNightmareMenu = {
 void() RandomizedListMenu = {
     if(EndlessCastleMapCount == 0)
     {
-        centerprint (Client, "\(\=\= RANDOMIZER LOG \=\=\)\n\n", "You wish to see the list of\nentities after randomization.\n\nThis is almost like cheating.\nDo you want to do this?\n\n", "[1] List of randomized objects\n[2] Return to Main Menu");
+        centerprint (Client, "=== RANDOMIZER LOG ===\n\n", "You wish to see the list of\nentities after randomization.\n\nThis is almost like cheating.\nDo you want to do this?\n\n", "[1] List of randomized objects\n[2] Return to Main Menu");
         CurrentMenu = RANDOMIZED_LIST_MENU;
         InputCapturer.nextthink = time + CaptureTime;
     }
     else
     {
-        centerprint (Client, "\(\=\= RANDOMIZER LOG \=\=\)\n\n", "You cannot see the list of\nentities after randomization\nDuring Endless Castle Mode.\n\n", "[1] Return to Main Menu");
+        centerprint (Client, "=== RANDOMIZER LOG ===\n\n", "You cannot see the list of\nentities after randomization\nDuring Endless Castle Mode.\n\n", "[1] Return to Main Menu");
         CurrentMenu = FINAL_MENU;
     }
 };
 
 void() SpecifyRandomMenu = {
     local string menuHeader, option1, option2, option3, option4, fixedOptions;
-    menuHeader = "\(\=\= Specify Randomization  \=\=\)\n\nCurrent randomizer settings:\n\n";
+    menuHeader = "=== Specify Randomization  ===\n\nCurrent randomizer settings:\n\n";
     if(EndlessCastleMapCount == 0)
     {
         if(RandomizeMonsters)
@@ -263,7 +263,7 @@ void() SeedMenu = {
 };
 
 void() AboutMenu = {
-    centerprint (Client, "\(\=\= About the Quake Randomizer Mod \=\=\)\n\n", "Created by Shiigu\n\n", "Source Code:https://github.com/\nShiigu/quake1randomizer\n\n", "(Help is appreciated!)\n\n[1] Return to Main Menu");
+    centerprint (Client, "=== About the Quake Randomizer Mod ===\n\n", "Created by Shiigu\n\n", "Source Code:https://github.com/\nShiigu/quake1randomizer\n\n", "(Help is appreciated!)\n\n[1] Return to Main Menu");
     CurrentMenu = FINAL_MENU;
 };
 
@@ -315,7 +315,7 @@ void() CheckMenuImpulses = {
                 UnbiasedMode = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
+            centerprint (Client, "=== WARNING ===\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -340,7 +340,7 @@ void() CheckMenuImpulses = {
                 HideInBackpacks = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
+            centerprint (Client, "=== WARNING ===\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -365,7 +365,7 @@ void() CheckMenuImpulses = {
                 HideInBackpacks = 1;
                 CurrentMenu = FINAL_MENU;
             }
-            centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
+            centerprint (Client, "=== WARNING ===\n\n", warning, "(This won't take effect until\na level is loaded)\n\n[1] Return to Main Menu");
             cvar_set("savedgamecfg", ftos(RandomMode));
         }
         if(self.impulse == 2)
@@ -455,14 +455,14 @@ void() CheckMenuImpulses = {
             {
                 if(seedIsFixed)
                 {
-                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
+                    centerprint (Client, "=== WARNING ===\n\n", "Seed is no longer fixed\n\n", "(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                     cvar_set("gamecfg", "0");
                     seedIsFixed = 0;
                     CurrentMenu = FINAL_MENU;
                 }
                 else 
                 {
-                    centerprint (Client, "\(\=\= WARNING \=\=\)\n\n", "Seed is now fixed to ", ftos(seed), "\n\n(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
+                    centerprint (Client, "=== WARNING ===\n\n", "Seed is now fixed to ", ftos(seed), "\n\n(This won't take effect until\na level is loaded)\n\nYou can set this seed back in\nthe future with the following\nconsole command:\ngamecfg ", ftos(seed), "\n\n[1] Return to Main Menu");
                     cvar_set("gamecfg", ftos(seed));
                     seedIsFixed = 1;
                     CurrentMenu = FINAL_MENU;
@@ -574,12 +574,8 @@ void() SetEndlessCastleParms = {
 	SpawnedWeapons = 0;
     EndlessCastleMapCount = 1;
     FinalEndlessCastleLevel = 0;
-	EndlessCastleEpisode1Flags = 0;
-	EndlessCastleEpisode2Flags = 0;
-	EndlessCastleEpisode3Flags = 0;
-	EndlessCastleEpisode4Flags = 0;
-	EndlessCastleEpisode5Flags = 0;
-	EndlessCastleEpisode6Flags = 0;
+	EndlessCastleBagSeed = 0;
+	EndlessCastleBagIndex = 0;
 	EndlessCastleElapsedTime = 0;
     EndlessCastleDeadMonsters = 0;
 	EndlessCastleTotalMonsters = 0;
@@ -610,19 +606,28 @@ string() GetCurrentDifficultyString = {
 
 void() PrintEndlessCastleStats = {
     if(EndlessCastleDifficultyLevel == 0) return;
-    bprint("\(\=\= ENDLESS CASTLE PERFORMANCE \=\=\)\n\n");
+    bprint("=== ENDLESS CASTLE PERFORMANCE ===");
+    bprint("\n\n");
     if(FinalEndlessCastleLevel > 0)
         bprint("-> Final Map Level: ");
     else
         bprint("-> Current Map Level: ");
     bprint(ftos(EndlessCastleMapCount));
-    bprint(".\n-> Base Difficulty: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Base Difficulty: ");
     bprint(GetBaseDifficultyString());
-    bprint(".\n-> Difficulty Level: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Difficulty Level: ");
     bprint(ftos(EndlessCastleMapDifficulty));
-    bprint(".\n-> Current Difficulty: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Current Difficulty: ");
     bprint(GetCurrentDifficultyString());
-    bprint(".\n-> Time Elapsed: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Time Elapsed: ");
 
     local float hours, minutes, seconds, timeToUse, totalMonsters, deadMonsters, totalSecrets, foundSecrets;
     
@@ -656,21 +661,34 @@ void() PrintEndlessCastleStats = {
     if (seconds < 10) bprint("0");
     bprint(ftos(seconds));
 
-    bprint(".\n-> Total Monsters Created: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Total Monsters Created: ");
     bprint(ftos(totalMonsters));
-    bprint(".\n-> Total Monsters Dead: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Total Monsters Dead: ");
     bprint(ftos(deadMonsters));
     bprint(" (");
     bprint(ftos(floor(deadMonsters / totalMonsters * 100)));
     bprint("%)");
-    bprint(".\n-> Total Secrets Created: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Total Secrets Created: ");
     bprint(ftos(totalSecrets));
-    bprint(".\n-> Total Secrets Found: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Total Secrets Found: ");
     bprint(ftos(foundSecrets));
     bprint(" (");
     bprint(ftos(floor(foundSecrets / totalSecrets * 100)));
     bprint("%)");
-    bprint(".\n-> Endless Castle Seed: ");
+    bprint(".");
+    bprint("\n");
+    bprint("-> Endless Castle Seed: ");
     bprint(ftos(EndlessCastleSeed));
-    bprint(".\n\n\(\=\= ENDLESS CASTLE PERFORMANCE \=\=\)\n\n");
+    bprint(".");
+    bprint("\n\n");
+    bprint("=== ENDLESS CASTLE PERFORMANCE ===");
+    bprint("\n\n");
 };
