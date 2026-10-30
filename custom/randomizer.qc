@@ -33,12 +33,12 @@ float IndexPermutation[9];
 
 // PROBABILITY "TABLES"
 
-string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "monster_zombie" };
+string MonsterUnbiasedClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_fish", "monster_hell_knight", "monster_knight", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "trap_spike_mine", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "monster_morph", "monster_zombie" };
 void() MonsterUnbiasedSpawnFunctions[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToRotfish, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
-    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToZombie };
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToSpikeMine, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToGuardian, ConvertToZombie };
 
-float ProbabilitiesMonsterToMonsterGround[22];
+float ProbabilitiesMonsterToMonsterGround[23];
 float ProbabilitiesMonsterToMonsterGroundByTier[] = {
     //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
      10,  14,  16,  22,  25,  29,  // Fiend
@@ -55,8 +55,9 @@ float ProbabilitiesMonsterToMonsterGroundByTier[] = {
      24,  26,  26,  22,  26,   0,  // Ogre
       5,   9,  13,  15,  19,  31,  // Centroid
      16,  18,  22,  19,  16,   0,  // Gremlin
-      7,  10,  11,  14,  18,  38,  // Wrath
+      3,   5,   6,   8,  11,  24,  // Wrath
       2,   4,   5,   7,   9,  18,  // Mummy
+      3,   6,   8,  10,  13,  22,  // Guardian
       1,   4,   6,  10,  10,  28,  // Hell Spawn
       2,   4,   6,   8,  12,   0,  // Multi-Grenade Ogre
      10,  13,   8,   8,   8,   0,  // Knight Statue
@@ -66,10 +67,10 @@ float ProbabilitiesMonsterToMonsterGroundByTier[] = {
 };
 void() MonsterGroundToGroundConverters[] = { ConvertToFiend, ConvertToDog, ConvertToEnforcer, ConvertToDeathKnight, ConvertToKnight, 
     ConvertToZombie, ConvertToVore, ConvertToShambler, ConvertToGrunt, ConvertToSpawn, ConvertToScrag, 
-    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToSpikeMine };
-string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "trap_spike_mine" };
+    ConvertToOgre, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToGuardian, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToKnightStatue, ConvertToDeathKnightStatue, ConvertToPhantomSwordsman, ConvertToSpikeMine };
+string MonsterGroundToGroundClassnames[] = { "monster_demon1", "monster_dog", "monster_enforcer", "monster_hell_knight", "monster_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_morph", "monster_tarbaby", "monster_ogre", "monster_knight", "monster_hell_knight", "monster_sword", "trap_spike_mine" };
 
-float ProbabilitiesMonsterToMonsterWater[19];
+float ProbabilitiesMonsterToMonsterWater[20];
 float ProbabilitiesMonsterToMonsterWaterByTier[] = {
     //  Easy  Normal  Hard  Nightmare  SuperNightmare  Unfair
      16,  12,   8,   4,   2,   0,  // Fiend
@@ -85,16 +86,17 @@ float ProbabilitiesMonsterToMonsterWaterByTier[] = {
      50,  34,  30,  22,  16,   0,  // Rotfish
       5,   9,  13,  14,  18,  20,  // Centroid
      16,  18,  22,  18,  16,   0,  // Gremlin
-      6,   9,  11,  13,  17,  24,  // Wrath
+      3,   5,   6,   8,  11,  24,  // Wrath
       2,   3,   5,   7,   9,  12,  // Mummy
+      3,   6,   8,  10,  13,  22,  // Guardian
      10,  14,  31,  26,  22,   0,  // Eel
       9,   5,   7,   7,  13,   0,  // Hell Spawn
       2,   4,   6,   8,  10,   0,  // Multi-Grenade Ogre
-      2,   3,   3,   4,   6, 210   // Spike Mine
+      2,   3,   3,   4,   6,  10   // Spike Mine
 };
 void() MonsterWaterToWaterConverters[] = { ConvertToFiend, ConvertToEnforcer, ConvertToDeathKnight, ConvertToZombie, ConvertToVore, ConvertToShambler,
-                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToSpikeMine };
-string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_eel", "monster_tarbaby", "monster_ogre", "trap_spike_mine" };
+                                 ConvertToGrunt, ConvertToSpawn, ConvertToScrag, ConvertToOgre, ConvertToRotfish, ConvertToCentroid, ConvertToGremlin, ConvertToWrath, ConvertToMummy, ConvertToGuardian, ConvertToEel, ConvertToHellSpawn, ConvertToMultiGrenadeOgre, ConvertToSpikeMine };
+string MonsterWaterToWaterClassnames[] = { "monster_demon1", "monster_enforcer", "monster_hell_knight", "monster_zombie", "monster_shalrath", "monster_shambler", "monster_army", "monster_tarbaby", "monster_wizard", "monster_ogre", "monster_fish", "monster_scourge", "monster_gremlin", "monster_wrath", "monster_mummy", "monster_morph", "monster_eel", "monster_tarbaby", "monster_ogre", "trap_spike_mine" };
 
 float ProbabilityToRemovePickup;                               // "Pickup" being Health, Armor, Ammo, Powerup or Weapon
 float ProbabilityToRemovePickupByTier[6] = { 0, 0, 0, 0, 5, 10 };

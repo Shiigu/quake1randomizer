@@ -19,6 +19,7 @@ void() ConvertToGremlin;
 void() ConvertToSpikeMine;
 void() ConvertToWrath;
 void() ConvertToMummy;
+void() ConvertToGuardian;
 void() ConvertToEel;
 void() ConvertToHellSpawn;
 void() ConvertToMultiGrenadeOgre;
@@ -1843,6 +1844,82 @@ void() ConvertToMummy =
 	self.Converted = "1";
 
 	self.EntityID = ENTITY_MUMMY;
+	RegisterEntity(self.EntityID);
+	walkmonster_start();
+};
+
+// Replaces entity with a Guardian (a Morph). It is always the 200 health kind, standing where the monster was as if the
+// map had placed it there: it doesn't rise from the floor and it can't summon more Guardians.
+void() ConvertToGuardian =
+{
+	if (deathmatch)
+	{
+		SUB_Remove();
+		return;
+	}
+
+	dprint("Converted ");
+	dprint(self.classname);
+	dprint(" to ");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	// Aztec, Egyptian or Greek, all with the same body
+	local float look;
+	look = Random(1, 3);
+	if (look == 1)
+		setmodel (self, "progs/morph_az.mdl");
+	else if (look == 2)
+		setmodel (self, "progs/morph_eg.mdl");
+	else
+		setmodel (self, "progs/morph_gr.mdl");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (!(self.flags & FL_ONGROUND))
+		self.flags = self.flags | FL_ONGROUND;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - (self.flags & FL_FLY);
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - (self.flags & FL_SWIM);
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
+
+	self.health = 200;
+	self.classname = "monster_morph";
+	self.frame = $mfstand1;
+	self.skin = 1;						// The one a Guardian wears once it is up (the others are for rising and dying)
+
+	// morph_teleport gives up once it has spawned its quota, so this keeps it from ever summoning
+	self.childrenSpawned = 1000;
+
+	self.touch = SUB_Null;
+	self.th_die = SUB_Null;
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_melee = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = SUB_Null;
+	self.use = SUB_Null;
+
+	self.th_stand = morph_stand1;
+	self.th_walk = morph_walk1;
+	self.th_run = morph_run1;
+	self.th_melee = morph_attack;
+	self.th_missile = morph_fire1;
+	self.th_pain = morph_pain;
+	self.th_die = morph_die;
+	self.yaw_speed = 20;
+	self.attack_state = 0;
+	self.state = 0;
+
+	dprint(self.classname);
+	dprint("\n");
+	self.Converted = "1";
+
+	self.EntityID = ENTITY_GUARDIAN;
 	RegisterEntity(self.EntityID);
 	walkmonster_start();
 };

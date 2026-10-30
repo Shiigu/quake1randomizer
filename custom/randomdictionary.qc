@@ -33,7 +33,8 @@ enum {
     ENTITY_MULTI_GRENADE_OGRE,
     ENTITY_KNIGHT_STATUE,
     ENTITY_DEATH_KNIGHT_STATUE,
-    ENTITY_PHANTOM_SWORDSMAN,               // Last monster
+    ENTITY_PHANTOM_SWORDSMAN,
+    ENTITY_GUARDIAN,                        // Last monster
 
     ENTITY_HEALTH_15,
     ENTITY_HEALTH_25,
@@ -132,6 +133,7 @@ string EntityNames[] = {
     "Monster -> Knight Statue",
     "Monster -> Death Knight Statue",
     "Monster -> Phantom Swordsman",
+    "Monster -> Guardian",
 
     "Pickup -> Health Pack (15)",
     "Pickup -> Health Pack (25)",
@@ -201,7 +203,7 @@ string EntityNames[] = {
     "Backpack (Weapon) -> Mjolnir"
 };
 
-float AMOUNT_OF_MONSTER_SLOTS = ENTITY_PHANTOM_SWORDSMAN + 1;	// Monsters are the only ones to count kills, so they only need their own counters.
+float AMOUNT_OF_MONSTER_SLOTS = ENTITY_GUARDIAN + 1;	// Monsters are the only ones to count kills, so they only need their own counters.
 float EntityQuantities[ENTITY_COUNT];
 float DeadEntityQuantities[AMOUNT_OF_MONSTER_SLOTS];
 

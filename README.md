@@ -20,7 +20,7 @@ To set up the game modes, press the 'M' key, and the Randomization Menu will sho
 
 For conversion, all items are split into five categories. Save for some exceptions in Biased Mode, all convertible entities can only be replaced with one of the same type:
 
-- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath, Armagon, the Dragon, Quake's Guardians, the Temporal Energy Converter and cruficied Zombies.
+- **Monsters**: Includes all monsters with the exception of Chthon, Shub-Niggurath, Armagon, the Dragon, Quake's Guardians (the ones with 2000 HP, specifically), the Temporal Energy Converter and cruficied Zombies.
 - **Pickup**: Includes Health Packs (15 and 25 Health) and Armor Suits (Green and Yellow).
 - **Ammo**: Includes all Ammo Crates.
 - **Powerup**: Includes all Powerups, as well as 100 Health Packs and Red Armor Suits.
@@ -38,11 +38,9 @@ All the odds used in this mode are the same as the Endless Castle in Normal Odds
 
 Added in v1.7, this mode, which can only be enabled through the Randomization Menu, puts you through an endless stream of Quake levels from the vanilla, Scourge of Armagon or Dissolution of Eternity campaigns. The levels themselves are randomized, so that every time you get to the exit of a level, you may end up in a completely different place.
 
-Every level is set up to only show up once until all other levels have been set as exits. This has two consequences:
-- Since there are eight levels with secret exits, two different levels will be set up as exits in their case. That means that, out of 48 possible levels, you will only see 43 per sequence.
-- Every level may only appear again 43 levels after the previous time it showed up.
-- As a unique rule, Shub-Niggurath's lair (better known as `END`) cannot be rolled as one of the first four levels of any Endless Castle run, given the fact it's almost impossible to get out of it without a full set of weapons.
-- If, for some reason, the level picker fails to work, it will default to `E4M3`.
+Every level is set up to only show up once until all other levels have been set as exits. This includes levels set as secret exits, so you will never be able to see all maps in the same Endless Castle sequence.
+
+As a unique rule, Shub-Niggurath's lair (better known as `END`) cannot be rolled as one of the first eight level exits of any Endless Castle run, given the fact it's almost impossible to get out of it without a full set of weapons, and it can become very easy with randomized entities.
 
 Furthermore, as you venture through the Endless Castle, with every passing level, the Randomization itself starts playing less and less fair (on Biased Mode, on Unbiased Mode it always stays the same):
 - **Easy Odds** start at the lowest levels of the Endless Castle, until Level 5.
@@ -79,60 +77,66 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
 |Fiend|4%|5%|5%|7%|7%|7%|
-|Rottweiler|8%|5%|4%|2%|1%|0%|
+|Rottweiler|8%|5%|4%|3%|1%|0%|
 |Enforcer|8%|6%|5%|3%|3%|0%|
-|Hell Knight|4%|7%|7%|8%|8%|6%|
+|Hell Knight|5%|7%|7%|8%|8%|6%|
 |Knight|10%|10%|5%|5%|4%|0%|
 |Zombie|8%|6%|7%|7%|5%|5%|
 |Vore|2%|2%|3%|3%|4%|11%|
 |Shambler|<1%|1%|2%|2%|3%|11%|
-|Grunt|12%|9%|7%|4%|4%|0%|
-|Spawn|1%|2%|3%|4%|4%|7%|
+|Grunt|12%|9%|7%|4%|3%|0%|
+|Spawn|1%|2%|3%|4%|3%|7%|
 |Scrag|8%|8%|9%|8%|8%|10%|
 |Ogre|9%|9%|9%|7%|8%|0%|
 |Centroid|2%|3%|4%|5%|6%|8%|
 |Gremlin|6%|6%|7%|6%|5%|0%|
-|Wrath|3%|3%|4%|4%|5%|9%|
+|Wrath|1%|2%|2%|3%|3%|6%|
 |Mummy|1%|1%|2%|2%|3%|4%|
+|Guardian|1%|2%|3%|3%|4%|5%|
 |Hell Spawn|<1%|1%|2%|3%|3%|7%|
-|Multi-Grenade Ogre|1%|1%|2%|2%|4%|0%|
-|Knight Statue|4%|4%|3%|2%|2%|0%|
-|Death Knight Statue|3%|2%|3%|3%|4%|4%|
-|Phantom Swordsman|4%|7%|7%|8%|8%|6%|
-|Spike Mine|2%|2%|2%|2%|4%|5%|
+|Multi-Grenade Ogre|1%|1%|2%|3%|3%|0%|
+|Knight Statue|4%|4%|3%|3%|2%|0%|
+|Death Knight Statue|3%|2%|3%|3%|3%|4%|
+|Phantom Swordsman|5%|7%|7%|8%|8%|6%|
+|Spike Mine|1%|1%|1%|1%|2%|2%|
 
 > Rotfish and Eels aren't allowed to spawn outside of water surfaces because they can't move there.
 > Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
+> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move.
 > Hell Spawn, Multi-Grenade Ogres, Knight Statues, Death Knight Statues and Phantom Swordsmen are reskins of other monsters, so they have their own, lower odds.
 > Statues stay frozen (and can't be hurt) until they notice a player. Hell Spawn may split in two when hurt, and Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
+> Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 - For Monsters in the water:
 
 |Name|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Fiend|6%|4%|3%|1%|1%|0%|
-|Enforcer|6%|9%|9%|9%|9%|0%|
+|Fiend|7%|5%|3%|1%|1%|0%|
+|Enforcer|7%|9%|9%|9%|9%|0%|
 |Hell Knight|4%|9%|9%|10%|10%|4%|
 |Zombie|13%|8%|5%|4%|2%|8%|
 |Vore|1%|2%|3%|3%|4%|14%|
-|Shambler|<1%|1%|2%|2%|3%|14%|
+|Shambler|<1%|1%|2%|2%|3%|13%|
 |Grunt|7%|10%|7%|9%|6%|0%|
-|Spawn|4%|2%|3%|3%|4%|0%|
-|Scrag|8%|9%|9%|10%|11%|29%|
-|Ogre|6%|7%|6%|6%|6%|0%|
+|Spawn|4%|2%|3%|3%|5%|0%|
+|Scrag|8%|9%|9%|10%|11%|27%|
+|Ogre|7%|7%|6%|6%|6%|0%|
 |Rotfish|20%|13%|10%|8%|5%|0%|
 |Centroid|2%|3%|4%|5%|6%|8%|
-|Gremlin|6%|7%|7%|6%|5%|0%|
-|Wrath|2%|3%|4%|4%|6%|10%|
+|Gremlin|7%|7%|7%|6%|5%|0%|
+|Wrath|1%|2%|2%|3%|4%|9%|
 |Mummy|1%|1%|2%|2%|3%|5%|
+|Guardian|1%|2%|3%|3%|4%|9%|
 |Eel|4%|5%|10%|9%|7%|0%|
 |Hell Spawn|4%|2%|2%|2%|4%|0%|
 |Multi-Grenade Ogre|1%|2%|2%|3%|3%|0%|
-|Spike Mine|2%|2%|2%|3%|4%|8%|
+|Spike Mine|1%|1%|1%|1%|2%|4%|
 
 > Rottweilers, Knights, Knight and Death Knight Statues and Phantom Swordsmen aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
 > Eels only spawn in plain water, not in slime or lava, because they can't survive there.
 > Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
+> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move.
+> Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 #### Pickup replacement chances on Biased Mode
 
@@ -287,6 +291,26 @@ Have fun!
 This mode is disabled by default. Here, all the weapons and ammo pickups are "disguised" as backpacks, so you can't know what you get until you actually get it!
 
 > To match the behaviour of ammo crates, Backpacks that only contain ammo can't be picked up if your respective ammo reserves are full.
+
+---
+
+## Disclaimers and concessions made for the mod
+
+### LLM disclaimer
+
+With the big code adaptation mess that is Dissolution of Eternity, the porting of its entities and, most importantly, the alternate ammo mechanics, has been done with the assistance of Claude Code. I had personally tried to do it myself but the manual refactoring effort was gargantuan, so I had to cede some terrain here.
+
+If you disagree with this usage, feel free to download the 1.09 version instead.
+
+### Bugs
+
+Most bugs regarding entity behaviour have been kept because it's not the mod's intention.
+
+One has been fixed, however: the Spike Mine will not target you if you have the Ring of Shadows activated.
+
+### Concessions
+
+Since Gremlins only appear in Scourge of Armagon, to preserve some "autenticity", they cannot steal alternate ammo weapons (Lava Nailgun, Super Lava Nailgun, Multi-Grenade Launcher, Multi-Rocket Launcher and Plasma Gun). Instead, they will steal the base weapon and lock you access to the alternate ammo modes (e.g. a Gremlin stealing a Nailgun will not let you use the Lava Nailgun).
 
 ---
 
