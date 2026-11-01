@@ -1412,7 +1412,7 @@ void() ConvertToHellSpawn =
 		self.spawnflags = self.spawnflags - (self.spawnflags & SPAWN_CRUCIFIED);
 
 	// Like the Hell Spawn of the original game: a smaller one (skin 1) or a tougher one (skin 2)
-	if (Random(1, 3) == 1)
+	if (Random(1, 30000) <= 10000)
 	{
 		self.skin = 2;
 		self.health = 100;
@@ -1865,15 +1865,24 @@ void() ConvertToGuardian =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	// Aztec, Egyptian or Greek, all with the same body
+	// Aztec, Egyptian or Greek, the skin is entirely randomized
 	local float look;
-	look = Random(1, 3);
-	if (look == 1)
+	look = Random(1, 30000);
+	if (look <= 10000)
+	{
 		setmodel (self, "progs/morph_az.mdl");
-	else if (look == 2)
+		self.skin = 4;
+	}
+	else if (look <= 20000)
+	{	
 		setmodel (self, "progs/morph_eg.mdl");
+		self.skin = 1;
+	}
 	else
+	{	
 		setmodel (self, "progs/morph_gr.mdl");
+		self.skin = 0;
+	}
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
@@ -1889,9 +1898,8 @@ void() ConvertToGuardian =
 	self.health = 200;
 	self.classname = "monster_morph";
 	self.frame = $mfstand1;
-	self.skin = 1;						// The one a Guardian wears once it is up (the others are for rising and dying)
 
-	// morph_teleport gives up once it has spawned its quota, so this keeps it from ever summoning
+	// An exceptionally high childrenSpawned makes it unable to spawn more Guardians
 	self.childrenSpawned = 1000;
 
 	self.touch = SUB_Null;
