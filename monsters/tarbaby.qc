@@ -229,6 +229,15 @@ void() tbaby_checknew =
 
 	total_monsters = total_monsters + 1;
 	EndlessCastleTotalMonsters = EndlessCastleTotalMonsters + 1;
+
+	if(self.owner.Converted == "1")
+	{
+		self.Converted = "1";
+		self.Unstuckable = 1;
+		self.EntityID = ENTITY_HELL_SPAWN;
+		RegisterEntity(self.EntityID);
+	}
+
 	WriteByte (MSG_BROADCAST, SVC_UPDATESTAT);
 	WriteByte (MSG_BROADCAST, STAT_TOTALMONSTERS);
 	WriteLong (MSG_BROADCAST, total_monsters);

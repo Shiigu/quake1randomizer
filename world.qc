@@ -261,6 +261,7 @@ void() worldspawn =
 	precache_everything();
 	// player precaches
 	W_Precache ();			// get weapon precaches
+	RunePrecache();			// precache the runes (deathmatch only)
 
 	// sounds used from C physics code
 	precache_sound ("demon/dland2.wav");		// landing thud
@@ -386,6 +387,13 @@ void() worldspawn =
 	precache_model ("progs/zom_gib.mdl");
 
 	precache_model ("progs/v_light.mdl");
+
+	// Rogue's grapple (Capture the Flag, deathmatch only)
+	if (deathmatch)
+	{
+		precache_model ("progs/hook.mdl");
+		precache_model ("progs/v_grpple.mdl");
+	}
 
 
 //

@@ -217,8 +217,8 @@ void() health_touch =
 	self.model = string_null;
 	self.solid = SOLID_NOT;
 
-	// Megahealth = rot down the player's super health
-	if (self.healtype == 2)
+	// Megahealth = rot down the player's super health (not with the Rune of Elder Magic, it regenerates)
+	if (self.healtype == 2 && !RuneHasElder(other))
 	{
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
@@ -511,6 +511,10 @@ Deathmatch weapon change rules for picking up a weapon
 void(float old, float new) Deathmatch_Weapon =
 {
 	local float or, nr;
+
+// don't change weapons while grappling
+	if (self.weapon == ROGW_GRAPPLE && self.button0)
+		return;
 
 // change self.weapon if desired
 	or = RankForWeapon (self.weapon);
@@ -1501,6 +1505,8 @@ void() BackpackTouch =
 	new = self.items;
 	if (!new)
 		new = other.weapon;
+	if (Rog_IsRogueWeapon(new))
+		new = 0;	// a combo weapon or the Grapple (a backpack tossed with 'impulse 20' has no weapon) is no item
 	old = other.items;
 	other.items = other.items | new;
 	
@@ -1832,7 +1838,11 @@ void() DropBackpack =
 		item.items = IT_LIGHTNING;
 	}
 	else
+	{
 		item.netname = "";
+		if (Rog_IsRogueWeapon(item.items))
+			item.items = 0;	// the Grapple is not an item
+	}
 
 	item.ammo_standard_shells = self.ammo_standard_shells;
 	item.ammo_standard_nails = self.ammo_standard_nails;

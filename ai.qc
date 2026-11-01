@@ -548,6 +548,8 @@ local float	rsnd;
       sound (self, CHAN_VOICE, "eel/eelc5.wav", 1, ATTN_NORM);
    else if (self.classname == "monster_wrath")
       sound (self, CHAN_VOICE, "wrath/wsee.wav", 1, ATTN_NORM);
+   else if (self.classname == "monster_morph")
+	   sound ( self, CHAN_VOICE, "guard/see1.wav", 1, ATTN_NORM );
    else if (self.classname == "monster_dragon")
       sound (self, CHAN_VOICE, "dragon/see.wav", 1, ATTN_NORM);
 };
