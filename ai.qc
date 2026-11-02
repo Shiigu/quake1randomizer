@@ -495,6 +495,8 @@ local float	rsnd;
 		// Statues (skin 1) play their own sound when they wake up
 		if (self.skin == 0)
 			sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+      else if (self.skin == 1)
+			sound ( self, CHAN_VOICE, "statue/see.wav", 1, ATTN_NORM);
 	}
 	else if (self.classname == "monster_shambler")
 		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
@@ -510,6 +512,8 @@ local float	rsnd;
 	{
 		if (self.skin == 0)
 			sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+      else if (self.skin == 1)
+			sound ( self, CHAN_VOICE, "statue/see.wav", 1, ATTN_NORM);
 	}
 	else if (self.classname == "monster_tarbaby")
 		sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
