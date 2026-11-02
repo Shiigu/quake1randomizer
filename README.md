@@ -310,7 +310,7 @@ One has been fixed, however: the Spike Mine will not target you if you have the 
 
 ### Concessions
 
-Since Gremlins only appear in Scourge of Armagon, to preserve some "autenticity", they cannot steal alternate ammo weapons (Lava Nailgun, Super Lava Nailgun, Multi-Grenade Launcher, Multi-Rocket Launcher and Plasma Gun). Instead, they will steal the base weapon and lock you access to the alternate ammo modes (e.g. a Gremlin stealing a Nailgun will not let you use the Lava Nailgun).
+Since Gremlins only appear in Scourge of Armagon, to preserve some "authenticity", they cannot steal alternate ammo weapons (Lava Nailgun, Super Lava Nailgun, Multi-Grenade Launcher, Multi-Rocket Launcher and Plasma Gun). Instead, they will steal the base weapon and lock you access to the alternate ammo modes (e.g. a Gremlin stealing a Nailgun will not let you use the Lava Nailgun).
 
 ---
 
@@ -318,6 +318,6 @@ Since Gremlins only appear in Scourge of Armagon, to preserve some "autenticity"
 
 The mod works as intended, but there are still a bunch of things in the mod that can be done better, which are as follows:
 - Give more 'fair' odds for the Biased mode.
-- Create forks of this mod in which it can fully work for Dimension of the Machine and Dawn of the Machine. 
+- Create forks of this mod in which it can fully work for Dimension of the Past, Dimension of the Machine and Dawn of the Machine. 
 - Have the mod use its own, custom cvar instead of `savedgamecfg`.
 - Use a better logic for `UnstuckMonster` and `UnstuckObject`. Currently, what the game does is reposition the entity in random locations around its starting spot up to 1500 times, and if it can't get the entity unstuck, it either kills it gruesomely (if it's a monster) or removes it from the game (if it's an object). Monsters touching teleporters are excluded from this logic because they are expected to move out of those positions.
