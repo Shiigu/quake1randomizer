@@ -1782,15 +1782,6 @@ void() ConvertToMummy =
 		return;
 	}
 
-	// Just like Zombies, Mummies fall down and get back up, so they can't be tied to a trigger
-	// (to prevent potential soft-locks). Roll again for something else.
-	if (IsTiedToATrigger(self))
-	{
-		self.think = ConvertToMonster;
-		self.nextthink = time;
-		return;
-	}
-
 	dprint("Converted ");
 	dprint(self.classname);
 	dprint(" to ");

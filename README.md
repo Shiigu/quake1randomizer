@@ -60,7 +60,7 @@ Within the Endless Castle menu itself, there are six possible difficulty modes:
 
 The Endless Castle always uses Nightmare settings regardless of the current level. For example, `E4M3` will always have 105 enemies no matter how lenient the randomizer is right now.
 
-**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters.
+**Dying in the Endless Castle IS FINAL.** There's no retrying a level after you get killed by the monsters. The console will print your Endless Castle stats for posterity.
 
 Using the `map` command will instantly end Endless Castle mode. Most cheat codes (such as `god`, `noclip` or `impulse 255`) will instantly boot the player out of Endless Castle mode.
 
@@ -101,10 +101,10 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Spike Mine|1%|1%|1%|1%|2%|2%|
 
 > Rotfish and Eels aren't allowed to spawn outside of water surfaces because they can't move there.
-> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
-> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move.
-> Hell Spawn, Multi-Grenade Ogres, Knight Statues, Death Knight Statues and Phantom Swordsmen are reskins of other monsters, so they have their own, lower odds.
-> Statues stay frozen (and can't be hurt) until they notice a player. Hell Spawn may split in two when hurt, and Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
+> Zombies can't spawn on monster spots that are tied to a trigger, to prevent softlocks in case the player lacks any direct or indirect means to gib them.
+> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move. Spike Mines also can't spawn less than 128 units away from the player's spawn (or current location for random spawns) to give them the chance to react.
+> Statues stay frozen (and can't be hurt) until they notice a player. This differs from their Dissolution of Eternity behaviour where they could only wake up via a trigger. To prevent softlocks, statues can be alerted by the nearby presence of a player even if the map's geometry prevents any kind of backwards vision.
+> Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
 > Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 - For Monsters in the water:
@@ -134,8 +134,8 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 
 > Rottweilers, Knights, Knight and Death Knight Statues and Phantom Swordsmen aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
 > Eels only spawn in plain water, not in slime or lava, because they can't survive there.
-> Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
-> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move.
+> Zombies can't spawn on monster spots that are tied to a trigger, to prevent softlocks in case the player lacks any direct or indirect means to gib them.
+> In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move. Spike Mines also can't spawn less than 128 units away from the player's spawn (or current location for random spawns) to give them the chance to react.
 > Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 #### Pickup replacement chances on Biased Mode
@@ -185,13 +185,13 @@ Exclusive to Endless Castle Mode, there's a chance that the Pickup will be remov
 |Small|50%|65%|70%|75%|80%|100%|
 |Big|50%|35%|30%|25%|20%|0%|
 
-- Alternate ammo (Dissolution of Eternity). Before the ammo type is rolled, an ammo pack has this chance to become Lava Nails (25/50), Multi Rockets (5/10) or Plasma (6/12) instead, all equally likely and with the crate sizes above:
+- Alternate Ammo (Dissolution of Eternity) is strong ammo for the player, so it is far rarer than any standard ammo. First, the Ammo Type and Size is rolled, then a second roll is performed to determine whether Nails become Lava Nails, Rockets become Multi-Rockets and Cells become Plasma Cells:
 
 |-|Easy Odds|Normal Odds|Hard Odds|Nightmare Odds|Super Nightmare Odds|Unfair Odds|
 |----|----|----|----|----|----|----|
-|Alternate ammo|8%|6%|4%|3%|2%|0%|
+|Alternate Ammo|20%|15%|10%|8%|5%|2%|
 
-> It is strong ammo for the player, so it is far rarer than any standard ammo. Unbiased Mode keeps it at 10%.
+> For Unbiased Mode only, the chance for an Ammo crate to become an Alternate Ammo crate is always 15%.
 
 Exclusive to Endless Castle Mode, there's a chance that the Ammo Pack will be removed from the level altogether. This applies before calculating the aforementioned odds:
 
@@ -246,7 +246,7 @@ Exclusive to Endless Castle Mode, there's a chance that the Powerup will be remo
 
 > The odds for which weapon to be spawned are defined below.
 
-> If weapon randomization is disabled, the weapon will be replaced by a Quad Damage, or a random Powerup in case proximity checks prevent it.
+> If weapon randomization is disabled, the weapon will always be replaced by a Quad Damage, or a random Powerup in case proximity checks prevent it.
 
 > The odds of a monster spawned by the Horn of Conjuring follow the same rule as the current randomizer difficulty setting. Thus, the higher the Endless Castle level, the more likely you are to get a powerful monster.
 
