@@ -104,7 +104,8 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 > Zombies and Mummies can't spawn on monster spots that are tied to a trigger.
 > In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move.
 > Hell Spawn, Multi-Grenade Ogres, Knight Statues, Death Knight Statues and Phantom Swordsmen are reskins of other monsters, so they have their own, lower odds.
-> Statues stay frozen (and can't be hurt) until they notice a player. Hell Spawn may split in two when hurt, and Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
+> Statues stay frozen (and can't be hurt) until they notice a player. This differs from their Dissolution of Eternity behaviour where they could only wake up via a trigger. To prevent softlocks, statues can be alerted by the nearby presence of a player even if the map's geometry prevents any kind of backwards vision.
+> Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
 > Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 - For Monsters in the water:
