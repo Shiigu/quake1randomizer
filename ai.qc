@@ -754,6 +754,32 @@ float(float playAlertSound) FindTarget =
 	return TRUE;
 };
 
+// Exclusively directed towards preventing softlocks with randomized Knight and Death Knight Statues.
+// It allows Statues to wake up if a player is nearby, even if they don't see them.
+// Otherwise, a Statue spawning exactly on a corridor, facing away from the player, would be impassable.
+float() StatueSenseNearby =
+{
+   return FALSE;
+   
+   local entity head;
+
+	head = findradius (self.origin, 96);
+	while (head)
+	{
+		if (head.classname == "player" && head.health > 0 && !(head.flags & FL_NOTARGET))
+		{
+			if (visible (head))
+			{
+				self.enemy = head;
+				FoundTarget ();
+				return TRUE;
+			}
+		}
+		head = head.chain;
+	}
+	return FALSE;
+};
+
 
 //=============================================================================
 
