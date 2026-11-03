@@ -290,9 +290,9 @@ void() knight_pause1 =
 	self.nextthink = time + 0.1;
 };
 
-// The randomizer's Knight Statues have no trigger, so they wake up as soon as they notice a player
-// (not ai_stand: it calls th_walk when it runs out of things to do, and th_walk is this very function)
-void() knight_statue1 = [44, knight_statue1] { self.takedamage = DAMAGE_NO; FindTarget (TRUE); };
+// Randomized Knight Statues have no trigger to wake up through, so they wake up as soon as they notice a player
+// ADDITIONAL: They also wake up if the player is nearby, even if they don't see them. This is to prevent softlocks.
+void() knight_statue1 = [44, knight_statue1] { self.takedamage = DAMAGE_NO; if (!FindTarget (TRUE)) StatueSenseNearby (); };
 
 void() knight_wake =
 {
