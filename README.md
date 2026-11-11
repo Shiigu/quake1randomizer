@@ -101,10 +101,15 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Spike Mine|1%|1%|1%|1%|2%|2%|
 
 > Rotfish and Eels aren't allowed to spawn outside of water surfaces because they can't move there.
+
 > Zombies can't spawn on monster spots that are tied to a trigger, to prevent softlocks in case the player lacks any direct or indirect means to gib them.
+
 > In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move. Spike Mines also can't spawn less than 128 units away from the player's spawn (or current location for random spawns) to give them the chance to react.
+
 > Statues stay frozen (and can't be hurt) until they notice a player. This differs from their Dissolution of Eternity behaviour where they could only wake up via a trigger. To prevent softlocks, statues can be alerted by the nearby presence of a player even if the map's geometry prevents any kind of backwards vision.
+
 > Phantom Swordsmen wait a few seconds after noticing a player before they attack. Phantom Swordsmen's delay is either set by the map or is at 10 seconds by default. Here, it's randomized to be between 0.5 and 3 seconds.
+
 > Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 - For Monsters in the water:
@@ -133,9 +138,13 @@ This is the default Randomizer mode. Here, the game will try to be fair (keyword
 |Spike Mine|1%|1%|1%|1%|2%|4%|
 
 > Rottweilers, Knights, Knight and Death Knight Statues and Phantom Swordsmen aren't allowed to spawn inside water surfaces because their attacks are almost completely useless there.
+
 > Eels only spawn in plain water, not in slime or lava, because they can't survive there.
+
 > Zombies can't spawn on monster spots that are tied to a trigger, to prevent softlocks in case the player lacks any direct or indirect means to gib them.
+
 > In practice, the odds for Spike Mines to spawn are actually much lower. Since they explode on contact with anything, they are only allowed to spawn where there is enough room for them to move. Spike Mines also can't spawn less than 128 units away from the player's spawn (or current location for random spawns) to give them the chance to react.
+
 > Guardians that spawn this way are always the 200 health kind, use a random skin (Aztec, Greek or Egyptian), and never summon more Guardians.
 
 #### Pickup replacement chances on Biased Mode
@@ -300,11 +309,11 @@ This mode is disabled by default. Here, all the weapons and ammo pickups are "di
 
 With the big code adaptation mess that is Dissolution of Eternity, the porting of its entities and, most importantly, the alternate ammo mechanics, has been done with the assistance of Claude Code. I had personally tried to do it myself but the manual refactoring effort was gargantuan, so I had to cede some terrain here.
 
-If you disagree with this usage, feel free to download the 1.09 version instead.
+If you disagree with this usage, feel free to download the 1.09 version instead, being the latest one made without LLMs being involved.
 
 ### Bugs
 
-Most bugs regarding entity behaviour have been kept because it's not the mod's intention.
+Most bugs regarding entity behaviour have been kept because it's not the mod's intention to alter vanilla behaviour. The idea is for the mod to feel like someone went into a map editor and blindedly changed entities, rather than alter the code itself.
 
 One has been fixed, however: the Spike Mine will not target you if you have the Ring of Shadows activated.
 
